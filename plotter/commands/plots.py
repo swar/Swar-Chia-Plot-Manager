@@ -21,15 +21,3 @@ def create(size, memory_buffer, temporary_directory, destination_directory, thre
             continue
         data.append(str(value))
     return data
-
-
-cli_command = create(
-    size=32,
-    memory_buffer=4608,
-    temporary_directory=r'Z:\Plotter',
-    destination_directory='D:\Plots',
-    threads=2,
-    buckets=128,
-    bitfield=False,
-    temporary2_directory=None,
-)
