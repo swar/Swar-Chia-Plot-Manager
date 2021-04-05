@@ -1,7 +1,6 @@
 chia_location: C:\Users\Swar\AppData\Local\chia-blockchain\app-1.0.3\resources\app.asar.unpacked\daemon\chia
 
 log_location:
-  #enabled: true
   folder_path: S:\logs\plotter
   check_seconds: 60
 
