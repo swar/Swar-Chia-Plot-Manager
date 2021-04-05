@@ -41,3 +41,5 @@ class Work:
     completed = False
 
     progress = 0
+
+
