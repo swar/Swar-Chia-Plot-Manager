@@ -1,0 +1,3 @@
+
+class InvalidYAMLConfigException(Exception):
+    pass
