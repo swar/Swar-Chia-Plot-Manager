@@ -4,7 +4,6 @@ import os
 import psutil
 import re
 import subprocess
-import sys
 import time
 
 from copy import deepcopy
@@ -15,15 +14,6 @@ from termcolor import cprint, colored
 from plotter.commands import plots
 from plotter.parse.configuration import get_config_info
 from plotter.utilities.objects import Job, Work
-
-
-def pprint(message, job=None, work=None):
-    print_statement = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: "
-    if work and not job:
-        job = work.job
-    if job:
-        print_statement += f"[{job.name.upper() if isinstance(job.name, str) else job.name}] "
-    print(f"{print_statement}{message}")
 
 
 def pretty_print_time(seconds):
@@ -115,8 +105,6 @@ def start_work(job, chia_location, log_directory):
         temporary2_directory=None
     )
 
-    # pprint(plot_command)
-
     log_file = open(log_file_path, 'a')
     process = subprocess.Popen(
         args=plot_command,
@@ -134,8 +122,6 @@ def start_work(job, chia_location, log_directory):
     work.pid = pid
     job.total_running += 1
     job.running_work = job.running_work + [pid]
-
-    # pprint(f"Started job - {pid}", job=job)
 
     return job, work
 
@@ -224,9 +210,7 @@ while jobs_to_do(jobs):
             break
         del running_work[pid]
 
-    # pprint("Logs checked")
     next_log_check = datetime.now() + timedelta(seconds=log_check_seconds)
-    # pprint(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
 
     # DETERMINE IF JOB NEEDS TO START
     for i, job in enumerate(jobs):
@@ -256,21 +240,14 @@ while jobs_to_do(jobs):
             continue
         if job.total_running >= job.max_concurrent_with_disregard:
             continue
-        # pprint(f"Starting work", job=job)
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
-            # pprint(f"Staggering work and next job in {job.stagger_minutes} minutes", job=job)
         if job.max_concurrent == job.total_running:
             pass
-            # pprint("Reached max concurrent work", job=job)
         job, work = start_work(job=job, chia_location=chia_location, log_directory=log_directory)
         jobs[i] = deepcopy(job)
         next_log_check = datetime.now()
         running_work[work.pid] = work
-
-    # print(psutil.cpu_percent())
-    # print(psutil.virtual_memory())
-
 
     # DETERMINE RUNNING PROCESSES
     # TODO: Check Running Processes
@@ -311,5 +288,3 @@ while jobs_to_do(jobs):
     print()
 
     time.sleep(log_check_seconds)
-
-pprint("Completed all jobs!")
