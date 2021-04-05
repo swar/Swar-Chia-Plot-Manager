@@ -1,8 +1,6 @@
 import os
 import yaml
 
-from string import ascii_uppercase
-
 from plotter.utilities.exceptions import InvalidYAMLConfigException
 
 CONFIG_LOCATION = 'S:/Cloud Storage/Github/plotter/config.yaml'
@@ -22,11 +20,26 @@ def _get_chia_location(config):
 
 
 def _get_log_location(config):
+    if 'log_location' not in config:
+        raise InvalidYAMLConfigException('Failed to find the log_location parameter in the YAML.')
     log_location = config['log_location']
+    failed_checks = []
+    checks = ['folder_path', 'check_seconds']
+    for check in checks:
+        if check in log_location:
+            continue
+        failed_checks.append(check)
+
+    if failed_checks:
+        raise InvalidYAMLConfigException(f'Failed to find the following parameters in log_location: '
+                                         f'{", ".join(failed_checks)}')
+
     return log_location['folder_path'], log_location['check_seconds']
 
 
 def _get_jobs(config):
+    if 'jobs' not in config:
+        raise InvalidYAMLConfigException('Failed to find the jobs parameter in the YAML.')
     return config['jobs']
 
 
