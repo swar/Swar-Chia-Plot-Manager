@@ -4,7 +4,7 @@ import os
 import psutil
 import re
 
-from plotter.utilities.print import pretty_print_time
+from utilities.print import pretty_print_time
 
 
 def get_log_file_name(log_directory, job, datetime):
