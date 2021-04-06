@@ -33,14 +33,14 @@ def print_table(jobs, running_work, next_log_check, stop_plotting):
                 continue
             max_characters[i] = length
 
-    headers = "   ".join([colored(cell.center(max_characters[i]), 'blue') for i, cell in enumerate(statuses[0])])
-    separator = colored('=', 'green') * (sum(max_characters) + 3 * len(max_characters))
+    headers = "   ".join([cell.center(max_characters[i]) for i, cell in enumerate(statuses[0])])
+    separator = '=' * (sum(max_characters) + 3 * len(max_characters))
     console = [separator, headers, separator]
     for row in statuses[1:]:
-        console.append("   ".join([colored(cell.ljust(max_characters[i]), 'blue') for i, cell in enumerate(row)]))
+        console.append("   ".join([cell.ljust(max_characters[i]) for i, cell in enumerate(row)]))
     console.append(separator)
     print("\n".join(console))
-    cprint(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}", 'blue')
+    print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     if stop_plotting:
         cprint(f"Plotting has been disabled", 'red')
     print()
