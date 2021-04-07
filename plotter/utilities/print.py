@@ -1,12 +1,29 @@
 from datetime import datetime
 from termcolor import cprint, colored
 
+# Let's get us a file we can send to a webserver with the statuses
+printStatusFile = True #TODO: move to config file
+
+# define our clear screen function
+def clear():
+  
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+  
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
+        
+def statusFile(content):
+    text_file = open("plotstatus.txt", "w") #TODO: move to config file
+    n = text_file.write(content)
+    text_file.close()
 
 def pretty_print_time(seconds):
     total_minutes, second = divmod(seconds, 60)
     hour, minute = divmod(total_minutes, 60)
     return f"{hour:02}:{minute:02}:{second:02}"
-
 
 def print_table(jobs, running_work, next_log_check, stop_plotting):
     statuses = []
@@ -39,7 +56,14 @@ def print_table(jobs, running_work, next_log_check, stop_plotting):
     for row in statuses[1:]:
         console.append("   ".join([cell.ljust(max_characters[i]) for i, cell in enumerate(row)]))
     console.append(separator)
+    
+    clear() #clear screen before print
+    
     print("\n".join(console))
+    
+    if printStatusFile == True: # If enabled, create text file suitable for sending to webserver
+        statusFile("\n".join(console))
+        
     print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     if stop_plotting:
         cprint(f"Plotting has been disabled", 'red')

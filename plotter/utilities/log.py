@@ -4,6 +4,15 @@ import os
 import psutil
 import re
 
+#Send Discord notification? TODO: Move configs to config
+sendDiscord = False
+discordWebhook = r'https://discord.com/api/webhooks/XXXXXXXXXXX/YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY'
+
+#play sound notification completed plots? TODO: Move configs to config
+playSound = False
+song = 'audio.mp3'
+
+
 from utilities.print import pretty_print_time
 
 
@@ -93,5 +102,22 @@ def check_log_progress(jobs, running_work):
                 job.running_work.remove(pid)
             job.total_running -= 1
             job.total_completed += 1
+            
+            
+            #Trigger notifications for completed plots
+            #Move to seperate .py
+            msgContent = 'You completed a plot, buddy!  Way to farm!'
+            msgTitle = 'Plot done, Farmer!'
+            
+            if sendDiscord == True:
+                import discord_notify as dn
+                
+                notifier = dn.Notifier(discordWebhook)
+                notifier.send(msgContent, print_message=False)
+                
+            if playSound == True:
+                from playsound import playsound
+                playsound(song)
+                
             break
         del running_work[pid]

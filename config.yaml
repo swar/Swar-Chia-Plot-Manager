@@ -1,47 +1,69 @@
-chia_location: C:\Users\Swar\AppData\Local\chia-blockchain\app-1.0.3\resources\app.asar.unpacked\daemon\chia
+#Location of chia executable -- version number will change with version updates!
+chia_location: C:\Users\Wofl\AppData\Local\chia-blockchain\app-1.0.3\resources\app.asar.unpacked\daemon\chia
 
 log_location:
-  folder_path: S:\logs\plotter
-  check_seconds: 60
+  folder_path: c:\chia\ #location to store logs
+  check_seconds: 60     #how often to update status
 
 global:
-  max_concurrent: 8
+  max_concurrent: 8     #How many max plots at a time
 
-jobs:
-  - name: micron
-    max_plots: 999
-    temporary_directory: Z:\Plotter
-    destination_directory:
-      - D:\Plots
-      - E:\Plots
-      - F:\Plots
-    size: 32
-    bitfield: true
-    threads: 6
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 6
-    max_concurrent_with_disregard: 7
-    stagger_minutes: 60
-    max_for_phase_1: 2
-    concurrency_disregard_phase: 4
+jobs:               #BECAREFUL OF FORMATTING
+  - name: 2TB E     #Name displayed for this job
+    max_plots: 999  #How many plots to churn out max
+    temporary_directory: E:\ #location of temp drive
+    destination_directory: #list of destination drives - recommend switching order between jobs for now
+      - Z:\
+      - Y:\
+      - X:\
+    size: 32 # K-size of plots
+    bitfield: true #Use bitfield?
+    threads: 3  #threads per plot
+    buckets: 128 #
+    memory_buffer: 6500 #ram given per plot
+    max_concurrent: 4 #How many plots allowed to run at once on this temp drive
+    max_concurrent_with_disregard: 5 #Allowed plot count during phase 4
+    stagger_minutes: 60 #TIme between launching plots
+    max_for_phase_1: 2  #Don't overload phase 1
+    concurrency_disregard_phase: 4  #During this phase it can start an extra plot
     concurrency_disregard_phase_delay: 0
 
-  - name: inland
+  - name: 1TB F
     max_plots: 999
-    temporary_directory: G:\Plotter
+    temporary_directory: F:\
     destination_directory:
-      - D:\Plots
-      - E:\Plots
-      - F:\Plots
+      - Y:\
+      - Z:\
+      - X:\
     size: 32
     bitfield: true
-    threads: 6
+    threads: 3
     buckets: 128
-    memory_buffer: 5000
+    memory_buffer: 6500
     max_concurrent: 2
-    max_concurrent_with_disregard: 3
+    max_concurrent_with_disregard: 2
     stagger_minutes: 180
     max_for_phase_1: 1
     concurrency_disregard_phase: 4
     concurrency_disregard_phase_delay: 0
+
+  - name: 1TB G
+    max_plots: 999
+    temporary_directory: G:\
+    destination_directory:
+      - X:\
+      - Y:\
+      - Z:\
+    size: 32
+    bitfield: true
+    threads: 3
+    buckets: 128
+    memory_buffer: 6500
+    max_concurrent: 2
+    max_concurrent_with_disregard: 2
+    stagger_minutes: 60
+    max_for_phase_1: 1
+    concurrency_disregard_phase: 4
+    concurrency_disregard_phase_delay: 0
+    
+
