@@ -2,3 +2,5 @@ PyYAML==5.4.1
 psutil==5.8.0
 termcolor==1.1.0
 dateparser==1.0.0
+discord_notify==1.0.0
+playSound==1.2.2
