@@ -1,15 +1,18 @@
+import pathlib
 import os
 import yaml
 
-from utilities.exceptions import InvalidYAMLConfigException
 
-CONFIG_LOCATION = 'S:/Cloud Storage/Github/plotter/config.yaml'
+from utilities.exceptions import InvalidYAMLConfigException
 
 
 def _get_config():
-    if not os.path.exists(CONFIG_LOCATION):
-        raise FileNotFoundError("Was unable to find the config.yaml file.")
-    f = open(CONFIG_LOCATION, 'r')
+    directory = pathlib.Path().resolve()
+    file_name = 'config.yaml'
+    file_path = os.path.join(directory, file_name)
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Unable to find the config.yaml file. Expected location: {file_path}")
+    f = open(file_path, 'r')
     config = yaml.load(stream=f, Loader=yaml.Loader)
     f.close()
     return config
