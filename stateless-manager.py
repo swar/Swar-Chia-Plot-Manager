@@ -4,10 +4,10 @@ import time
 from datetime import datetime, timedelta
 from termcolor import cprint
 
-from library.parse import get_config_info
-from library.utilities import has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
-from library.utilities.log import check_stop_plotting_override, check_log_progress
-from library.utilities import print_table
+from plotmanager.library.parse.configuration import get_config_info
+from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
+from plotmanager.library.utilities.log import check_stop_plotting_override, check_log_progress
+from plotmanager.library.utilities.print import print_table
 
 
 chia_location, log_directory, config_jobs, log_check_seconds = get_config_info()

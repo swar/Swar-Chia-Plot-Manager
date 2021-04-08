@@ -3,7 +3,7 @@ import os
 import yaml
 
 
-from library.utilities.exceptions import InvalidYAMLConfigException
+from plotmanager.library.utilities.exceptions import InvalidYAMLConfigException
 
 
 def _get_config():

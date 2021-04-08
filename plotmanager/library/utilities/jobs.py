@@ -1,12 +1,13 @@
+import os
 import psutil
 import subprocess
 
 from copy import deepcopy
 from datetime import datetime, timedelta
 
-from library.commands import plots
-from library.utilities.objects import Job, Work
-from library.utilities.log import get_log_file_name
+from plotmanager.library.commands import plots
+from plotmanager.library.utilities.objects import Job, Work
+from plotmanager.library.utilities.log import get_log_file_name
 
 
 def has_active_jobs_and_work(jobs):
@@ -118,11 +119,21 @@ def start_work(job, chia_location, log_directory):
         temporary2_directory=None
     )
 
+    kwargs = {}
+    if 'nt' == os.name:
+        flags = 0
+        flags |= 0x00000008
+
+        kwargs = {
+            'creationflags': flags,
+        }
+
     log_file = open(log_file_path, 'a')
     process = subprocess.Popen(
         args=plot_command,
         stdout=log_file,
         stderr=log_file,
+        **kwargs,
     )
     pid = process.pid
     psutil.Process(pid).nice(psutil.REALTIME_PRIORITY_CLASS)
