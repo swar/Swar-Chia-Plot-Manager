@@ -1,7 +1,7 @@
 import os
 import yaml
 
-from plotter.utilities.exceptions import InvalidYAMLConfigException
+from utilities.exceptions import InvalidYAMLConfigException
 
 CONFIG_LOCATION = 'S:/Cloud Storage/Github/plotter/config.yaml'
 
