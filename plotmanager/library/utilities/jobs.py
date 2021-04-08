@@ -4,9 +4,9 @@ import subprocess
 from copy import deepcopy
 from datetime import datetime, timedelta
 
-from commands import plots
-from utilities.objects import Job, Work
-from utilities.log import get_log_file_name
+from library.commands import plots
+from library.utilities.objects import Job, Work
+from library.utilities.log import get_log_file_name
 
 
 def has_active_jobs_and_work(jobs):

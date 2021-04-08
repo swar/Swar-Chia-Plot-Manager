@@ -3,7 +3,7 @@ import os
 import yaml
 
 
-from utilities.exceptions import InvalidYAMLConfigException
+from library.utilities.exceptions import InvalidYAMLConfigException
 
 
 def _get_config():
