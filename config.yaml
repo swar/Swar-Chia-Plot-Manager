@@ -8,7 +8,7 @@ log_location:
 global:
   max_concurrent: 8     #How many max plots at a time
 
-jobs:               #BECAREFUL OF FORMATTING
+jobs:               #BE CAREFUL OF FORMATTING
   - name: 2TB E     #Name displayed for this job
     max_plots: 999  #How many plots to churn out max
     temporary_directory: E:\ #location of temp drive
@@ -66,3 +66,11 @@ jobs:               #BECAREFUL OF FORMATTING
     concurrency_disregard_phase: 4
     concurrency_disregard_phase_delay: 0
     
+notifications:
+  #Send Discord notification?
+  notify_discord: False
+  discord_webhook_url: https://discord.com/api/webhooks/XXXXXXXXXXX/YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+
+  #play sound notification completed plots?
+  play_sound: False
+  song: audio.mp3

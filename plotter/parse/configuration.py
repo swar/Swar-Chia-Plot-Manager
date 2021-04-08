@@ -23,17 +23,7 @@ def _get_log_location(config):
     if 'log_location' not in config:
         raise InvalidYAMLConfigException('Failed to find the log_location parameter in the YAML.')
     log_location = config['log_location']
-    failed_checks = []
-    checks = ['folder_path', 'check_seconds']
-    for check in checks:
-        if check in log_location:
-            continue
-        failed_checks.append(check)
-
-    if failed_checks:
-        raise InvalidYAMLConfigException(f'Failed to find the following parameters in log_location: '
-                                         f'{", ".join(failed_checks)}')
-
+    _check_parameters(log_location, ['folder_path', 'check_seconds'])
     return log_location['folder_path'], log_location['check_seconds']
 
 
@@ -42,6 +32,25 @@ def _get_jobs(config):
         raise InvalidYAMLConfigException('Failed to find the jobs parameter in the YAML.')
     return config['jobs']
 
+def get_notifications_settings():
+    config = _get_config()
+    if 'notifications' not in config:
+        raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
+    notifications = config['notifications']
+    _check_parameters(notifications, ['notify_discord', 'discord_webhook_url', 'play_sound', 'song'])
+    return notifications
+
+def _check_parameters(parameter, expectedParameters):
+    failed_checks = []
+    checks = expectedParameters
+    for check in checks:
+        if check in parameter:
+            continue
+        failed_checks.append(check)
+
+    if failed_checks:
+        raise InvalidYAMLConfigException(f'Failed to find the following parameters: '
+                                         f'{", ".join(failed_checks)}')
 
 def get_config_info():
     config = _get_config()

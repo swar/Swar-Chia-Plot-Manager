@@ -4,13 +4,16 @@ import os
 import psutil
 import re
 
-#Send Discord notification? TODO: Move configs to config
-sendDiscord = False
-discordWebhook = r'https://discord.com/api/webhooks/XXXXXXXXXXX/YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY'
+from parse.configuration import get_notifications_settings
 
-#play sound notification completed plots? TODO: Move configs to config
-playSound = False
-song = 'audio.mp3'
+notifications_settings = get_notifications_settings()
+#send Discord notification
+sendDiscord = notifications_settings.get('notify_discord')
+discordWebhook = r'%s' % notifications_settings.get('discord_webhook_url')
+
+#play sound notification completed plots
+playSound = notifications_settings.get('play_sound')
+song = r'%s' % notifications_settings.get('song')
 
 
 from utilities.print import pretty_print_time
