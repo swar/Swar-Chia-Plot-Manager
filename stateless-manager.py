@@ -17,7 +17,7 @@ next_log_check = datetime.now()
 next_job_work = {}
 running_work = {}
 
-override_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'OVERRIDE.json')
+override_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'STATELESS-OVERRIDE.json')
 stop_plotting = False
 while has_active_jobs_and_work(jobs):
     # CHECK TO SEE IF PLOTTING SHOULD BE OVERRIDDEN
