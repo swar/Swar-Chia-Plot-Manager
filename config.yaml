@@ -74,3 +74,4 @@ notifications:
   #play sound notification completed plots?
   play_sound: False
   song: audio.mp3
+  
