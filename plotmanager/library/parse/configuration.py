@@ -46,6 +46,18 @@ def _get_jobs(config):
     return config['jobs']
 
 
+def _get_global_max_concurrent_config(config):
+    if 'global' not in config:
+        raise InvalidYAMLConfigException('Failed to find global parameter in the YAML.')
+    print(config['global'])
+    if 'max_concurrent' not in config['global']:
+        raise InvalidYAMLConfigException('Failed to find max_concurrent in the global parameter in the YAML.')
+    max_concurrent = config['global']['max_concurrent']
+    if not isinstance(max_concurrent, int):
+        raise Exception('global -> max_concurrent should be a integer value.')
+    return max_concurrent
+
+
 def get_config_info():
     config = _get_config()
     chia_location = _get_chia_location(config=config)
@@ -53,4 +65,5 @@ def get_config_info():
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
     jobs = _get_jobs(config=config)
-    return chia_location, log_directory, jobs, log_check_seconds
+    max_concurrent = _get_global_max_concurrent_config(config=config)
+    return chia_location, log_directory, jobs, log_check_seconds, max_concurrent

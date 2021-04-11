@@ -54,9 +54,11 @@ def load_jobs(config_jobs):
     return jobs
 
 
-def monitor_jobs_to_start(jobs, running_work, next_job_work, chia_location, log_directory, next_log_check, stop_plotting):
+def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory, next_log_check, stop_plotting):
     for i, job in enumerate(jobs):
         if stop_plotting:
+            continue
+        if len(running_work.values()) >= max_concurrent:
             continue
         phase_1_count = 0
         for pid in job.running_work:

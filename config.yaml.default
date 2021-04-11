@@ -4,6 +4,9 @@ log_location:
   folder_path: S:\Chia\Logs\Plotter
   check_seconds: 60
 
+global:
+  max_concurrent: 10
+
 jobs:
   - name: micron
     max_plots: 999

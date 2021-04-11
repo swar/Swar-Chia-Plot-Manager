@@ -9,8 +9,7 @@ from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jo
 from plotmanager.library.utilities.log import check_stop_plotting_override, check_log_progress
 from plotmanager.library.utilities.print import print_table
 
-
-chia_location, log_directory, config_jobs, log_check_seconds = get_config_info()
+chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent = get_config_info()
 jobs = load_jobs(config_jobs)
 
 next_log_check = datetime.now()
@@ -31,6 +30,7 @@ while has_active_jobs_and_work(jobs):
     jobs, running_work, next_job_work, next_log_check = monitor_jobs_to_start(
         jobs=jobs,
         running_work=running_work,
+        max_concurrent=max_concurrent,
         next_job_work=next_job_work,
         chia_location=chia_location,
         log_directory=log_directory,
