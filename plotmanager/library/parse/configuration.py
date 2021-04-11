@@ -49,7 +49,6 @@ def _get_jobs(config):
 def _get_global_max_concurrent_config(config):
     if 'global' not in config:
         raise InvalidYAMLConfigException('Failed to find global parameter in the YAML.')
-    print(config['global'])
     if 'max_concurrent' not in config['global']:
         raise InvalidYAMLConfigException('Failed to find max_concurrent in the global parameter in the YAML.')
     max_concurrent = config['global']['max_concurrent']
