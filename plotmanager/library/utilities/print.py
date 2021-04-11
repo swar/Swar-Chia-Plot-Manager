@@ -3,6 +3,17 @@ import os
 from datetime import datetime
 
 
+def _get_row_info(pid, running_work):
+    work = running_work[pid]
+    phase_times = work.phase_times
+    elapsed_time = (datetime.now() - work.datetime_start)
+    elapsed_time = pretty_print_time(elapsed_time.seconds)
+    row = [work.job.name if work.job else '?', work.work_id, pid, work.datetime_start.strftime('%Y-%m-%d %H:%M:%S'),
+           elapsed_time, work.current_phase, phase_times.get(1, ''), phase_times.get(2, ''), phase_times.get(3, ''),
+           phase_times.get(4, ''), work.progress]
+    return [str(cell) for cell in row]
+
+
 def pretty_print_time(seconds):
     total_minutes, second = divmod(seconds, 60)
     hour, minute = divmod(total_minutes, 60)
@@ -17,14 +28,7 @@ def print_table(jobs, running_work, next_log_check, stop_plotting):
         for pid in job.running_work:
             if pid not in running_work:
                 continue
-            work = running_work[pid]
-            phase_times = work.phase_times
-            elapsed_time = (datetime.now() - work.datetime_start)
-            elapsed_time = pretty_print_time(elapsed_time.seconds)
-            row = [job.name, work.work_id, pid, work.datetime_start.strftime('%Y-%m-%d %H:%M:%S'), elapsed_time,
-                   work.current_phase, phase_times.get(1, ''), phase_times.get(2, ''), phase_times.get(3, ''),
-                   phase_times.get(4, ''), work.progress]
-            statuses.append([str(cell) for cell in row])
+            statuses.append(_get_row_info(pid, running_work))
 
     max_characters = [0 for cell in statuses[0]]
     for row in statuses:
