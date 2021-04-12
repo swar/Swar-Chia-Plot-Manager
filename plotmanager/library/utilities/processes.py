@@ -1,5 +1,6 @@
 import os
 import psutil
+import re
 import subprocess
 
 from copy import deepcopy
@@ -20,7 +21,7 @@ def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
         try:
-            if process.name() not in ['python.exe', 'pythonw.exe']:
+            if not re.search(r'^python(?:\d+\.\d+)?w?\.exe$', process.name()):
                 continue
             if not _contains_in_list('python', process.cmdline()) or \
                     not _contains_in_list('stateless-manager.py', process.cmdline()):

@@ -25,7 +25,7 @@ def start_manager():
     manager_log_file_path = os.path.join(directory, 'manager.log')
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
-    pythonw_file_path = python_file_path.replace('python.exe', 'pythonw.exe')
+    pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
     if os.path.exists(pythonw_file_path):
         python_file_path = pythonw_file_path
     args = [python_file_path, stateless_manager_path]
