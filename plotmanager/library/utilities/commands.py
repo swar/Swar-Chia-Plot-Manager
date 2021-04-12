@@ -48,7 +48,7 @@ def stop_manager():
             pass
     if get_manager_processes():
         raise TerminationException("Failed to stop manager processes.")
-    print("Successfully stop manager processes.")
+    print("Successfully stopped manager processes.")
 
 
 def view():
