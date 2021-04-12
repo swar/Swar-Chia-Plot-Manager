@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
 from plotmanager.library.utilities.log import check_log_progress
-from plotmanager.library.utilities.scan import get_running_chia_processes
+from plotmanager.library.utilities.processes import get_running_plots
 
 chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent = get_config_info()
 jobs = load_jobs(config_jobs)
@@ -14,7 +14,7 @@ next_log_check = datetime.now()
 next_job_work = {}
 running_work = {}
 
-jobs, running_work = get_running_chia_processes(jobs, running_work)
+jobs, running_work = get_running_plots(jobs, running_work)
 
 while has_active_jobs_and_work(jobs):
     # CHECK LOGS FOR DELETED WORK

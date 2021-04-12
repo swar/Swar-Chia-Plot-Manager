@@ -11,8 +11,7 @@ from plotmanager.library.utilities.exceptions import ManagerError, TerminationEx
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import check_log_progress
 from plotmanager.library.utilities.print import print_table
-from plotmanager.library.utilities.processes import get_manager_processes, start_process
-from plotmanager.library.utilities.scan import get_running_chia_processes
+from plotmanager.library.utilities.processes import get_manager_processes, get_running_plots, start_process
 
 
 def start_manager():
@@ -58,7 +57,7 @@ def view():
         try:
             jobs = load_jobs(config_jobs)
             running_work = {}
-            jobs, running_work = get_running_chia_processes(jobs, running_work)
+            jobs, running_work = get_running_plots(jobs, running_work)
             check_log_progress(jobs=jobs, running_work=running_work)
             print_table(jobs, running_work, datetime.now() + timedelta(seconds=60), False)
             time.sleep(60)
