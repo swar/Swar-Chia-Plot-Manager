@@ -1,11 +1,10 @@
-import os
 import psutil
-import subprocess
 
 from copy import deepcopy
 from datetime import datetime, timedelta
 
 from plotmanager.library.commands import plots
+from plotmanager.library.utilities.processes import start_process
 from plotmanager.library.utilities.objects import Job, Work
 from plotmanager.library.utilities.log import get_log_file_name
 
@@ -54,10 +53,8 @@ def load_jobs(config_jobs):
     return jobs
 
 
-def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory, next_log_check, stop_plotting):
+def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory, next_log_check):
     for i, job in enumerate(jobs):
-        if stop_plotting:
-            continue
         if len(running_work.values()) >= max_concurrent:
             continue
         phase_1_count = 0
@@ -121,29 +118,10 @@ def start_work(job, chia_location, log_directory):
         temporary2_directory=None
     )
 
-    kwargs = {}
-    if 'nt' == os.name:
-        flags = 0
-        flags |= 0x00000008
-
-        kwargs = {
-            'creationflags': flags,
-        }
-
     log_file = open(log_file_path, 'a')
-    process = subprocess.Popen(
-        args=plot_command,
-        stdout=log_file,
-        stderr=log_file,
-        **kwargs,
-    )
+    process = start_process(args=plot_command, log_file=log_file)
     pid = process.pid
     psutil.Process(pid).nice(psutil.REALTIME_PRIORITY_CLASS)
-
-    # THIS IS JUST TEST CODE
-    # import random
-    # pid = random.randint(1, 1000000)
-    # work.log_file = random.choice([r'S:\logs\plotter\fake.log', r'S:\logs\plotter\fake2.log'])
 
     work.pid = pid
     job.total_running += 1

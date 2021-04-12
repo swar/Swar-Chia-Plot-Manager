@@ -1,5 +1,4 @@
 import dateparser
-import json
 import os
 import psutil
 import re
@@ -9,19 +8,6 @@ from plotmanager.library.utilities.print import pretty_print_time
 
 def get_log_file_name(log_directory, job, datetime):
     return os.path.join(log_directory, f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
-
-
-def check_stop_plotting_override(stop_plotting, override_file_path):
-    if not stop_plotting and os.path.exists(override_file_path):
-        f = open(override_file_path, 'r')
-        contents = f.read()
-        f.close()
-        try:
-            override = json.loads(contents)
-        except:
-            override = {}
-        stop_plotting = override.get('stop_plotting', False)
-    return stop_plotting
 
 
 def get_phase_info(contents):
