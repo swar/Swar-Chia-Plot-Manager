@@ -2,6 +2,8 @@ import os
 
 from datetime import datetime
 
+from plotmanager.library.utilities.processes import get_manager_processes
+
 
 def _get_row_info(pid, running_work):
     work = running_work[pid]
@@ -49,6 +51,8 @@ def print_table(jobs, running_work, next_log_check, stop_plotting):
     else:
         os.system('clear')
     print("\n".join(console))
+    print(f'Manager Status: {"Running" if get_manager_processes() else "Stopped"}')
+    print()
     print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     if stop_plotting:
         print("Plotting has been disabled...")
