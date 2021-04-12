@@ -10,6 +10,52 @@ def get_log_file_name(log_directory, job, datetime):
     return os.path.join(log_directory, f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
 
 
+def _analyze_log_file(contents):
+    match = re.search(r'total time = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    total_seconds, date_raw = match.groups()
+    total_seconds = pretty_print_time(int(float(total_seconds)))
+    parsed_date = dateparser.parse(date_raw)
+    return dict(
+        total_seconds=total_seconds,
+        date=parsed_date,
+    )
+
+
+def _get_summary(analysis):
+    summary = analysis.get('summary', {})
+    for file_path in analysis['files'].keys():
+        if analysis['files'][file_path]['checked']:
+            continue
+        analysis['files'][file_path]['checked'] = True
+        end_date = analysis['files'][file_path]['data']['date'].date()
+        if end_date not in summary:
+            summary[end_date] = 0
+        summary[end_date] += 1
+    analysis['summary'] = summary
+    return analysis
+
+
+def analyze_logs(log_directory, analysis):
+    files = os.listdir(log_directory)
+    for file in files:
+        file_path = os.path.join(log_directory, file)
+        if file_path in analysis['files']:
+            continue
+        f = open(file_path, 'r')
+        contents = f.read()
+        f.close()
+        if 'Total time = ' not in contents:
+            continue
+        data = _analyze_log_file(contents)
+        if data is None:
+            continue
+        analysis['files'][file_path] = {'data': data, 'checked': False}
+    analysis = _get_summary(analysis)
+    return analysis
+
+
 def get_phase_info(contents):
     phase_times = {}
     phase_dates = {}

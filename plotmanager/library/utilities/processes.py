@@ -32,6 +32,25 @@ def get_manager_processes():
     return processes
 
 
+def get_chia_drives():
+    drive_stats = {'temp': {}, 'dest': {}}
+    for process in psutil.process_iter():
+        if process.name() != 'chia.exe':
+            continue
+        commands = process.cmdline()
+        temp_index = commands.index('-t') + 1
+        temp_drive = commands[temp_index].split('\\')[0]
+        dest_index = commands.index('-d') + 1
+        dest_drive = commands[dest_index].split('\\')[0]
+        if temp_drive not in drive_stats['temp']:
+            drive_stats['temp'][temp_drive] = 0
+        drive_stats['temp'][temp_drive] += 1
+        if dest_drive not in drive_stats['dest']:
+            drive_stats['dest'][dest_drive] = 0
+        drive_stats['dest'][dest_drive] += 1
+    return drive_stats
+
+
 def get_running_plots(jobs, running_work):
     chia_processes = []
     for process in psutil.process_iter():
