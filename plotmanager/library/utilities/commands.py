@@ -1,3 +1,4 @@
+import importlib
 import os
 import pathlib
 import psutil
@@ -68,6 +69,7 @@ def view():
             drives['dest'].append(drive)
     while True:
         try:
+            importlib.reload(psutil)
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             running_work = {}
             jobs = load_jobs(config_jobs)
