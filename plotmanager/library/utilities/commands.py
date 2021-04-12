@@ -67,14 +67,26 @@ def view():
                 continue
             drives['dest'].append(drive)
     while True:
+        running_work = {}
         try:
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
-            running_work = {}
             jobs = load_jobs(config_jobs)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives, next_log_check=datetime.now() + timedelta(seconds=60))
             time.sleep(60)
+            has_file = False
+            if len(running_work.values()) == 0:
+                has_file = True
+            for work in running_work.values():
+                if not work.log_file:
+                    continue
+                has_file = True
+                break
+            if not has_file:
+                print("Restarting view due to psutil going stale...")
+                system_args = [f'"{sys.executable}"'] + sys.argv
+                os.execv(sys.executable, system_args)
         except KeyboardInterrupt:
             print("Stopped view.")
             exit()
