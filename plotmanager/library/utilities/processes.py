@@ -38,9 +38,12 @@ def get_chia_drives():
         if process.name() != 'chia.exe':
             continue
         commands = process.cmdline()
-        temp_index = commands.index('-t') + 1
+        try:
+            temp_index = commands.index('-t') + 1
+            dest_index = commands.index('-d') + 1
+        except ValueError:
+            continue
         temp_drive = commands[temp_index].split('\\')[0]
-        dest_index = commands.index('-d') + 1
         dest_drive = commands[dest_index].split('\\')[0]
         if temp_drive not in drive_stats['temp']:
             drive_stats['temp'][temp_drive] = 0

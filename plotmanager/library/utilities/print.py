@@ -82,7 +82,7 @@ def get_drive_data(drives):
             usage = psutil.disk_usage(drive)
             rows.append([drive_type, drive, f'{pretty_print_bytes(usage.used, "tb")}TB',
                          f'{pretty_print_bytes(usage.total, "tb")}TB', f'{usage.percent}%',
-                         str(chia_drives[drive_type].get(drive, 0))])
+                         str(chia_drives[drive_type].get(drive, '?'))])
     return pretty_print_table(rows)
 
 
