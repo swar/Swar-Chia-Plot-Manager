@@ -26,11 +26,18 @@ def print_table(jobs, running_work, next_log_check, stop_plotting):
     statuses = []
     headers = ['job', 'wid', 'pid', 'start', 'elapsed_time', 'current', 'phase1', 'phase2', 'phase3', 'phase4', 'progress']
     statuses.append(headers)
+    added_pids = []
     for job in jobs:
         for pid in job.running_work:
             if pid not in running_work:
                 continue
             statuses.append(_get_row_info(pid, running_work))
+            added_pids.append(pid)
+    for pid in running_work.keys():
+        if pid in added_pids:
+            continue
+        statuses.append(_get_row_info(pid, running_work))
+        added_pids.append(pid)
 
     max_characters = [0 for cell in statuses[0]]
     for row in statuses:

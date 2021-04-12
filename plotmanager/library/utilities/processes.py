@@ -46,7 +46,7 @@ def get_running_plots(jobs, running_work):
         for file in process.open_files():
             if '.mui' == file.path[-4:]:
                 continue
-            if '.log' != file.path[-4:]:
+            if file.path[-4:] not in ['.log', '.txt']:
                 drives.append(file.path[0])
                 continue
             log_file_path = file.path
