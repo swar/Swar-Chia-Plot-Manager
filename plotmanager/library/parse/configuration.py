@@ -22,22 +22,37 @@ def _get_chia_location(config):
     return config.get('chia_location', 'chia')
 
 
-def _get_log_location(config):
-    if 'log_location' not in config:
-        raise InvalidYAMLConfigException('Failed to find the log_location parameter in the YAML.')
-    log_location = config['log_location']
+def _get_progress_settings(config):
+    progress_setting = config['progress']
+    check_keys = ['phase1_end', 'phase2_end', 'phase3_end', 'phase4_end', 'phase1_weight', 'phase2_weight',
+                  'phase3_weight', 'phase4_weight', ]
+    missing_keys = []
+    for key in check_keys:
+        if key in progress_setting:
+            continue
+        missing_keys.append(key)
+
+    if missing_keys:
+        raise InvalidYAMLConfigException(f'Missing parameters inside progress: {", ".join(missing_keys)}')
+    return progress_setting
+
+
+def _get_log_settings(config):
+    if 'log' not in config:
+        raise InvalidYAMLConfigException('Failed to find the log parameter in the YAML.')
+    log = config['log']
     failed_checks = []
     checks = ['folder_path', 'check_seconds']
     for check in checks:
-        if check in log_location:
+        if check in log:
             continue
         failed_checks.append(check)
 
     if failed_checks:
-        raise InvalidYAMLConfigException(f'Failed to find the following parameters in log_location: '
+        raise InvalidYAMLConfigException(f'Failed to find the following parameters in log: '
                                          f'{", ".join(failed_checks)}')
 
-    return log_location['folder_path'], log_location['check_seconds']
+    return log['folder_path'], log['check_seconds']
 
 
 def _get_jobs(config):
@@ -60,9 +75,10 @@ def _get_global_max_concurrent_config(config):
 def get_config_info():
     config = _get_config()
     chia_location = _get_chia_location(config=config)
-    log_directory, log_check_seconds = _get_log_location(config=config)
+    log_directory, log_check_seconds = _get_log_settings(config=config)
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
     jobs = _get_jobs(config=config)
     max_concurrent = _get_global_max_concurrent_config(config=config)
-    return chia_location, log_directory, jobs, log_check_seconds, max_concurrent
+    progress_settings = _get_progress_settings(config=config)
+    return chia_location, log_directory, jobs, log_check_seconds, max_concurrent, progress_settings

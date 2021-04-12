@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.exceptions import ManagerError, TerminationException
 from plotmanager.library.utilities.jobs import load_jobs
-from plotmanager.library.utilities.log import analyze_logs, check_log_progress
+from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
 from plotmanager.library.utilities.print import print_view
 from plotmanager.library.utilities.processes import get_manager_processes, get_running_plots, start_process
 
@@ -52,7 +52,7 @@ def stop_manager():
 
 
 def view():
-    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent = get_config_info()
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
     analysis = {'files': {}}
     drives = {'temp': [], 'dest': []}
     jobs = load_jobs(config_jobs)
@@ -68,13 +68,18 @@ def view():
             drives['dest'].append(drive)
     while True:
         try:
-            analysis = analyze_logs(log_directory=log_directory, analysis=analysis)
+            analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             running_work = {}
             jobs = load_jobs(config_jobs)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work)
-            check_log_progress(jobs=jobs, running_work=running_work)
+            check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives, next_log_check=datetime.now() + timedelta(seconds=60))
             time.sleep(60)
         except KeyboardInterrupt:
             print("Stopped view.")
             exit()
+
+
+def analyze_logs():
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
+    analyze_log_times(log_directory)

@@ -7,7 +7,7 @@ from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jo
 from plotmanager.library.utilities.log import check_log_progress
 from plotmanager.library.utilities.processes import get_running_plots
 
-chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent = get_config_info()
+chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
 jobs = load_jobs(config_jobs)
 
 next_log_check = datetime.now()
@@ -18,7 +18,7 @@ jobs, running_work = get_running_plots(jobs, running_work)
 
 while has_active_jobs_and_work(jobs):
     # CHECK LOGS FOR DELETED WORK
-    check_log_progress(jobs=jobs, running_work=running_work)
+    check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings)
     next_log_check = datetime.now() + timedelta(seconds=log_check_seconds)
 
     # DETERMINE IF JOB NEEDS TO START
