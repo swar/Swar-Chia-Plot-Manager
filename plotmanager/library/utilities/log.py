@@ -147,6 +147,8 @@ def get_progress(line_count, progress_settings):
 
 def check_log_progress(jobs, running_work, progress_settings):
     for pid, work in list(running_work.items()):
+        if not work.log_file:
+            continue
         f = open(work.log_file, 'r')
         data = f.read()
         f.close()
