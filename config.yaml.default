@@ -10,12 +10,12 @@ global:
 progress:
   phase1_end: 801
   phase2_end: 834
-  phase3_end: 1933
-  phase4_end: 2079
-  phase1_weight: 31.65
-  phase2_weight: 17.94
-  phase3_weight: 46.46
-  phase4_weight: 3.95
+  phase3_end: 2474
+  phase4_end: 2620
+  phase1_weight: 33.4
+  phase2_weight: 20.43
+  phase3_weight: 42.29
+  phase4_weight: 3.88
 
 jobs:
   - name: micron
