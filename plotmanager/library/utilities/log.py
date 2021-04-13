@@ -46,6 +46,8 @@ def get_completed_log_files(log_directory, skip=None):
         skip = []
     files = {}
     for file in os.listdir(log_directory):
+        if file[-4:] not in ['.log', '.txt']:
+            continue
         file_path = os.path.join(log_directory, file)
         if file_path in skip:
             continue
