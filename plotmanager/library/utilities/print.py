@@ -108,8 +108,8 @@ def print_view(jobs, running_work, analysis, drives, next_log_check):
     print(f'RAM Usage: {pretty_print_bytes(ram_usage.used, "gb")}/{pretty_print_bytes(ram_usage.total, "gb")}GB '
           f'({ram_usage.percent}%)')
     print()
-    print(f'Plots Completed Yesterday: {analysis["summary"][datetime.now().date() - timedelta(days=1)]}')
-    print(f'Plots Completed Today: {analysis["summary"][datetime.now().date()]}')
+    print(f'Plots Completed Yesterday: {analysis["summary"].get(datetime.now().date() - timedelta(days=1), 0)}')
+    print(f'Plots Completed Today: {analysis["summary"].get(datetime.now().date(), 0)}')
     print()
     print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     print()
