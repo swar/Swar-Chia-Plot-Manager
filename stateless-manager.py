@@ -15,6 +15,15 @@ next_job_work = {}
 running_work = {}
 
 jobs, running_work = get_running_plots(jobs, running_work)
+for job in jobs:
+    max_date = None
+    for work in running_work.values():
+        start = work.datetime_start
+        if not max_date or start > max_date:
+            max_date = start
+    if not max_date:
+        continue
+    next_job_work[job.name] = max_date + timedelta(minutes=job.stagger_minutes)
 
 while has_active_jobs_and_work(jobs):
     # CHECK LOGS FOR DELETED WORK
