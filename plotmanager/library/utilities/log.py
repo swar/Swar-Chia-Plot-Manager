@@ -5,6 +5,10 @@ import re
 
 from plotmanager.library.utilities.print import pretty_print_time
 
+from plotmanager.library.utilities.notifications import sendNotifications
+
+
+
 
 def get_log_file_name(log_directory, job, datetime):
     return os.path.join(log_directory, f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
@@ -180,5 +184,7 @@ def check_log_progress(jobs, running_work, progress_settings):
                 job.running_work.remove(pid)
             job.total_running -= 1
             job.total_completed += 1
+
+            sendNotifications('You completed a plot, Farmer!  Way to go, buddy!', 'Congrats, ChiaPet!')
             break
         del running_work[pid]

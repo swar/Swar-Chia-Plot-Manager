@@ -71,6 +71,26 @@ def _get_global_max_concurrent_config(config):
         raise Exception('global -> max_concurrent should be a integer value.')
     return max_concurrent
 
+def get_notifications_settings():
+    config = _get_config()
+    if 'notifications' not in config:
+        raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
+    notifications = config['notifications']
+    _check_parameters(notifications, ['notify_discord', 'discord_webhook_url', 'play_sound', 'song', 'notifyPushover', 'pushoverUserKey', 'pushoverAPIKey'])
+    return notifications
+
+def _check_parameters(parameter, expectedParameters):
+    failed_checks = []
+    checks = expectedParameters
+    for check in checks:
+        if check in parameter:
+            continue
+        failed_checks.append(check)
+
+    if failed_checks:
+        raise InvalidYAMLConfigException(f'Failed to find the following parameters: '
+                                         f'{", ".join(failed_checks)}')
+
 
 def get_config_info():
     config = _get_config()

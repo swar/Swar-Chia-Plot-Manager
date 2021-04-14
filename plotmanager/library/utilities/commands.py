@@ -33,6 +33,10 @@ def start_manager():
     time.sleep(3)
     if not get_manager_processes():
         raise ManagerError('Failed to start Manager.')
+    from plotmanager.library.utilities.notifications import sendNotifications
+
+    sendNotifications('Plot Manager has Started...', 'Plot manager started')
+
     print('Manager has started...')
 
 
