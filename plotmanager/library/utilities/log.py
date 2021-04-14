@@ -172,6 +172,8 @@ def check_log_progress(jobs, running_work, progress_settings):
             continue
 
         for job in jobs:
+            if not job or not work or not work.job:
+                continue
             if job.name != work.job.name:
                 continue
             if pid in job.running_work:
