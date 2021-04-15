@@ -4,6 +4,26 @@ log:
   folder_path: S:\Chia\Logs\Plotter
   check_seconds: 60
 
+notifications:
+
+  notify_discord: False #Send discord notice to a channel when a plot completes?
+  discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+  play_sound: False #Play a sound file when plots are completed?
+  song: audio.mp3   #mp3 file to play
+
+  notifyPushover: False #Send notification to Pushover push service?
+  pushoverUserKey: xxxxxxxxxxxx
+  pushoverAPIKey: yyyyyyyyyyyyyyy
+  
+  
+  notify_twilio: False
+  twilio_account_sid: xxxxxxxxxxxxxxxx
+  twilio_auth_token: xxxxxxxxxxxxxxxxxxxx
+  twilio_from_phone: +1112223333
+  twilio_to_phone: +1112223333
+
+
 global:
   max_concurrent: 10
 
