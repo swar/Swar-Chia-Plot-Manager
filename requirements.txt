@@ -1,7 +1,8 @@
-playsound==1.2.2
-discord_notify==1.0.0
 dateparser==1.0.0
+discord_notify==1.0.0
+playsound==1.2.2
 python_pushover==0.4
 psutil==5.8.0
 pushover==0.5
 PyYAML==5.4.1
+twilio==6.56.0

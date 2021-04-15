@@ -76,7 +76,7 @@ def get_notifications_settings():
     if 'notifications' not in config:
         raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
     notifications = config['notifications']
-    _check_parameters(notifications, ['notify_discord', 'discord_webhook_url', 'play_sound', 'song', 'notifyPushover', 'pushoverUserKey', 'pushoverAPIKey'])
+    _check_parameters(notifications, ['twilio_to_phone','twilio_from_phone','twilio_auth_token','twilio_account_sid','notify_twilio','notify_discord', 'discord_webhook_url', 'play_sound', 'song', 'notifyPushover', 'pushoverUserKey', 'pushoverAPIKey'])
     return notifications
 
 def _check_parameters(parameter, expectedParameters):

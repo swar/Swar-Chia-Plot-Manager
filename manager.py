@@ -34,9 +34,11 @@ elif args.action == 'stop':
     stop_manager()
 elif args.action == 'view':
     view()
+elif args.action == 'status':
+    view(True)    
 elif args.action == 'analyze_logs':
     analyze_logs()
 else:
-    error_message = 'Invalid action provided. The valid options are "start", "restart", "stop", "view", and ' \
+    error_message = 'Invalid action provided. The valid options are "start", "restart", "stop", "status, "view", and ' \
                     '"analyze_logs".'
     raise InvalidArgumentException(error_message)
