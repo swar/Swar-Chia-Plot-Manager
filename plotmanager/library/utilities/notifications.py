@@ -1,9 +1,8 @@
 
 
 from plotmanager.library.parse.configuration import get_notifications_settings
-
-
 notifications_settings = get_notifications_settings()
+
 #send Discord notification
 sendDiscord = notifications_settings.get('notify_discord')
 discordWebhook = r'%s' % notifications_settings.get('discord_webhook_url')
@@ -24,24 +23,24 @@ twilio_auth_token = r'%s' % notifications_settings.get('twilio_auth_token')
 twilio_from_phone = r'%s' % notifications_settings.get('twilio_from_phone')
 twilio_to_phone = r'%s' % notifications_settings.get('twilio_to_phone')
 
-def sendNotifications(msgTxt, msgTitle):
+def sendNotifications(msgTxt, msgTitle, discord = True, sound = True, pushover = True, twilio = True):
 
-    if sendDiscord == True:
+    if sendDiscord and discord:
         import discord_notify as dn
         notifier = dn.Notifier(discordWebhook)
         notifier.send(msgTxt, print_message=False)
 
-    if playSound == True:
-        from playsound import playsound  # pip install playsound
+    if playSound and sound:
+        from playsound import playsound
         playsound(song)
 
-    if sendPushover == True:
+    if sendPushover and pushover:
         from pushover import init, Client
         client = Client(pushoverUserKey, api_token=pushoverAPIKey)
-        client.send_message(msgTxt, title=msgTitle)  # pip install python-pushover
+        client.send_message(msgTxt, title=msgTitle) 
 
 
-    if sendTwilio == True:
+    if sendTwilio and twilio:
         import os
         from twilio.rest import Client
 
