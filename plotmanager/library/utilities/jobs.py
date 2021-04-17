@@ -16,11 +16,20 @@ def has_active_jobs_and_work(jobs):
     return False
 
 
-def get_destination_directory(job):
-    if isinstance(job.destination_directory, list):
-        return job.destination_directory[(job.total_completed + job.total_running) % len(job.destination_directory)]
+def get_target_directories(job):
+    idx = job.total_completed + job.total_running
 
-    return job.destination_directory
+    if isinstance(job.destination_directory, list):
+        dst_idx = idx % len(job.destination_directory)
+        if isinstance(job.temporary2_directory, list):
+            tmp2_idx = idx % len(job.temporary2_directory)
+            return job.destination_directory[dst_idx], job.temporary2_directory[tmp2_idx]
+        return job.destination_directory[dst_idx], job.temporary2_directory
+    elif isinstance(job.temporary2_directory, list):
+        tmp2_idx = idx % len(job.temporary2_directory)
+        return job.destination_directory, job.temporary2_directory[tmp2_idx]
+
+    return job.destination_directory, job.temporary2_directory
 
 
 def load_jobs(config_jobs):
@@ -97,7 +106,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
 def start_work(job, chia_location, log_directory):
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
-    destination_directory = get_destination_directory(job)
+    destination_directory, temporary2_directory = get_target_directories(job)
 
     work = deepcopy(Work())
     work.job = job
@@ -112,7 +121,7 @@ def start_work(job, chia_location, log_directory):
         size=job.size,
         memory_buffer=job.memory_buffer,
         temporary_directory=job.temporary_directory,
-        temporary2_directory=job.temporary2_directory,
+        temporary2_directory=temporary2_directory,
         destination_directory=destination_directory,
         threads=job.threads,
         buckets=job.buckets,
