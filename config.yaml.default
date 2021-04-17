@@ -21,10 +21,8 @@ jobs:
   - name: micron
     max_plots: 999
     temporary_directory: Z:\Plotter
-    temporary2_directory:
-    destination_directory:
-      - J:\Plots
-      - K:\Plots
+    temporary2_directory: J:\Plots
+    destination_directory: J:\Plots
     size: 32
     bitfield: true
     threads: 8
@@ -41,6 +39,8 @@ jobs:
     max_plots: 999
     temporary_directory: Y:\Plotter
     temporary2_directory:
+      - J:\Plots
+      - K:\Plots
     destination_directory:
       - J:\Plots
       - K:\Plots

@@ -54,18 +54,36 @@ def stop_manager():
 def view():
     chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
     analysis = {'files': {}}
-    drives = {'temp': [], 'dest': []}
+    drives = {'temp': [], 'tmp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
     for job in jobs:
         drive = job.temporary_directory.split('\\')[0]
         if drive in drives['temp']:
             continue
         drives['temp'].append(drive)
-        for directory in job.destination_directory:
-            drive = directory.split('\\')[0]
+        if isinstance(job.destination_directory, list):
+            for directory in job.destination_directory:
+                drive = directory.split('\\')[0]
+                if drive in drives['dest']:
+                    continue
+                drives['dest'].append(drive)
+        else:
+            drive = job.destination_directory.split('\\')[0]
             if drive in drives['dest']:
                 continue
             drives['dest'].append(drive)
+        if isinstance(job.temporary2_directory, list):
+            for directory in job.temporary2_directory:
+                drive = directory.split('\\')[0]
+                if drive in drives['tmp2']:
+                    continue
+                drives['tmp2'].append(drive)
+        else:
+            drive = job.temporary2_directory.split('\\')[0]
+            if drive in drives['tmp2']:
+                continue
+            drives['tmp2'].append(drive)
+
     while True:
         running_work = {}
         try:

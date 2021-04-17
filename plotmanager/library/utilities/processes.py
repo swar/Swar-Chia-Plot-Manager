@@ -33,7 +33,7 @@ def get_manager_processes():
 
 
 def get_chia_drives():
-    drive_stats = {'temp': {}, 'dest': {}}
+    drive_stats = {'temp': {}, 'tmp2': {}, 'dest': {}}
     for process in psutil.process_iter():
         if process.name() != 'chia.exe':
             continue
@@ -42,14 +42,19 @@ def get_chia_drives():
         commands = process.cmdline()
         try:
             temp_index = commands.index('-t') + 1
+            tmp2_index = commands.index('-2') + 1
             dest_index = commands.index('-d') + 1
         except ValueError:
             continue
         temp_drive = commands[temp_index].split('\\')[0]
+        tmp2_drive = commands[dest_index].split('\\')[0]
         dest_drive = commands[dest_index].split('\\')[0]
         if temp_drive not in drive_stats['temp']:
             drive_stats['temp'][temp_drive] = 0
         drive_stats['temp'][temp_drive] += 1
+        if tmp2_drive not in drive_stats['tmp2']:
+            drive_stats['tmp2'][tmp2_drive] = 0
+        drive_stats['tmp2'][tmp2_drive] += 1
         if dest_drive not in drive_stats['dest']:
             drive_stats['dest'][dest_drive] = 0
         drive_stats['dest'][dest_drive] += 1
