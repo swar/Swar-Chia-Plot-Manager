@@ -21,6 +21,7 @@ jobs:
   - name: micron
     max_plots: 999
     temporary_directory: Z:\Plotter
+    temporary2_directory:
     destination_directory:
       - J:\Plots
       - K:\Plots
@@ -39,6 +40,7 @@ jobs:
   - name: inland
     max_plots: 999
     temporary_directory: Y:\Plotter
+    temporary2_directory:
     destination_directory:
       - J:\Plots
       - K:\Plots

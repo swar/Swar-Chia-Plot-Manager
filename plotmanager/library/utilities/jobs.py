@@ -41,6 +41,7 @@ def load_jobs(config_jobs):
         job.concurrency_disregard_phase_delay = info.get('concurrency_disregard_phase_delay', None)
 
         job.temporary_directory = info['temporary_directory']
+        job.temporary2_directory = info['temporary2_directory']
         job.destination_directory = info['destination_directory']
 
         job.size = info['size']
@@ -111,11 +112,11 @@ def start_work(job, chia_location, log_directory):
         size=job.size,
         memory_buffer=job.memory_buffer,
         temporary_directory=job.temporary_directory,
+        temporary2_directory=job.temporary2_directory,
         destination_directory=destination_directory,
         threads=job.threads,
         buckets=job.buckets,
-        bitfield=job.bitfield,
-        temporary2_directory=None
+        bitfield=job.bitfield
     )
 
     log_file = open(log_file_path, 'a')
