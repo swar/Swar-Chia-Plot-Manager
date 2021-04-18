@@ -13,7 +13,7 @@ def _get_row_info(pid, running_work):
     elapsed_time = pretty_print_time(elapsed_time.seconds)
     row = [work.job.name if work.job else '?', pid, work.datetime_start.strftime('%Y-%m-%d %H:%M:%S'),
            elapsed_time, work.current_phase, phase_times.get(1, ''), phase_times.get(2, ''), phase_times.get(3, ''),
-           phase_times.get(4, ''), work.progress]
+           phase_times.get(4, ''), work.progress, work.working_drives]
     return [str(cell) for cell in row]
 
 
@@ -53,7 +53,7 @@ def pretty_print_table(rows):
 
 def get_job_data(jobs, running_work):
     rows = []
-    headers = ['num', 'job', 'pid', 'start', 'elapsed_time', 'current', 'phase1', 'phase2', 'phase3', 'phase4', 'progress']
+    headers = ['num', 'job', 'pid', 'start', 'elapsed_time', 'current', 'phase1', 'phase2', 'phase3', 'phase4', 'progress', 'tmp 2 dst']
     added_pids = []
     for job in jobs:
         for pid in job.running_work:

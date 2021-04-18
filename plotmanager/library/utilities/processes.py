@@ -41,23 +41,32 @@ def get_chia_drives():
             continue
         commands = process.cmdline()
         try:
-            temp_index = commands.index('-t') + 1
             tmp2_index = commands.index('-2') + 1
+            temp_index = commands.index('-t') + 1
             dest_index = commands.index('-d') + 1
         except ValueError:
-            continue
+            try:
+                temp_index = commands.index('-t') + 1
+                dest_index = commands.index('-d') + 1
+            except ValueError:
+                continue
+
         temp_drive = commands[temp_index].split('\\')[0]
-        tmp2_drive = commands[dest_index].split('\\')[0]
-        dest_drive = commands[dest_index].split('\\')[0]
         if temp_drive not in drive_stats['temp']:
             drive_stats['temp'][temp_drive] = 0
         drive_stats['temp'][temp_drive] += 1
-        if tmp2_drive not in drive_stats['tmp2']:
-            drive_stats['tmp2'][tmp2_drive] = 0
-        drive_stats['tmp2'][tmp2_drive] += 1
+
+        if 'tmp2_index' in locals():
+            tmp2_drive = commands[tmp2_index].split('\\')[0]
+            if tmp2_drive not in drive_stats['tmp2']:
+                drive_stats['tmp2'][tmp2_drive] = 0
+            drive_stats['tmp2'][tmp2_drive] += 1
+
+        dest_drive = commands[dest_index].split('\\')[0]
         if dest_drive not in drive_stats['dest']:
             drive_stats['dest'][dest_drive] = 0
         drive_stats['dest'][dest_drive] += 1
+
     return drive_stats
 
 
@@ -102,6 +111,21 @@ def get_running_plots(jobs, running_work):
             assumed_job.total_running += 1
             assumed_job.running_work = assumed_job.running_work + [process.pid]
         running_work[work.pid] = work
+
+        try:
+            commands = process.cmdline()
+            tmp2 = commands[commands.index('-2') + 1].split('\\')[0]
+            tmp = commands[commands.index('-t') + 1].split('\\')[0]
+            dst = commands[commands.index('-d') + 1].split('\\')[0]
+            work.working_drives = ' ' + tmp + ' ' + tmp2 + ' ' + dst
+        except ValueError:
+            try:
+                tmp = commands[commands.index('-t') + 1].split('\\')[0]
+                dst = commands[commands.index('-d') + 1].split('\\')[0]
+                work.working_drives = ' ' + tmp + '    ' + dst
+            except ValueError:
+                work.working_drives = '    ?'
+                continue
 
     return jobs, running_work
 

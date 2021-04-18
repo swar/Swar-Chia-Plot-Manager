@@ -79,10 +79,11 @@ def view():
                     continue
                 drives['tmp2'].append(drive)
         else:
-            drive = job.temporary2_directory.split('\\')[0]
-            if drive in drives['tmp2']:
-                continue
-            drives['tmp2'].append(drive)
+            if job.temporary2_directory is not None:
+                drive = job.temporary2_directory.split('\\')[0]
+                if drive in drives['tmp2']:
+                    continue
+                drives['tmp2'].append(drive)
 
     while True:
         running_work = {}
