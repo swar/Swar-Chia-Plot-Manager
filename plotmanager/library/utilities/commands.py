@@ -27,14 +27,16 @@ def start_manager():
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
 
+    extra_args = []
     if is_windows():
         pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
     else:
         pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['python &'])
+        extra_args.append('&')
     if os.path.exists(pythonw_file_path):
         python_file_path = pythonw_file_path
 
-    args = [python_file_path, stateless_manager_path, '&']
+    args = [python_file_path, stateless_manager_path] + extra_args
     start_process(args=args, log_file=manager_log_file)
     time.sleep(3)
     if not get_manager_processes():
