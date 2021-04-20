@@ -9,7 +9,7 @@ sendDiscord = notifications_settings.get('notify_discord')
 discordWebhook = r'%s' % notifications_settings.get('discord_webhook_url')
 
 #play sound notification completed plots
-playSound = notifications_settings.get('play_sound')
+playSound = notifications_settings.get('notify_sound')
 song = r'%s' % notifications_settings.get('song')
 
 #send Push noticies to Pushover service

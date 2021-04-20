@@ -11,8 +11,8 @@ notifications:
   notify_discord: false
   discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-  # AUDIO SOUND
-  play_sound: false
+  # PLAY AUDIO SOUND
+  notify_sound: false
   song: audio.mp3
 
   # PUSHOVER PUSH SERVICE
