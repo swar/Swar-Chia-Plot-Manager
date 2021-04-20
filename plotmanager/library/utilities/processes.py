@@ -10,8 +10,12 @@ from datetime import datetime
 from plotmanager.library.utilities.objects import Work
 
 
-def _contains_in_list(string, lst):
+def _contains_in_list(string, lst, case_insensitive=False):
+    if case_insensitive:
+        string = string.lower()
     for item in lst:
+        if case_insensitive:
+            item = item.lower()
         if string not in item:
             continue
         return True
@@ -22,16 +26,11 @@ def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
         try:
-            if platform.system() == 'Windows':
-                if not re.search(r'^pythonw?(?:\d+\.\d+)?\.exe$', process.name()):
-                    continue
-                if not _contains_in_list('python', process.cmdline()) or not _contains_in_list('stateless-manager.py', process.cmdline()):
-                    continue
-            else:
-                if not re.search(r'^python3.8', process.name()):
-                    continue
-                if not _contains_in_list('python', process.cmdline()) or not _contains_in_list('stateless-manager.py', process.cmdline()):
-                    continue
+            if not re.search(r'^pythonw?(?:\d+\.\d+)?(?:\.exe)?$', process.name(), flags=re.I):
+                continue
+            if not _contains_in_list('python', process.cmdline(), case_insensitive=True) or \
+                    not _contains_in_list('stateless-manager.py', process.cmdline()):
+                continue
             processes.append(process)
         except psutil.NoSuchProcess:
             pass
@@ -42,17 +41,15 @@ def is_windows():
     return platform.system() == 'Windows'
 
 
-def which_exec():
-    chiaexec = 'chia'
-    if platform.system() == 'Windows':
-        chiaexec = chiaexec + '.exe'
-    return chiaexec
+def get_chia_executable_name():
+    return f'chia{".exe" if is_windows() else ""}'
 
 
 def get_chia_drives():
     drive_stats = {'temp': {}, 'dest': {}}
+    chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        if process.name() != which_exec():
+        if process.name() != chia_executable_name:
             continue
         commands = process.cmdline()
         try:
@@ -71,11 +68,11 @@ def get_chia_drives():
     return drive_stats
 
 
-
 def get_running_plots(jobs, running_work):
     chia_processes = []
+    chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        if process.name() != which_exec():
+        if process.name() != chia_executable_name:
             continue
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])
@@ -117,7 +114,7 @@ def get_running_plots(jobs, running_work):
 
 def start_process(args, log_file):
     kwargs = {}
-    if 'nt' == os.name:
+    if is_windows():
         flags = 0
         flags |= 0x00000008
         kwargs = {
