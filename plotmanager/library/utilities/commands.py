@@ -10,9 +10,10 @@ from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.exceptions import ManagerError, TerminationException
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
+from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import print_view
-from plotmanager.library.utilities.processes import get_manager_processes, get_running_plots, start_process
-import platform
+from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, start_process
+
 
 def start_manager():
     if get_manager_processes():
@@ -25,24 +26,22 @@ def start_manager():
     manager_log_file_path = os.path.join(directory, 'manager.log')
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
-    
-    if platform.system() == 'Windows':
-        print('WINDOWS!')
+
+    if is_windows():
         pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
     else:
         pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['python &'])
     if os.path.exists(pythonw_file_path):
         python_file_path = pythonw_file_path
+
     args = [python_file_path, stateless_manager_path, '&']
     start_process(args=args, log_file=manager_log_file)
     time.sleep(3)
     if not get_manager_processes():
         raise ManagerError('Failed to start Manager.')
-    from plotmanager.library.utilities.notifications import sendNotifications
 
-    sendNotifications('Plot Manager has Started...', 'Plot manager started')
-
-    print('Manager has started...')
+    send_notifications('Plot Manager has Started...', 'Plot manager started')
+    print('Plot Manager has started...')
 
 
 def stop_manager():

@@ -5,7 +5,7 @@ import re
 
 from plotmanager.library.utilities.print import pretty_print_time
 
-from plotmanager.library.utilities.notifications import sendNotifications
+from plotmanager.library.utilities.notifications import send_notifications
 
 
 
@@ -185,6 +185,6 @@ def check_log_progress(jobs, running_work, progress_settings):
             job.total_running -= 1
             job.total_completed += 1
 
-            sendNotifications('You completed a plot, Farmer!  Way to go, buddy!', 'Congrats, ChiaPet!')
+            send_notifications('You completed a plot, Farmer!  Way to go, buddy!', 'Congrats, ChiaPet!')
             break
         del running_work[pid]

@@ -1,4 +1,5 @@
 import os
+import platform
 import psutil
 import re
 import subprocess
@@ -7,9 +8,6 @@ from copy import deepcopy
 from datetime import datetime
 
 from plotmanager.library.utilities.objects import Work
-import platform
-
-
 
 
 def _contains_in_list(string, lst):
@@ -40,11 +38,16 @@ def get_manager_processes():
     return processes
 
 
+def is_windows():
+    return platform.system() == 'Windows'
+
+
 def which_exec():
-	chiaexec = 'chia'
-	if platform.system() == 'Windows':
-		chiaexec = chiaexec + '.exe'
-	return chiaexec
+    chiaexec = 'chia'
+    if platform.system() == 'Windows':
+        chiaexec = chiaexec + '.exe'
+    return chiaexec
+
 
 def get_chia_drives():
     drive_stats = {'temp': {}, 'dest': {}}

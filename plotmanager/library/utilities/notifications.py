@@ -18,7 +18,7 @@ pushover_user_key = r'%s' % notifications_settings.get('pushover_user_key')
 pushover_api_key = r'%s' % notifications_settings.get('pushover_api_key')
 
 
-def sendNotifications(msgTxt, msgTitle):
+def send_notifications(msgTxt, msgTitle):
 
     if sendDiscord == True:
         import discord_notify as dn
