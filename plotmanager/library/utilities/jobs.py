@@ -4,11 +4,10 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 
 from plotmanager.library.commands import plots
-from plotmanager.library.utilities.processes import start_process
+from plotmanager.library.utilities.processes import is_windows, start_process
 from plotmanager.library.utilities.objects import Job, Work
 from plotmanager.library.utilities.log import get_log_file_name
 
-import platform
 
 def has_active_jobs_and_work(jobs):
     for job in jobs:
@@ -95,10 +94,9 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
 
 
 def start_work(job, chia_location, log_directory):
-
-    niceval = 5
-    if platform.system() == 'Windows':
-         niceval = psutil.REALTIME_PRIORITY_CLASS
+    nice_val = 15
+    if is_windows():
+        nice_val = psutil.REALTIME_PRIORITY_CLASS
 
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
@@ -128,7 +126,7 @@ def start_work(job, chia_location, log_directory):
     process = start_process(args=plot_command, log_file=log_file)
     pid = process.pid
     
-    psutil.Process(pid).nice(niceval)
+    psutil.Process(pid).nice(nice_val)
 
     work.pid = pid
     job.total_running += 1
