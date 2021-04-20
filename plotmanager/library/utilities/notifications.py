@@ -14,8 +14,8 @@ song = r'%s' % notifications_settings.get('song')
 
 #send Push noticies to Pushover service
 sendPushover = notifications_settings.get('notify_pushover')
-pushoverUserKey = r'%s' % notifications_settings.get('pushoverUserKey')
-pushoverAPIKey = r'%s' % notifications_settings.get('pushoverAPIKey')
+pushover_user_key = r'%s' % notifications_settings.get('pushover_user_key')
+pushover_api_key = r'%s' % notifications_settings.get('pushover_api_key')
 
 
 def sendNotifications(msgTxt, msgTitle):
@@ -31,7 +31,7 @@ def sendNotifications(msgTxt, msgTitle):
 
     if sendPushover == True:
         from pushover import init, Client
-        client = Client(pushoverUserKey, api_token=pushoverAPIKey)
+        client = Client(pushover_user_key, api_token=pushover_api_key)
         client.send_message(msgTxt, title=msgTitle)  # pip install python-pushover
 
 

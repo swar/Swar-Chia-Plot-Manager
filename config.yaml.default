@@ -1,50 +1,36 @@
 chia_location: C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.0.4\resources\app.asar.unpacked\daemon\chia.exe
 
-notifications:
-
-  notify_discord: False #Send discord notice to a channel when a plot completes?
-  discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-  play_sound: False #Play a sound file when plots are completed?
-  song: audio.mp3   #mp3 file to play
-
-  notifyPushover: False #Send notification to Pushover push service?
-  pushoverUserKey: ''
-  pushoverAPIKey: ''
-  
-  
-  notify_twilio: False
-  twilio_account_sid: xxxxxxxxxxxxxxxx
-  twilio_auth_token: xxxxxxxxxxxxxxxxxxxx
-  twilio_from_phone: +1112223333
-  twilio_to_phone: +1112223333
 
 log:
   folder_path: S:\Chia\Logs\Plotter
   check_seconds: 60
 
-notifications:
 
-  notify_discord: False #Send discord notice to a channel when a plot completes?
+notifications:
+  # DISCORD
+  notify_discord: false
   discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-  play_sound: False #Play a sound file when plots are completed?
-  song: audio.mp3   #mp3 file to play
+  # AUDIO SOUND
+  play_sound: false
+  song: audio.mp3
 
-  notifyPushover: False #Send notification to Pushover push service?
-  pushoverUserKey: xxxxxxxxxxxx
-  pushoverAPIKey: yyyyyyyyyyyyyyy
+  # PUSHOVER PUSH SERVICE
+  notify_pushover: false
+  pushover_user_key: xx
+  pushover_api_key: xx
   
-  
-  notify_twilio: False
-  twilio_account_sid: xxxxxxxxxxxxxxxx
-  twilio_auth_token: xxxxxxxxxxxxxxxxxxxx
-  twilio_from_phone: +1112223333
-  twilio_to_phone: +1112223333
+  # TWILIO
+  notify_twilio: false
+  twilio_account_sid: xxxxx
+  twilio_auth_token: xxxxx
+  twilio_from_phone: +1234657890
+  twilio_to_phone: +1234657890
 
 
 global:
   max_concurrent: 10
+
 
 progress:
   phase1_end: 801
@@ -55,6 +41,7 @@ progress:
   phase2_weight: 20.43
   phase3_weight: 42.29
   phase4_weight: 3.88
+
 
 jobs:
   - name: micron

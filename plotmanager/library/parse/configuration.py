@@ -76,7 +76,7 @@ def get_notifications_settings():
     if 'notifications' not in config:
         raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
     notifications = config['notifications']
-    _check_parameters(notifications, ['notify_discord', 'discord_webhook_url', 'play_sound', 'song', 'notifyPushover', 'pushoverUserKey', 'pushoverAPIKey'])
+    _check_parameters(notifications, ['notify_discord', 'discord_webhook_url', 'play_sound', 'song', 'notify_pushover', 'pushover_user_key', 'pushover_api_key'])
     return notifications
 
 def _check_parameters(parameter, expectedParameters):
