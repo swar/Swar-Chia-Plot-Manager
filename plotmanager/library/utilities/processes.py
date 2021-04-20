@@ -51,6 +51,8 @@ def get_chia_drives():
     for process in psutil.process_iter():
         if process.name() != chia_executable_name:
             continue
+        if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
+            continue
         commands = process.cmdline()
         try:
             temp_index = commands.index('-t') + 1
@@ -73,6 +75,8 @@ def get_running_plots(jobs, running_work):
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
         if process.name() != chia_executable_name:
+            continue
+        if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])

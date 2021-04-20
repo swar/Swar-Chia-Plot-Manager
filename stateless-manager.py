@@ -17,7 +17,8 @@ running_work = {}
 jobs, running_work = get_running_plots(jobs, running_work)
 for job in jobs:
     max_date = None
-    for work in running_work.values():
+    for pid in job.running_work:
+        work = running_work[pid]
         start = work.datetime_start
         if not max_date or start > max_date:
             max_date = start

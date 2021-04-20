@@ -24,7 +24,7 @@ def _get_chia_location(config):
 
 def _get_progress_settings(config):
     progress_setting = config['progress']
-    check_keys = ['phase1_end', 'phase2_end', 'phase3_end', 'phase4_end', 'phase1_weight', 'phase2_weight',
+    check_keys = ['phase1_line_end', 'phase2_line_end', 'phase3_line_end', 'phase4_line_end', 'phase1_weight', 'phase2_weight',
                   'phase3_weight', 'phase4_weight', ]
     missing_keys = []
     for key in check_keys:
