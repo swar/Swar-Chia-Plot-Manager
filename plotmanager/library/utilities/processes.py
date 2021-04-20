@@ -7,6 +7,9 @@ from copy import deepcopy
 from datetime import datetime
 
 from plotmanager.library.utilities.objects import Work
+import platform
+
+
 
 
 def _contains_in_list(string, lst):
@@ -21,21 +24,32 @@ def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
         try:
-            if not re.search(r'^pythonw?(?:\d+\.\d+)?\.exe$', process.name()):
-                continue
-            if not _contains_in_list('python', process.cmdline()) or \
-                    not _contains_in_list('stateless-manager.py', process.cmdline()):
-                continue
+            if platform.system() == 'Windows':
+                if not re.search(r'^pythonw?(?:\d+\.\d+)?\.exe$', process.name()):
+                    continue
+                if not _contains_in_list('python', process.cmdline()) or not _contains_in_list('stateless-manager.py', process.cmdline()):
+                    continue
+            else:
+                if not re.search(r'^python3.8', process.name()):
+                    continue
+                if not _contains_in_list('python', process.cmdline()) or not _contains_in_list('stateless-manager.py', process.cmdline()):
+                    continue
             processes.append(process)
         except psutil.NoSuchProcess:
             pass
     return processes
 
 
+def which_exec():
+	chiaexec = 'chia'
+	if platform.system() == 'Windows':
+		chiaexec = chiaexec + '.exe'
+	return chiaexec
+
 def get_chia_drives():
     drive_stats = {'temp': {}, 'dest': {}}
     for process in psutil.process_iter():
-        if process.name() != 'chia.exe':
+        if process.name() != which_exec():
             continue
         commands = process.cmdline()
         try:
@@ -54,10 +68,11 @@ def get_chia_drives():
     return drive_stats
 
 
+
 def get_running_plots(jobs, running_work):
     chia_processes = []
     for process in psutil.process_iter():
-        if process.name() != 'chia.exe':
+        if process.name() != which_exec():
             continue
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])

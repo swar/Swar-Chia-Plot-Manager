@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from plotmanager.library.utilities.processes import get_manager_processes, get_chia_drives
 
+
 def _get_row_info(pid, running_work):
     work = running_work[pid]
     phase_times = work.phase_times

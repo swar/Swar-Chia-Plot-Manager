@@ -12,7 +12,7 @@ from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
 from plotmanager.library.utilities.print import print_view
 from plotmanager.library.utilities.processes import get_manager_processes, get_running_plots, start_process
-
+import platform
 
 def start_manager():
     if get_manager_processes():
@@ -25,10 +25,15 @@ def start_manager():
     manager_log_file_path = os.path.join(directory, 'manager.log')
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
-    pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
+    
+    if platform.system() == 'Windows':
+        print('WINDOWS!')
+        pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
+    else:
+        pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['python &'])
     if os.path.exists(pythonw_file_path):
         python_file_path = pythonw_file_path
-    args = [python_file_path, stateless_manager_path]
+    args = [python_file_path, stateless_manager_path, '&']
     start_process(args=args, log_file=manager_log_file)
     time.sleep(3)
     if not get_manager_processes():
