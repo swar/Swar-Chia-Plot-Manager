@@ -27,6 +27,9 @@ def start_manager():
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
 
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings, \
+        notification_settings = get_config_info()
+
     extra_args = []
     if is_windows():
         pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
@@ -42,7 +45,7 @@ def start_manager():
     if not get_manager_processes():
         raise ManagerError('Failed to start Manager.')
 
-    send_notifications('Plot Manager has Started...', 'Plot manager started')
+    send_notifications(title='Plot manager started', body='Plot Manager has Started...', settings=notification_settings)
     print('Plot Manager has started...')
 
 
@@ -62,7 +65,8 @@ def stop_manager():
 
 
 def view():
-    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings, \
+        notification_settings = get_config_info()
     analysis = {'files': {}}
     drives = {'temp': [], 'dest': []}
     jobs = load_jobs(config_jobs)
@@ -82,7 +86,8 @@ def view():
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             jobs = load_jobs(config_jobs)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work)
-            check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings)
+            check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
+                               notification_settings=notification_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives, next_log_check=datetime.now() + timedelta(seconds=60))
             time.sleep(60)
             has_file = False
@@ -103,5 +108,6 @@ def view():
 
 
 def analyze_logs():
-    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings, \
+        notification_settings = get_config_info()
     analyze_log_times(log_directory)

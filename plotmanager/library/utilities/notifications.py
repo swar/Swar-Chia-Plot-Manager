@@ -1,40 +1,23 @@
+import discord_notify
+import playsound
+import pushover
 
 
-from plotmanager.library.parse.configuration import get_notifications_settings
+def _send_notifications(title, body, settings):
+    if settings.get('notify_discord') is True:
+        notifier = discord_notify.Notifier(settings.get('discord_webhook_url'))
+        notifier.send(body, print_message=False)
+
+    if settings.get('notify_sound') is True:
+        playsound.playsound(settings.get('song'))
+
+    if settings.get('notify_pushover') is True:
+        client = pushover.Client(settings.get('pushover_user_key'), api_token=settings.get('pushover_api_key'))
+        client.send_message(body, title=title)
 
 
-notifications_settings = get_notifications_settings()
-#send Discord notification
-sendDiscord = notifications_settings.get('notify_discord')
-discordWebhook = r'%s' % notifications_settings.get('discord_webhook_url')
-
-#play sound notification completed plots
-playSound = notifications_settings.get('notify_sound')
-song = r'%s' % notifications_settings.get('song')
-
-#send Push noticies to Pushover service
-sendPushover = notifications_settings.get('notify_pushover')
-pushover_user_key = r'%s' % notifications_settings.get('pushover_user_key')
-pushover_api_key = r'%s' % notifications_settings.get('pushover_api_key')
-
-
-def send_notifications(msgTxt, msgTitle):
-
-    if sendDiscord == True:
-        import discord_notify as dn
-        notifier = dn.Notifier(discordWebhook)
-        notifier.send(msgTxt, print_message=False)
-
-    if playSound == True:
-        from playsound import playsound  # pip install playsound
-        playsound(song)
-
-    if sendPushover == True:
-        from pushover import init, Client
-        client = Client(pushover_user_key, api_token=pushover_api_key)
-        client.send_message(msgTxt, title=msgTitle)  # pip install python-pushover
-
-
-
-
-
+def send_notifications(title, body, settings):
+    try:
+        _send_notifications(title=title, body=body, settings=settings)
+    except:
+        pass
