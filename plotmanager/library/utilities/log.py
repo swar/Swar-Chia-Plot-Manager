@@ -149,7 +149,7 @@ def get_progress(line_count, progress_settings):
     return progress
 
 
-def check_log_progress(jobs, running_work, progress_settings):
+def check_log_progress(jobs, running_work, progress_settings, notification_settings):
     for pid, work in list(running_work.items()):
         if not work.log_file:
             continue
@@ -183,6 +183,6 @@ def check_log_progress(jobs, running_work, progress_settings):
             job.total_running -= 1
             job.total_completed += 1
 
-            send_notifications('You completed a plot on ' + socket.gethostname() + '!', 'Plot Completed')
+            send_notifications(title='Plot Completed', body='You completed a plot on ' + socket.gethostname() +'!', settings=notification_settings)
             break
         del running_work[pid]
