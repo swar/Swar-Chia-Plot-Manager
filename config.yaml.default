@@ -1,11 +1,36 @@
 chia_location: C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.0.4\resources\app.asar.unpacked\daemon\chia.exe
 
+
 log:
   folder_path: S:\Chia\Logs\Plotter
   check_seconds: 60
 
+
+notifications:
+  # DISCORD
+  notify_discord: false
+  discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+  # PLAY AUDIO SOUND
+  notify_sound: false
+  song: audio.mp3
+
+  # PUSHOVER PUSH SERVICE
+  notify_pushover: false
+  pushover_user_key: xx
+  pushover_api_key: xx
+  
+  # TWILIO
+  notify_twilio: false
+  twilio_account_sid: xxxxx
+  twilio_auth_token: xxxxx
+  twilio_from_phone: +1234657890
+  twilio_to_phone: +1234657890
+
+
 global:
   max_concurrent: 10
+
 
 progress:
   phase1_line_end: 801
@@ -16,6 +41,7 @@ progress:
   phase2_weight: 20.43
   phase3_weight: 42.29
   phase4_weight: 3.88
+
 
 jobs:
   - name: micron
