@@ -30,7 +30,7 @@ def send_notifications(msgTxt, msgTitle):
         playsound(song)
 
     if sendPushover == True:
-        from pushover import init, Client
+        from pushover import init, Client   
         client = Client(pushover_user_key, api_token=pushover_api_key)
         client.send_message(msgTxt, title=msgTitle)  # pip install python-pushover
 
