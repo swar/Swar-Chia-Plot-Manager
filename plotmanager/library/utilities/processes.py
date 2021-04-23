@@ -26,7 +26,7 @@ def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
         try:
-            if not re.search(r'^pythonw?(?:\d+\.\d+)?(?:\.exe)?$', process.name(), flags=re.I):
+            if not re.search(r'^pythonw?(?:\d+\.\d+|\d+)?(?:\.exe)?$', process.name(), flags=re.I):
                 continue
             if not _contains_in_list('python', process.cmdline(), case_insensitive=True) or \
                     not _contains_in_list('stateless-manager.py', process.cmdline()):
@@ -89,13 +89,18 @@ def get_running_plots(jobs, running_work):
             if '.mui' == file.path[-4:]:
                 continue
             if file.path[-4:] not in ['.log', '.txt']:
-                drives.append(file.path[0])
+                if is_windows:
+                    drives.append(file.path[0])
+                else:
+                    drives.append(file.path.rsplit('/', 1)[0])
                 continue
             log_file_path = file.path
         drives = list(set(drives))
         assumed_job = None
         for job in jobs:
-            if job.temporary_directory[0] not in drives:
+            if is_windows and job.temporary_directory[0] not in drives:
+                continue
+            if not is_windows and job.temporary_directory not in drives:
                 continue
             assumed_job = job
             break
