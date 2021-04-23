@@ -32,6 +32,7 @@ def load_jobs(config_jobs):
         job.name = info['name']
         job.max_plots = info['max_plots']
 
+
         job.max_concurrent = info['max_concurrent']
         job.max_concurrent_with_disregard = info['max_concurrent_with_disregard']
         job.max_for_phase_1 = info['max_for_phase_1']
@@ -42,6 +43,11 @@ def load_jobs(config_jobs):
 
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']
+        
+        if info['use_dest_temp2']:
+            job.use_dest_temp2 = info['use_dest_temp2']
+        else:
+            job.use_dest_temp2 = None
 
         job.size = info['size']
         job.bitfield = info['bitfield']
@@ -110,6 +116,11 @@ def start_work(job, chia_location, log_directory):
 
     job.current_work_id += 1
 
+    if job.use_dest_temp2:
+        temporary2_dir=destination_directory
+    else:
+        temporary2_dir=None
+    
     plot_command = plots.create(
         chia_location=chia_location,
         size=job.size,
@@ -119,7 +130,7 @@ def start_work(job, chia_location, log_directory):
         threads=job.threads,
         buckets=job.buckets,
         bitfield=job.bitfield,
-        temporary2_directory=None
+        temporary2_directory=temporary2_dir
     )
 
     log_file = open(log_file_path, 'a')

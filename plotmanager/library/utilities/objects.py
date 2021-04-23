@@ -7,6 +7,7 @@ class Job:
     max_concurrent = 0
     max_concurrent_with_disregard = 0
     max_plots = 0
+    use_dest_temp2 = None
 
     stagger_minutes = None
     max_for_phase_1 = None
