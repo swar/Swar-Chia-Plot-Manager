@@ -56,11 +56,14 @@ def get_chia_drives():
             drive_stats['temp'][temp_drive] = 0
         drive_stats['temp'][temp_drive] += 1
 
-        if 'tmp2_index' in locals():
+
+        try:
             tmp2_drive = commands[tmp2_index].split('\\')[0]
             if tmp2_drive not in drive_stats['tmp2']:
                 drive_stats['tmp2'][tmp2_drive] = 0
             drive_stats['tmp2'][tmp2_drive] += 1
+        except:
+            continue
 
         dest_drive = commands[dest_index].split('\\')[0]
         if dest_drive not in drive_stats['dest']:
