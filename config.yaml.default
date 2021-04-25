@@ -61,6 +61,7 @@ jobs:
     max_for_phase_1: 2
     concurrency_disregard_phase: 4
     concurrency_disregard_phase_delay: 0
+    use_dest_temp2: true    
 
   - name: inland
     max_plots: 999
@@ -79,3 +80,5 @@ jobs:
     max_for_phase_1: 1
     concurrency_disregard_phase: 4
     concurrency_disregard_phase_delay: 0
+    use_dest_temp2: true
+    
