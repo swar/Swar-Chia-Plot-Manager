@@ -3,6 +3,7 @@ import os
 import psutil
 import re
 
+from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
 
 
@@ -92,7 +93,7 @@ def analyze_log_times(log_directory):
             line_numbers[phase].append(new_lines)
 
     for phase in range(1, 5):
-        print(f'  phase{phase}_end: {int(round(sum(line_numbers[phase]) / len(line_numbers[phase]), 0))}')
+        print(f'  phase{phase}_line_end: {int(round(sum(line_numbers[phase]) / len(line_numbers[phase]), 0))}')
 
     for phase in range(1, 5):
         print(f'  phase{phase}_weight: {round(total_times[phase] / sum(total_times.values()) * 100, 2)}')
@@ -116,38 +117,38 @@ def get_phase_info(contents, pretty_print=True):
 
 
 def get_progress(line_count, progress_settings):
-    phase1_end = progress_settings['phase1_end']
-    phase2_end = progress_settings['phase2_end']
-    phase3_end = progress_settings['phase3_end']
-    phase4_end = progress_settings['phase4_end']
+    phase1_line_end = progress_settings['phase1_line_end']
+    phase2_line_end = progress_settings['phase2_line_end']
+    phase3_line_end = progress_settings['phase3_line_end']
+    phase4_line_end = progress_settings['phase4_line_end']
     phase1_weight = progress_settings['phase1_weight']
     phase2_weight = progress_settings['phase2_weight']
     phase3_weight = progress_settings['phase3_weight']
     phase4_weight = progress_settings['phase4_weight']
     progress = 0
-    if line_count > phase1_end:
+    if line_count > phase1_line_end:
         progress += phase1_weight
     else:
-        progress += phase1_weight * (line_count / phase1_end)
+        progress += phase1_weight * (line_count / phase1_line_end)
         return progress
-    if line_count > phase2_end:
+    if line_count > phase2_line_end:
         progress += phase2_weight
     else:
-        progress += phase2_weight * ((line_count - phase1_end) / (phase2_end - phase1_end))
+        progress += phase2_weight * ((line_count - phase1_line_end) / (phase2_line_end - phase1_line_end))
         return progress
-    if line_count > phase3_end:
+    if line_count > phase3_line_end:
         progress += phase3_weight
     else:
-        progress += phase3_weight * ((line_count - phase2_end) / (phase3_end - phase2_end))
+        progress += phase3_weight * ((line_count - phase2_line_end) / (phase3_line_end - phase2_line_end))
         return progress
-    if line_count > phase4_end:
+    if line_count > phase4_line_end:
         progress += phase4_weight
     else:
-        progress += phase4_weight * ((line_count - phase3_end) / (phase4_end - phase3_end))
+        progress += phase4_weight * ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
     return progress
 
 
-def check_log_progress(jobs, running_work, progress_settings):
+def check_log_progress(jobs, running_work, progress_settings, notification_settings):
     for pid, work in list(running_work.items()):
         if not work.log_file:
             continue
@@ -180,5 +181,7 @@ def check_log_progress(jobs, running_work, progress_settings):
                 job.running_work.remove(pid)
             job.total_running -= 1
             job.total_completed += 1
+
+            send_notifications(title='Plot Completed', body='You completed a plot!', settings=notification_settings)
             break
         del running_work[pid]

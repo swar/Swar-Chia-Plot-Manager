@@ -1,4 +1,5 @@
 import os
+import platform
 import psutil
 import re
 import subprocess
@@ -9,8 +10,12 @@ from datetime import datetime
 from plotmanager.library.utilities.objects import Work
 
 
-def _contains_in_list(string, lst):
+def _contains_in_list(string, lst, case_insensitive=False):
+    if case_insensitive:
+        string = string.lower()
     for item in lst:
+        if case_insensitive:
+            item = item.lower()
         if string not in item:
             continue
         return True
@@ -21,9 +26,9 @@ def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
         try:
-            if not re.search(r'^pythonw?(?:\d+\.\d+)?\.exe$', process.name()):
+            if not re.search(r'^pythonw?(?:\d+\.\d+|\d+)?(?:\.exe)?$', process.name(), flags=re.I):
                 continue
-            if not _contains_in_list('python', process.cmdline()) or \
+            if not _contains_in_list('python', process.cmdline(), case_insensitive=True) or \
                     not _contains_in_list('stateless-manager.py', process.cmdline()):
                 continue
             processes.append(process)
@@ -32,48 +37,64 @@ def get_manager_processes():
     return processes
 
 
+def is_windows():
+    return platform.system() == 'Windows'
+
+
+def get_chia_executable_name():
+    return f'chia{".exe" if is_windows() else ""}'
+
+
+def get_plot_drives(commands):
+    try:
+        temporary_index = commands.index('-t') + 1
+        destination_index = commands.index('-d') + 1
+    except ValueError:
+        return None, None, None
+    try:
+        temporary2_index = commands.index('-2') + 1
+    except ValueError:
+        temporary2_index = None
+    temporary_drive = commands[temporary_index].split('\\')[0]
+    destination_drive = commands[destination_index].split('\\')[0]
+    temporary2_drive = None
+    if temporary2_index:
+        temporary2_drive = commands[temporary2_index].split('\\')[0]
+    return temporary_drive, temporary2_drive, destination_drive
+
+
 def get_chia_drives():
-    drive_stats = {'temp': {}, 'tmp2': {}, 'dest': {}}
+    drive_stats = {'temp': {}, 'temp2': {}, 'dest': {}}
+    chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        if process.name() != 'chia.exe':
+        if process.name() != chia_executable_name:
             continue
         if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
         commands = process.cmdline()
-        try:
-            tmp2_index = commands.index('-2') + 1
-            temp_index = commands.index('-t') + 1
-            dest_index = commands.index('-d') + 1
-        except ValueError:
-            try:
-                temp_index = commands.index('-t') + 1
-                dest_index = commands.index('-d') + 1
-            except ValueError:
-                continue
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
+        if not temporary_drive and not destination_drive:
+            continue
 
-        temp_drive = commands[temp_index].split('\\')[0]
-        if temp_drive not in drive_stats['temp']:
-            drive_stats['temp'][temp_drive] = 0
-        drive_stats['temp'][temp_drive] += 1
-
-        if 'tmp2_index' in locals():
-            tmp2_drive = commands[tmp2_index].split('\\')[0]
-            if tmp2_drive not in drive_stats['tmp2']:
-                drive_stats['tmp2'][tmp2_drive] = 0
-            drive_stats['tmp2'][tmp2_drive] += 1
-
-        dest_drive = commands[dest_index].split('\\')[0]
-        if dest_drive not in drive_stats['dest']:
-            drive_stats['dest'][dest_drive] = 0
-        drive_stats['dest'][dest_drive] += 1
+        if temporary_drive not in drive_stats['temp']:
+            drive_stats['temp'][temporary_drive] = 0
+        drive_stats['temp'][temporary_drive] += 1
+        if destination_drive not in drive_stats['dest']:
+            drive_stats['dest'][destination_drive] = 0
+        drive_stats['dest'][destination_drive] += 1
+        if temporary2_drive:
+            if temporary2_drive not in drive_stats['temp2']:
+                drive_stats['temp2'][temporary2_drive] = 0
+            drive_stats['temp2'][temporary2_drive] += 1
 
     return drive_stats
 
 
 def get_running_plots(jobs, running_work):
     chia_processes = []
+    chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        if process.name() != 'chia.exe':
+        if process.name() != chia_executable_name:
             continue
         if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
@@ -110,29 +131,19 @@ def get_running_plots(jobs, running_work):
             assumed_job.current_work_id += 1
             assumed_job.total_running += 1
             assumed_job.running_work = assumed_job.running_work + [process.pid]
-        running_work[work.pid] = work
 
-        try:
-            commands = process.cmdline()
-            tmp2 = commands[commands.index('-2') + 1].split('\\')[0]
-            tmp = commands[commands.index('-t') + 1].split('\\')[0]
-            dst = commands[commands.index('-d') + 1].split('\\')[0]
-            work.working_drives = ' ' + tmp + ' ' + tmp2 + ' ' + dst
-        except ValueError:
-            try:
-                tmp = commands[commands.index('-t') + 1].split('\\')[0]
-                dst = commands[commands.index('-d') + 1].split('\\')[0]
-                work.working_drives = ' ' + tmp + '    ' + dst
-            except ValueError:
-                work.working_drives = '    ?'
-                continue
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
+        work.temporary_drive = temporary_drive
+        work.temporary2_drive = temporary2_drive
+        work.destination_drive = destination_drive
+        
 
     return jobs, running_work
 
 
 def start_process(args, log_file):
     kwargs = {}
-    if 'nt' == os.name:
+    if is_windows():
         flags = 0
         flags |= 0x00000008
         kwargs = {

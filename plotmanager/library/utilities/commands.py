@@ -10,8 +10,9 @@ from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.exceptions import ManagerError, TerminationException
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
+from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import print_view
-from plotmanager.library.utilities.processes import get_manager_processes, get_running_plots, start_process
+from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, start_process
 
 
 def start_manager():
@@ -25,15 +26,27 @@ def start_manager():
     manager_log_file_path = os.path.join(directory, 'manager.log')
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
-    pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
+
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings, \
+        notification_settings = get_config_info()
+
+    extra_args = []
+    if is_windows():
+        pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['pythonw.exe'])
+    else:
+        pythonw_file_path = '\\'.join(python_file_path.split('\\')[:-1] + ['python &'])
+        extra_args.append('&')
     if os.path.exists(pythonw_file_path):
         python_file_path = pythonw_file_path
-    args = [python_file_path, stateless_manager_path]
+
+    args = [python_file_path, stateless_manager_path] + extra_args
     start_process(args=args, log_file=manager_log_file)
     time.sleep(3)
     if not get_manager_processes():
         raise ManagerError('Failed to start Manager.')
-    print('Manager has started...')
+
+    send_notifications(title='Plot manager started', body='Plot Manager has Started...', settings=notification_settings)
+    print('Plot Manager has started...')
 
 
 def stop_manager():
@@ -52,7 +65,8 @@ def stop_manager():
 
 
 def view():
-    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings, \
+        notification_settings = get_config_info()
     analysis = {'files': {}}
     drives = {'temp': [], 'tmp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
@@ -91,7 +105,8 @@ def view():
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             jobs = load_jobs(config_jobs)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work)
-            check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings)
+            check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
+                               notification_settings=notification_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives, next_log_check=datetime.now() + timedelta(seconds=60))
             time.sleep(60)
             has_file = False
@@ -112,5 +127,6 @@ def view():
 
 
 def analyze_logs():
-    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings = get_config_info()
+    chia_location, log_directory, config_jobs, log_check_seconds, max_concurrent, progress_settings, \
+        notification_settings = get_config_info()
     analyze_log_times(log_directory)

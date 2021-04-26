@@ -24,7 +24,7 @@ def _get_chia_location(config):
 
 def _get_progress_settings(config):
     progress_setting = config['progress']
-    check_keys = ['phase1_end', 'phase2_end', 'phase3_end', 'phase4_end', 'phase1_weight', 'phase2_weight',
+    check_keys = ['phase1_line_end', 'phase2_line_end', 'phase3_line_end', 'phase4_line_end', 'phase1_weight', 'phase2_weight',
                   'phase3_weight', 'phase4_weight', ]
     missing_keys = []
     for key in check_keys:
@@ -72,6 +72,27 @@ def _get_global_max_concurrent_config(config):
     return max_concurrent
 
 
+def _get_notifications_settings(config):
+    if 'notifications' not in config:
+        raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
+    notifications = config['notifications']
+    _check_parameters(notifications, ['notify_discord', 'discord_webhook_url', 'notify_sound', 'song',
+                                      'notify_pushover', 'pushover_user_key', 'pushover_api_key'])
+    return notifications
+
+
+def _check_parameters(parameter, expected_parameters):
+    failed_checks = []
+    checks = expected_parameters
+    for check in checks:
+        if check in parameter:
+            continue
+        failed_checks.append(check)
+
+    if failed_checks:
+        raise InvalidYAMLConfigException(f'Failed to find the following parameters: {", ".join(failed_checks)}')
+
+
 def get_config_info():
     config = _get_config()
     chia_location = _get_chia_location(config=config)
@@ -81,4 +102,6 @@ def get_config_info():
     jobs = _get_jobs(config=config)
     max_concurrent = _get_global_max_concurrent_config(config=config)
     progress_settings = _get_progress_settings(config=config)
-    return chia_location, log_directory, jobs, log_check_seconds, max_concurrent, progress_settings
+    notification_settings = _get_notifications_settings(config=config)
+    return chia_location, log_directory, jobs, log_check_seconds, max_concurrent, progress_settings, \
+        notification_settings
