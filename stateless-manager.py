@@ -9,11 +9,12 @@ from plotmanager.library.utilities.log import check_log_progress
 from plotmanager.library.utilities.processes import get_running_plots
 
 
-logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
-
-
 chia_location, log_directory, config_jobs, manager_check_interval, log_check_interval, max_concurrent, \
-    progress_settings, notification_settings = get_config_info()
+    progress_settings, notification_settings, debug_level = get_config_info()
+
+logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
+
+logging.info(f'Debug Level: {debug_level}')
 logging.info(f'Chia Location: {chia_location}')
 logging.info(f'Log Directory: {log_directory}')
 logging.info(f'Jobs: {config_jobs}')

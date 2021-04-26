@@ -28,7 +28,7 @@ def start_manager():
     python_file_path = sys.executable
 
     chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings = get_config_info()
+        progress_settings, notification_settings, debug_level = get_config_info()
 
     extra_args = []
     if is_windows():
@@ -66,7 +66,7 @@ def stop_manager():
 
 def view():
     chia_location, log_directory, config_jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings = get_config_info()
+        progress_settings, notification_settings, debug_level = get_config_info()
     analysis = {'files': {}}
     drives = {'temp': [], 'dest': []}
     jobs = load_jobs(config_jobs)
@@ -109,5 +109,5 @@ def view():
 
 def analyze_logs():
     chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings = get_config_info()
+        progress_settings, notification_settings, debug_level = get_config_info()
     analyze_log_times(log_directory)
