@@ -112,7 +112,10 @@ def get_running_plots(jobs, running_work):
             if '.mui' == file.path[-4:]:
                 continue
             if file.path[-4:] not in ['.log', '.txt']:
-                drives.append(file.path[0])
+                if is_windows:
+                    drives.append(file.path[0])
+                else:
+                    drives.append(file.path.rsplit('/', 1)[0])
                 continue
             log_file_path = file.path
             logging.info(f'Found log file: {log_file_path}')
@@ -120,7 +123,9 @@ def get_running_plots(jobs, running_work):
         assumed_job = None
         logging.info(f'Finding associated job')
         for job in jobs:
-            if job.temporary_directory[0] not in drives:
+            if is_windows and job.temporary_directory[0] not in drives:
+                continue
+            if not is_windows and job.temporary_directory not in drives:
                 continue
             logging.info(f'Found job: {job.name}')
             assumed_job = job

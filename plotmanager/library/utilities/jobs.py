@@ -39,7 +39,6 @@ def load_jobs(config_jobs):
 
         job.name = info['name']
         job.max_plots = info['max_plots']
-
         job.farmer_public_key = info.get('farmer_public_key', None)
         job.pool_public_key = info.get('pool_public_key', None)
         job.max_concurrent = info['max_concurrent']
@@ -52,6 +51,11 @@ def load_jobs(config_jobs):
 
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']
+        
+        if info['use_dest_temp2']:
+            job.use_dest_temp2 = info['use_dest_temp2']
+        else:
+            job.use_dest_temp2 = None
 
         temporary2_directory = info.get('temporary2_directory', None)
         if not temporary2_directory:
@@ -139,6 +143,11 @@ def start_work(job, chia_location, log_directory):
 
     job.current_work_id += 1
 
+    if job.use_dest_temp2:
+        temporary2_dir=destination_directory
+    else:
+        temporary2_dir=None
+    
     plot_command = plots.create(
         chia_location=chia_location,
         farmer_public_key=job.farmer_public_key,
@@ -150,8 +159,7 @@ def start_work(job, chia_location, log_directory):
         destination_directory=destination_directory,
         threads=job.threads,
         buckets=job.buckets,
-        bitfield=job.bitfield,
-    )
+        bitfield=job.bitfield    )
     logging.info(f'Starting with plot command: {plot_command}')
 
     log_file = open(log_file_path, 'a')

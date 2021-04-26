@@ -3,6 +3,7 @@ import pathlib
 import psutil
 import sys
 import time
+import socket
 
 from datetime import datetime, timedelta
 
@@ -45,7 +46,7 @@ def start_manager():
     if not get_manager_processes():
         raise ManagerError('Failed to start Manager.')
 
-    send_notifications(title='Plot manager started', body='Plot Manager has Started...', settings=notification_settings)
+    send_notifications(title='Plot manager started', body='Plot Manager has started on ' + socket.gethostname() +'...', settings=notification_settings)
     print('Plot Manager has started...')
 
 
