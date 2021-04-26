@@ -31,6 +31,10 @@ class Work:
     pid = None
     log_file = None
 
+    temporary_drive = None
+    temporary2_drive = None
+    destination_drive = None
+
     current_phase = 1
 
     datetime_start = None
