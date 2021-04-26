@@ -26,7 +26,7 @@ def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
         try:
-            if not re.search(r'^pythonw?(?:\d+\.\d+)?(?:\.exe)?$', process.name(), flags=re.I):
+            if not re.search(r'^pythonw?(?:\d+\.\d+|\d+)?(?:\.exe)?$', process.name(), flags=re.I):
                 continue
             if not _contains_in_list('python', process.cmdline(), case_insensitive=True) or \
                     not _contains_in_list('stateless-manager.py', process.cmdline()):
