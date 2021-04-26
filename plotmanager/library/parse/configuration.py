@@ -24,35 +24,30 @@ def _get_chia_location(config):
 
 def _get_progress_settings(config):
     progress_setting = config['progress']
-    check_keys = ['phase1_line_end', 'phase2_line_end', 'phase3_line_end', 'phase4_line_end', 'phase1_weight', 'phase2_weight',
-                  'phase3_weight', 'phase4_weight', ]
-    missing_keys = []
-    for key in check_keys:
-        if key in progress_setting:
-            continue
-        missing_keys.append(key)
-
-    if missing_keys:
-        raise InvalidYAMLConfigException(f'Missing parameters inside progress: {", ".join(missing_keys)}')
+    expected_parameters = ['phase1_line_end', 'phase2_line_end', 'phase3_line_end', 'phase4_line_end', 'phase1_weight',
+                           'phase2_weight', 'phase3_weight', 'phase4_weight', ]
+    _check_parameters(parameter=progress_setting, expected_parameters=expected_parameters, parameter_type='progress')
     return progress_setting
+
+
+def _get_manager_settings(config):
+    if 'manager' not in config:
+        raise InvalidYAMLConfigException('Failed to find the log parameter in the YAML.')
+    manager = config['manager']
+    expected_parameters = ['check_interval']
+    _check_parameters(parameter=manager, expected_parameters=expected_parameters, parameter_type='manager')
+
+    return manager['check_interval']
 
 
 def _get_log_settings(config):
     if 'log' not in config:
         raise InvalidYAMLConfigException('Failed to find the log parameter in the YAML.')
     log = config['log']
-    failed_checks = []
-    checks = ['folder_path', 'check_seconds']
-    for check in checks:
-        if check in log:
-            continue
-        failed_checks.append(check)
+    expected_parameters = ['folder_path', 'check_interval']
+    _check_parameters(parameter=log, expected_parameters=expected_parameters, parameter_type='log')
 
-    if failed_checks:
-        raise InvalidYAMLConfigException(f'Failed to find the following parameters in log: '
-                                         f'{", ".join(failed_checks)}')
-
-    return log['folder_path'], log['check_seconds']
+    return log['folder_path'], log['check_interval']
 
 
 def _get_jobs(config):
@@ -76,12 +71,13 @@ def _get_notifications_settings(config):
     if 'notifications' not in config:
         raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
     notifications = config['notifications']
-    _check_parameters(notifications, ['notify_discord', 'discord_webhook_url', 'notify_sound', 'song',
-                                      'notify_pushover', 'pushover_user_key', 'pushover_api_key'])
+    expected_parameters = ['notify_discord', 'discord_webhook_url', 'notify_sound', 'song', 'notify_pushover',
+                           'pushover_user_key', 'pushover_api_key']
+    _check_parameters(parameter=notifications, expected_parameters=expected_parameters, parameter_type='notification')
     return notifications
 
 
-def _check_parameters(parameter, expected_parameters):
+def _check_parameters(parameter, expected_parameters, parameter_type):
     failed_checks = []
     checks = expected_parameters
     for check in checks:
@@ -90,18 +86,20 @@ def _check_parameters(parameter, expected_parameters):
         failed_checks.append(check)
 
     if failed_checks:
-        raise InvalidYAMLConfigException(f'Failed to find the following parameters: {", ".join(failed_checks)}')
+        raise InvalidYAMLConfigException(f'Failed to find the following {parameter_type} parameters: '
+                                         f'{", ".join(failed_checks)}')
 
 
 def get_config_info():
     config = _get_config()
     chia_location = _get_chia_location(config=config)
-    log_directory, log_check_seconds = _get_log_settings(config=config)
+    manager_check_interval = _get_manager_settings(config=config)
+    log_directory, log_check_interval = _get_log_settings(config=config)
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
     jobs = _get_jobs(config=config)
     max_concurrent = _get_global_max_concurrent_config(config=config)
     progress_settings = _get_progress_settings(config=config)
     notification_settings = _get_notifications_settings(config=config)
-    return chia_location, log_directory, jobs, log_check_seconds, max_concurrent, progress_settings, \
-        notification_settings
+    return chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
+        progress_settings, notification_settings

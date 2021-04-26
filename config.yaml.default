@@ -1,9 +1,13 @@
 chia_location: C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.0.4\resources\app.asar.unpacked\daemon\chia.exe
 
 
+manager:
+  check_interval: 60
+
+
 log:
   folder_path: S:\Chia\Logs\Plotter
-  check_seconds: 60
+  check_interval: 60
 
 
 notifications:

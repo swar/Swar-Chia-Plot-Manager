@@ -1,4 +1,4 @@
-import os
+import logging
 import platform
 import psutil
 import re
@@ -72,17 +72,20 @@ def get_chia_drives():
 
 def get_running_plots(jobs, running_work):
     chia_processes = []
+    logging.info(f'Getting running plots')
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
         if process.name() != chia_executable_name:
             continue
         if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
+        logging.info(f'Found chia plotting process: {process.pid}')
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])
     chia_processes.sort(key=lambda x: (x[0]))
 
     for datetime_start, process in chia_processes:
+        logging.info(f'Finding log file for process: {process.pid}')
         drives = []
         log_file_path = None
         for file in process.open_files():
@@ -92,11 +95,14 @@ def get_running_plots(jobs, running_work):
                 drives.append(file.path[0])
                 continue
             log_file_path = file.path
+            logging.info(f'Found log file: {log_file_path}')
         drives = list(set(drives))
         assumed_job = None
+        logging.info(f'Finding associated job')
         for job in jobs:
             if job.temporary_directory[0] not in drives:
                 continue
+            logging.info(f'Found job: {job.name}')
             assumed_job = job
             break
 
@@ -112,6 +118,7 @@ def get_running_plots(jobs, running_work):
             assumed_job.total_running += 1
             assumed_job.running_work = assumed_job.running_work + [process.pid]
         running_work[work.pid] = work
+    logging.info(f'Finished finding running plots')
 
     return jobs, running_work
 

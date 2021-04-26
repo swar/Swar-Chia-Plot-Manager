@@ -1,3 +1,4 @@
+import logging
 import psutil
 
 from copy import deepcopy
@@ -55,18 +56,26 @@ def load_jobs(config_jobs):
 
 def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory, next_log_check):
     for i, job in enumerate(jobs):
+        logging.info(f'Checking to queue work for job: {job.name}')
         if len(running_work.values()) >= max_concurrent:
+            logging.info(f'Global concurrent limit met, skipping. Running plots: {len(running_work.values())}, '
+                         f'Max global concurrent limit: {max_concurrent}')
             continue
         phase_1_count = 0
         for pid in job.running_work:
             if running_work[pid].current_phase > 1:
                 continue
             phase_1_count += 1
+        logging.info(f'Total jobs in phase 1: {phase_1_count}')
         if job.max_for_phase_1 and phase_1_count >= job.max_for_phase_1:
+            logging.info(f'Max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
             continue
         if job.total_completed >= job.max_plots:
+            logging.info(f'Job\'s total completed greater than or equal to max plots, skipping. Total Completed: '
+                         f'{job.total_completed}, Max Plots: {job.max_plots}')
             continue
         if job.name in next_job_work and next_job_work[job.name] > datetime.now():
+            logging.info(f'Waiting for job stagger, skipping. Next allowable time: {next_job_work[job.name]}')
             continue
         discount_running = 0
         if job.concurrency_disregard_phase is not None:
@@ -78,13 +87,15 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
                     continue
                 discount_running += 1
         if (job.total_running - discount_running) >= job.max_concurrent:
+            logging.info(f'Job\'s max concurrent limit has been met, skipping. Max concurrent minus disregard: '
+                         f'{job.total_running - discount_running}, Max concurrent: {job.max_concurrent}')
             continue
         if job.total_running >= job.max_concurrent_with_disregard:
+            logging.info(f'Max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
             continue
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
-        if job.max_concurrent == job.total_running:
-            pass
+            logging.info(f'Calculating new job stagger time. Next stagger kickoff: {next_job_work[job.name]}')
         job, work = start_work(job=job, chia_location=chia_location, log_directory=log_directory)
         jobs[i] = deepcopy(job)
         next_log_check = datetime.now()
@@ -94,13 +105,16 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
 
 
 def start_work(job, chia_location, log_directory):
+    logging.info(f'Starting new plot for job: {job.name}')
     nice_val = 15
     if is_windows():
         nice_val = psutil.REALTIME_PRIORITY_CLASS
 
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
+    logging.info(f'Job log file path: {log_file_path}')
     destination_directory = get_destination_directory(job)
+    logging.info(f'Job destination directory: {destination_directory}')
 
     work = deepcopy(Work())
     work.job = job
@@ -121,15 +135,22 @@ def start_work(job, chia_location, log_directory):
         bitfield=job.bitfield,
         temporary2_directory=None
     )
+    logging.info(f'Starting with plot command: {plot_command}')
 
     log_file = open(log_file_path, 'a')
+    logging.info(f'Starting process')
     process = start_process(args=plot_command, log_file=log_file)
     pid = process.pid
-    
+    logging.info(f'Started process: {pid}')
+
+    logging.info(f'Setting priority level: {nice_val}')
     psutil.Process(pid).nice(nice_val)
+    logging.info(f'Set priority level')
 
     work.pid = pid
     job.total_running += 1
     job.running_work = job.running_work + [pid]
+    logging.info(f'Job total running: {job.total_running}')
+    logging.info(f'Job running: {job.running_work}')
 
     return job, work
