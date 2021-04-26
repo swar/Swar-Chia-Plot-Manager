@@ -1,5 +1,5 @@
-def create(size, memory_buffer, temporary_directory, temporary2_directory, destination_directory, threads, buckets, bitfield,
-           chia_location='chia'):
+def create(size, memory_buffer, temporary_directory, destination_directory, threads, buckets, bitfield,
+           chia_location='chia', temporary2_directory=None):
     flags = dict(
         k=size,
         b=memory_buffer,
