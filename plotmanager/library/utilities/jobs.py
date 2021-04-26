@@ -127,6 +127,7 @@ def start_work(job, chia_location, log_directory):
     logging.info(f'Job log file path: {log_file_path}')
     destination_directory, temporary2_directory = get_target_directories(job)
     logging.info(f'Job destination directory: {destination_directory}')
+    logging.info(f'Job temporary2 directory: {temporary2_directory}')
 
     work = deepcopy(Work())
     work.job = job
