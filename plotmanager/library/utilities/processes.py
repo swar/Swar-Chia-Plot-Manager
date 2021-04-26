@@ -120,6 +120,8 @@ def get_running_plots(jobs, running_work):
             assumed_job = job
             break
 
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
+
         work = deepcopy(Work())
         work.job = assumed_job
         work.log_file = log_file_path
@@ -131,12 +133,11 @@ def get_running_plots(jobs, running_work):
             assumed_job.current_work_id += 1
             assumed_job.total_running += 1
             assumed_job.running_work = assumed_job.running_work + [process.pid]
-
-        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
         work.temporary_drive = temporary_drive
         work.temporary2_drive = temporary2_drive
         work.destination_drive = destination_drive
-        
+
+        running_work[work.pid] = work
 
     return jobs, running_work
 
