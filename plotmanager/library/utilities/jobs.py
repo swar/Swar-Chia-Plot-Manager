@@ -40,6 +40,8 @@ def load_jobs(config_jobs):
         job.name = info['name']
         job.max_plots = info['max_plots']
 
+        job.farmer_public_key = info.get('farmer_public_key', None)
+        job.pool_public_key = info.get('pool_public_key', None)
         job.max_concurrent = info['max_concurrent']
         job.max_concurrent_with_disregard = info['max_concurrent_with_disregard']
         job.max_for_phase_1 = info['max_for_phase_1']
@@ -139,6 +141,8 @@ def start_work(job, chia_location, log_directory):
 
     plot_command = plots.create(
         chia_location=chia_location,
+        farmer_public_key=job.farmer_public_key,
+        pool_public_key=job.pool_public_key,
         size=job.size,
         memory_buffer=job.memory_buffer,
         temporary_directory=job.temporary_directory,

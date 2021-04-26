@@ -51,6 +51,8 @@ progress:
 jobs:
   - name: micron
     max_plots: 999
+    farmer_public_key:
+    pool_public_key:
     temporary_directory: Z:\Plotter
     temporary2_directory:
     destination_directory: J:\Plots
@@ -68,6 +70,8 @@ jobs:
 
   - name: inland
     max_plots: 999
+    farmer_public_key:
+    pool_public_key:
     temporary_directory: Y:\Plotter
     temporary2_directory:
       - J:\Plots

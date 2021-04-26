@@ -2,6 +2,9 @@ class Job:
     name = None
     current_work_id = 0
 
+    farmer_public_key = None
+    pool_public_key = None
+
     total_running = 0
     total_completed = 0
     max_concurrent = 0
