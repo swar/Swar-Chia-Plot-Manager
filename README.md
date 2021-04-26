@@ -5,7 +5,7 @@ Installation:
 On Windows use 'python3', on Linux use 'python'
 
 - Create a new python environment: `python -m venv /path/to/new/virtual/environment`
-- Activate environment: Linux:  `. .\venv\Scripts\activate` Windows: `venv\bin\activate` 
+- Activate environment: Windows:  `. .\venv\Scripts\activate` Linux: `venv\bin\activate` 
 - Install required modules: `pip install -r requirements.txt`
 - Rename `config.yaml.DEFAULT` to `config.yaml`
 - Edit and setup `config.yaml`
