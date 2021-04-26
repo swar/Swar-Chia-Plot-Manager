@@ -16,7 +16,7 @@ class Job:
     running_work = []
 
     temporary_directory = None
-    temporary2_directory = []
+    temporary2_directory = None
     destination_directory = []
     size = None
     bitfield = None
