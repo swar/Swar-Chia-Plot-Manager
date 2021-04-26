@@ -1,4 +1,5 @@
 import dateparser
+import logging
 import os
 import psutil
 import re
@@ -150,6 +151,7 @@ def get_progress(line_count, progress_settings):
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings):
     for pid, work in list(running_work.items()):
+        logging.info(f'Checking log progress for PID: {pid}')
         if not work.log_file:
             continue
         f = open(work.log_file, 'r')
@@ -170,13 +172,16 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         work.progress = f'{progress:.4f}%'
 
         if psutil.pid_exists(pid) and 'renamed final file from ' not in data:
+            logging.info(f'PID still alive: {pid}')
             continue
 
+        logging.info(f'PID no longer alive: {pid}')
         for job in jobs:
             if not job or not work or not work.job:
                 continue
             if job.name != work.job.name:
                 continue
+            logging.info(f'Removing PID {pid} from job: {job.name}')
             if pid in job.running_work:
                 job.running_work.remove(pid)
             job.total_running -= 1
