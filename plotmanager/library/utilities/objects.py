@@ -16,6 +16,7 @@ class Job:
     running_work = []
 
     temporary_directory = None
+    temporary2_directory = None
     destination_directory = []
     size = None
     bitfield = None
@@ -29,6 +30,10 @@ class Work:
     job = None
     pid = None
     log_file = None
+
+    temporary_drive = None
+    temporary2_drive = None
+    destination_drive = None
 
     current_phase = 1
 

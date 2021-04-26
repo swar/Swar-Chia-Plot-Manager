@@ -45,8 +45,26 @@ def get_chia_executable_name():
     return f'chia{".exe" if is_windows() else ""}'
 
 
+def get_plot_drives(commands):
+    try:
+        temporary_index = commands.index('-t') + 1
+        destination_index = commands.index('-d') + 1
+    except ValueError:
+        return None, None, None
+    try:
+        temporary2_index = commands.index('-2') + 1
+    except ValueError:
+        temporary2_index = None
+    temporary_drive = commands[temporary_index].split('\\')[0]
+    destination_drive = commands[destination_index].split('\\')[0]
+    temporary2_drive = None
+    if temporary2_index:
+        temporary2_drive = commands[temporary2_index].split('\\')[0]
+    return temporary_drive, temporary2_drive, destination_drive
+
+
 def get_chia_drives():
-    drive_stats = {'temp': {}, 'dest': {}}
+    drive_stats = {'temp': {}, 'temp2': {}, 'dest': {}}
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
         if process.name() != chia_executable_name:
@@ -54,19 +72,21 @@ def get_chia_drives():
         if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
         commands = process.cmdline()
-        try:
-            temp_index = commands.index('-t') + 1
-            dest_index = commands.index('-d') + 1
-        except ValueError:
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
+        if not temporary_drive and not destination_drive:
             continue
-        temp_drive = commands[temp_index].split('\\')[0]
-        dest_drive = commands[dest_index].split('\\')[0]
-        if temp_drive not in drive_stats['temp']:
-            drive_stats['temp'][temp_drive] = 0
-        drive_stats['temp'][temp_drive] += 1
-        if dest_drive not in drive_stats['dest']:
-            drive_stats['dest'][dest_drive] = 0
-        drive_stats['dest'][dest_drive] += 1
+
+        if temporary_drive not in drive_stats['temp']:
+            drive_stats['temp'][temporary_drive] = 0
+        drive_stats['temp'][temporary_drive] += 1
+        if destination_drive not in drive_stats['dest']:
+            drive_stats['dest'][destination_drive] = 0
+        drive_stats['dest'][destination_drive] += 1
+        if temporary2_drive:
+            if temporary2_drive not in drive_stats['temp2']:
+                drive_stats['temp2'][temporary2_drive] = 0
+            drive_stats['temp2'][temporary2_drive] += 1
+
     return drive_stats
 
 
@@ -106,6 +126,8 @@ def get_running_plots(jobs, running_work):
             assumed_job = job
             break
 
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
+
         work = deepcopy(Work())
         work.job = assumed_job
         work.log_file = log_file_path
@@ -117,6 +139,10 @@ def get_running_plots(jobs, running_work):
             assumed_job.current_work_id += 1
             assumed_job.total_running += 1
             assumed_job.running_work = assumed_job.running_work + [process.pid]
+        work.temporary_drive = temporary_drive
+        work.temporary2_drive = temporary2_drive
+        work.destination_drive = destination_drive
+
         running_work[work.pid] = work
     logging.info(f'Finished finding running plots')
 

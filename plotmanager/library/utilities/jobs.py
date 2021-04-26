@@ -17,11 +17,18 @@ def has_active_jobs_and_work(jobs):
     return False
 
 
-def get_destination_directory(job):
-    if isinstance(job.destination_directory, list):
-        return job.destination_directory[(job.total_completed + job.total_running) % len(job.destination_directory)]
+def get_target_directories(job):
+    job_offset = job.total_completed + job.total_running
 
-    return job.destination_directory
+    destination_directory = job.destination_directory
+    temporary2_directory = job.temporary2_directory
+
+    if isinstance(job.destination_directory, list):
+        destination_directory = job.destination_directory[job_offset % len(job.destination_directory)]
+    if isinstance(job.temporary2_directory, list):
+        temporary2_directory = job.temporary2_directory[job_offset % len(job.temporary2_directory)]
+
+    return destination_directory, temporary2_directory
 
 
 def load_jobs(config_jobs):
@@ -43,6 +50,11 @@ def load_jobs(config_jobs):
 
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']
+
+        temporary2_directory = info.get('temporary2_directory', None)
+        if not temporary2_directory:
+            temporary2_directory = None
+        job.temporary2_directory = temporary2_directory
 
         job.size = info['size']
         job.bitfield = info['bitfield']
@@ -113,8 +125,9 @@ def start_work(job, chia_location, log_directory):
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
     logging.info(f'Job log file path: {log_file_path}')
-    destination_directory = get_destination_directory(job)
+    destination_directory, temporary2_directory = get_target_directories(job)
     logging.info(f'Job destination directory: {destination_directory}')
+    logging.info(f'Job temporary2 directory: {temporary2_directory}')
 
     work = deepcopy(Work())
     work.job = job
@@ -129,11 +142,11 @@ def start_work(job, chia_location, log_directory):
         size=job.size,
         memory_buffer=job.memory_buffer,
         temporary_directory=job.temporary_directory,
+        temporary2_directory=temporary2_directory,
         destination_directory=destination_directory,
         threads=job.threads,
         buckets=job.buckets,
         bitfield=job.bitfield,
-        temporary2_directory=None
     )
     logging.info(f'Starting with plot command: {plot_command}')
 
