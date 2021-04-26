@@ -68,36 +68,29 @@ def view():
     chia_location, log_directory, config_jobs, manager_check_interval, log_check_interval, max_concurrent, \
         progress_settings, notification_settings, debug_level = get_config_info()
     analysis = {'files': {}}
-    drives = {'temp': [], 'tmp2': [], 'dest': []}
+    drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
     for job in jobs:
         drive = job.temporary_directory.split('\\')[0]
-        if drive in drives['temp']:
-            continue
         drives['temp'].append(drive)
-        if isinstance(job.destination_directory, list):
-            for directory in job.destination_directory:
-                drive = directory.split('\\')[0]
-                if drive in drives['dest']:
-                    continue
-                drives['dest'].append(drive)
-        else:
-            drive = job.destination_directory.split('\\')[0]
-            if drive in drives['dest']:
+        directories = {
+            'dest': job.destination_directory,
+            'temp2': job.temporary2_directory,
+        }
+        for key, directory_list in directories.items():
+            if directory_list is None:
                 continue
-            drives['dest'].append(drive)
-        if isinstance(job.temporary2_directory, list):
-            for directory in job.temporary2_directory:
-                drive = directory.split('\\')[0]
-                if drive in drives['tmp2']:
+            if isinstance(directory_list, list):
+                for directory in directory_list:
+                    drive = directory.split('\\')[0]
+                    if drive in drives[key]:
+                        continue
+                    drives[key].append(drive)
+            else:
+                drive = directory_list.split('\\')[0]
+                if drive in drives[key]:
                     continue
-                drives['tmp2'].append(drive)
-        else:
-            if job.temporary2_directory is not None:
-                drive = job.temporary2_directory.split('\\')[0]
-                if drive in drives['tmp2']:
-                    continue
-                drives['tmp2'].append(drive)
+                drives[key].append(drive)
 
     while True:
         running_work = {}
