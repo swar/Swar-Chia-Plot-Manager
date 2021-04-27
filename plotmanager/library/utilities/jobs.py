@@ -53,10 +53,10 @@ def load_jobs(config_jobs):
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']
 
-        if info['use_dest_temp2']:
-            job.use_dest_temp2 = info['use_dest_temp2']
+        if info['temporary2_destination_sync']:
+            job.temporary2_destination_sync = info['temporary2_destination_sync']
         else:
-            job.use_dest_temp2 = None
+            job.temporary2_destination_sync = False
 
         temporary2_directory = info.get('temporary2_directory', None)
         if not temporary2_directory:
@@ -143,7 +143,7 @@ def start_work(job, chia_location, log_directory):
 
     job.current_work_id += 1
 
-    if job.use_dest_temp2:
+    if job.temporary2_destination_sync:
         logging.info(f'Job temporary2 and destination sync')
         temporary2_directory = destination_directory
     logging.info(f'Job temporary2 directory: {temporary2_directory}')

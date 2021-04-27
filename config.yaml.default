@@ -1,4 +1,4 @@
-chia_location: C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.0.4\resources\app.asar.unpacked\daemon\chia.exe
+chia_location: C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe
 
 
 manager:
@@ -67,7 +67,7 @@ jobs:
     max_for_phase_1: 2
     concurrency_disregard_phase: 4
     concurrency_disregard_phase_delay: 0
-    use_dest_temp2: true    
+    temporary2_destination_sync: false
 
   - name: inland
     max_plots: 999
@@ -91,5 +91,4 @@ jobs:
     max_for_phase_1: 1
     concurrency_disregard_phase: 4
     concurrency_disregard_phase_delay: 0
-    use_dest_temp2: true
-    
+    temporary2_destination_sync: false
