@@ -6,12 +6,12 @@ from datetime import datetime, timedelta
 from plotmanager.library.utilities.processes import get_manager_processes, get_chia_drives
 
 
-def _get_row_info(pid, running_work):
+def _get_row_info(pid, running_work, view_settings):
     work = running_work[pid]
     phase_times = work.phase_times
     elapsed_time = (datetime.now() - work.datetime_start)
     elapsed_time = pretty_print_time(elapsed_time.seconds)
-    row = [work.job.name if work.job else '?', pid, work.datetime_start.strftime('%Y-%m-%d %H:%M:%S'),
+    row = [work.job.name if work.job else '?', pid, work.datetime_start.strftime(view_settings['datetime_format']),
            elapsed_time, work.current_phase, phase_times.get(1, ''), phase_times.get(2, ''), phase_times.get(3, ''),
            phase_times.get(4, ''), work.progress, pretty_print_bytes(work.temp_file_size, 'gb', " GiB")]
     return [str(cell) for cell in row]
@@ -27,10 +27,10 @@ def pretty_print_bytes(size, size_type, suffix=''):
     return f"{round(size / (1024 ** power), 2)}{suffix}"
 
 
-def pretty_print_time(seconds):
+def pretty_print_time(seconds, include_seconds=True):
     total_minutes, second = divmod(seconds, 60)
     hour, minute = divmod(total_minutes, 60)
-    return f"{hour:02}:{minute:02}:{second:02}"
+    return f"{hour:02}:{minute:02}{f':{second:02}' if include_seconds else ''}"
 
 
 def pretty_print_table(rows):
@@ -51,7 +51,7 @@ def pretty_print_table(rows):
     return "\n".join(console)
 
 
-def get_job_data(jobs, running_work):
+def get_job_data(jobs, running_work, view_settings):
     rows = []
     headers = ['num', 'job', 'pid', 'start', 'elapsed_time', 'current', 'phase1', 'phase2', 'phase3', 'phase4', 'progress', 'temp_size']
     added_pids = []
@@ -59,12 +59,12 @@ def get_job_data(jobs, running_work):
         for pid in job.running_work:
             if pid not in running_work:
                 continue
-            rows.append(_get_row_info(pid, running_work))
+            rows.append(_get_row_info(pid, running_work, view_settings))
             added_pids.append(pid)
     for pid in running_work.keys():
         if pid in added_pids:
             continue
-        rows.append(_get_row_info(pid, running_work))
+        rows.append(_get_row_info(pid, running_work, view_settings))
         added_pids.append(pid)
     rows.sort(key=lambda x: (x[3]), reverse=True)
     for i in range(len(rows)):
@@ -86,12 +86,14 @@ def get_drive_data(drives):
     return pretty_print_table(rows)
 
 
-def print_view(jobs, running_work, analysis, drives, next_log_check):
+def print_view(jobs, running_work, analysis, drives, next_log_check, view_settings):
     # Job Table
-    job_data = get_job_data(jobs=jobs, running_work=running_work)
+    job_data = get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings)
 
     # Drive Table
-    drive_data = get_drive_data(drives)
+    drive_data = ''
+    if view_settings.get('include_drive_info'):
+        drive_data = get_drive_data(drives)
 
     manager_processes = get_manager_processes()
 
@@ -102,14 +104,19 @@ def print_view(jobs, running_work, analysis, drives, next_log_check):
     print(job_data)
     print(f'Manager Status: {"Running" if manager_processes else "Stopped"}')
     print()
-    print(drive_data)
-    print(f'CPU Usage: {psutil.cpu_percent()}%')
-    ram_usage = psutil.virtual_memory()
-    print(f'RAM Usage: {pretty_print_bytes(ram_usage.used, "gb")}/{pretty_print_bytes(ram_usage.total, "gb")}GB '
-          f'({ram_usage.percent}%)')
+
+    if view_settings.get('include_drive_info'):
+        print(drive_data)
+    if view_settings.get('include_cpu'):
+        print(f'CPU Usage: {psutil.cpu_percent()}%')
+    if view_settings.get('include_ram'):
+        ram_usage = psutil.virtual_memory()
+        print(f'RAM Usage: {pretty_print_bytes(ram_usage.used, "gb")}/{pretty_print_bytes(ram_usage.total, "gb", "GiB")}'
+              f'({ram_usage.percent}%)')
     print()
-    print(f'Plots Completed Yesterday: {analysis["summary"].get(datetime.now().date() - timedelta(days=1), 0)}')
-    print(f'Plots Completed Today: {analysis["summary"].get(datetime.now().date(), 0)}')
-    print()
+    if view_settings.get('include_plot_stats'):
+        print(f'Plots Completed Yesterday: {analysis["summary"].get(datetime.now().date() - timedelta(days=1), 0)}')
+        print(f'Plots Completed Today: {analysis["summary"].get(datetime.now().date(), 0)}')
+        print()
     print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     print()

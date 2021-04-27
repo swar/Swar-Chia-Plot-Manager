@@ -29,7 +29,7 @@ def start_manager():
     python_file_path = sys.executable
 
     chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings, debug_level = get_config_info()
+        progress_settings, notification_settings, debug_level, view_settings = get_config_info()
 
     extra_args = []
     if is_windows():
@@ -71,7 +71,7 @@ def stop_manager():
 
 def view():
     chia_location, log_directory, config_jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings, debug_level = get_config_info()
+        progress_settings, notification_settings, debug_level, view_settings = get_config_info()
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
@@ -104,8 +104,9 @@ def view():
             jobs = load_jobs(config_jobs)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
-                               notification_settings=notification_settings)
-            print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives, next_log_check=datetime.now() + timedelta(seconds=60))
+                               notification_settings=notification_settings, view_settings=view_settings)
+            print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
+                       next_log_check=datetime.now() + timedelta(seconds=60), view_settings=view_settings)
             time.sleep(60)
             has_file = False
             if len(running_work.values()) == 0:
@@ -126,5 +127,5 @@ def view():
 
 def analyze_logs():
     chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings, debug_level = get_config_info()
+        progress_settings, notification_settings, debug_level, view_settings = get_config_info()
     analyze_log_times(log_directory)

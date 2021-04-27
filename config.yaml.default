@@ -11,6 +11,15 @@ log:
   check_interval: 60
 
 
+view:
+  datetime_format: "%Y-%m-%d %H:%M:%S"
+  include_seconds_for_phase: false
+  include_drive_info: true
+  include_cpu: true
+  include_ram: true
+  include_plot_stats: true
+
+
 notifications:
   # DISCORD
   notify_discord: false

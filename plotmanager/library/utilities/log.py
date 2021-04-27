@@ -101,17 +101,18 @@ def analyze_log_times(log_directory):
         print(f'  phase{phase}_weight: {round(total_times[phase] / sum(total_times.values()) * 100, 2)}')
 
 
-def get_phase_info(contents, pretty_print=True):
+def get_phase_info(contents, view_settings=None, pretty_print=True):
+    if not view_settings:
+        view_settings = {}
     phase_times = {}
     phase_dates = {}
 
     for phase in range(1, 5):
         match = re.search(rf'time for phase {phase} = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
-        # match = re.search(rf'time for phase {phase} = ([\d\.]+) seconds', contents, flags=re.I)
         if match:
             seconds, date_raw = match.groups()
             seconds = float(seconds)
-            phase_times[phase] = pretty_print_time(int(seconds)) if pretty_print else seconds
+            phase_times[phase] = pretty_print_time(int(seconds), view_settings['include_seconds_for_phase']) if pretty_print else seconds
             parsed_date = dateparser.parse(date_raw)
             phase_dates[phase] = parsed_date
 
@@ -150,7 +151,7 @@ def get_progress(line_count, progress_settings):
     return progress
 
 
-def check_log_progress(jobs, running_work, progress_settings, notification_settings):
+def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
         if not work.log_file:
@@ -163,7 +164,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
 
         progress = get_progress(line_count=line_count, progress_settings=progress_settings)
 
-        phase_times, phase_dates = get_phase_info(data)
+        phase_times, phase_dates = get_phase_info(data, view_settings)
         current_phase = 1
         if phase_times:
             current_phase = max(phase_times.keys()) + 1

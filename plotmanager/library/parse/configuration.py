@@ -75,6 +75,16 @@ def _get_notifications_settings(config):
     return notifications
 
 
+def _get_view_settings(config):
+    if 'view' not in config:
+        raise InvalidYAMLConfigException('Failed to find view parameter in the YAML.')
+    view = config['view']
+    expected_parameters = ['datetime_format', 'include_seconds_for_phase', 'include_drive_info', 'include_cpu', 'include_ram',
+                           'include_plot_stats']
+    _check_parameters(parameter=view, expected_parameters=expected_parameters, parameter_type='notification')
+    return view
+
+
 def _check_parameters(parameter, expected_parameters, parameter_type):
     failed_checks = []
     checks = expected_parameters
@@ -99,6 +109,7 @@ def get_config_info():
     max_concurrent = _get_global_max_concurrent_config(config=config)
     progress_settings = _get_progress_settings(config=config)
     notification_settings = _get_notifications_settings(config=config)
+    view_settings = _get_view_settings(config=config)
 
     return chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings, log_level
+        progress_settings, notification_settings, log_level, view_settings

@@ -10,7 +10,7 @@ from plotmanager.library.utilities.processes import get_running_plots
 
 
 chia_location, log_directory, config_jobs, manager_check_interval, log_check_interval, max_concurrent, \
-    progress_settings, notification_settings, debug_level = get_config_info()
+    progress_settings, notification_settings, debug_level, view_settings = get_config_info()
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
@@ -50,7 +50,7 @@ while has_active_jobs_and_work(jobs):
     # CHECK LOGS FOR DELETED WORK
     logging.info(f'Checking log progress..')
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
-                       notification_settings=notification_settings)
+                       notification_settings=notification_settings, view_settings=view_settings)
     next_log_check = datetime.now() + timedelta(seconds=manager_check_interval)
 
     # DETERMINE IF JOB NEEDS TO START
