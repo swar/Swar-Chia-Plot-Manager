@@ -49,14 +49,10 @@ def load_jobs(config_jobs):
         job.max_for_phase_1 = info.get('max_for_phase_1', None)
         job.concurrency_disregard_phase = info.get('concurrency_disregard_phase', None)
         job.concurrency_disregard_phase_delay = info.get('concurrency_disregard_phase_delay', None)
+        job.temporary2_destination_sync = info.get('temporary2_destination_sync', False)
 
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']
-
-        if info['temporary2_destination_sync']:
-            job.temporary2_destination_sync = info['temporary2_destination_sync']
-        else:
-            job.temporary2_destination_sync = False
 
         temporary2_directory = info.get('temporary2_directory', None)
         if not temporary2_directory:
