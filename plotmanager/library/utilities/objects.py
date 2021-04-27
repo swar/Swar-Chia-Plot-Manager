@@ -51,5 +51,6 @@ class Work:
 
     progress = 0
     temp_file_size = 0
+    k_size = None
 
 

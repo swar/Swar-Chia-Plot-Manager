@@ -46,6 +46,14 @@ def get_chia_executable_name():
     return f'chia{".exe" if is_windows() else ""}'
 
 
+def get_plot_k_size(commands):
+    try:
+        k_index = commands.index('-k') + 1
+    except ValueError:
+        return None
+    return commands[k_index]
+
+
 def get_plot_directories(commands):
     try:
         temporary_index = commands.index('-t') + 1
@@ -164,6 +172,7 @@ def get_running_plots(jobs, running_work):
             break
 
         temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
+        k_size = get_plot_k_size(commands=process.cmdline())
         work = deepcopy(Work())
         work.job = assumed_job
         work.log_file = log_file_path
@@ -179,6 +188,7 @@ def get_running_plots(jobs, running_work):
         work.temporary2_drive = temporary2_drive
         work.destination_drive = destination_drive
         work.temp_file_size = temp_file_size
+        work.k_size = k_size
 
         running_work[work.pid] = work
     logging.info(f'Finished finding running plots')

@@ -11,9 +11,22 @@ def _get_row_info(pid, running_work, view_settings):
     phase_times = work.phase_times
     elapsed_time = (datetime.now() - work.datetime_start)
     elapsed_time = pretty_print_time(elapsed_time.seconds)
-    row = [work.job.name if work.job else '?', pid, work.datetime_start.strftime(view_settings['datetime_format']),
-           elapsed_time, work.current_phase, phase_times.get(1, ''), phase_times.get(2, ''), phase_times.get(3, ''),
-           phase_times.get(4, ''), work.progress, pretty_print_bytes(work.temp_file_size, 'gb', " GiB")]
+    phase_time_log = []
+    for i in range(1, 5):
+        if phase_times.get(i):
+            phase_time_log.append(phase_times.get(i))
+
+    row = [
+        work.job.name if work.job else '?',
+        work.k_size,
+        pid,
+        work.datetime_start.strftime(view_settings['datetime_format']),
+        elapsed_time,
+        work.current_phase,
+        ' / '.join(phase_time_log),
+        work.progress,
+        pretty_print_bytes(work.temp_file_size, 'gb', " GiB"),
+    ]
     return [str(cell) for cell in row]
 
 
@@ -53,7 +66,7 @@ def pretty_print_table(rows):
 
 def get_job_data(jobs, running_work, view_settings):
     rows = []
-    headers = ['num', 'job', 'pid', 'start', 'elapsed_time', 'current', 'phase1', 'phase2', 'phase3', 'phase4', 'progress', 'temp_size']
+    headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
     added_pids = []
     for job in jobs:
         for pid in job.running_work:
