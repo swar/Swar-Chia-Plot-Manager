@@ -149,7 +149,11 @@ def get_running_plots(jobs, running_work):
         log_file_path = None
         temp_file_size = 0
         for file in process.open_files():
-            temp_file_size += os.path.getsize(file.path)
+            # TODO: Fix, because not all temp files are openned so we're missing some. We need to get plot_id and then try to add sizes.
+            try:
+                temp_file_size += os.path.getsize(file.path)
+            except FileNotFoundError:
+                pass
             if '.mui' == file.path[-4:]:
                 continue
             if file.path[-4:] not in ['.log', '.txt']:
