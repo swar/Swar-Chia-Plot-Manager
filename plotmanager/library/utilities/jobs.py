@@ -49,6 +49,7 @@ def load_jobs(config_jobs):
         job.max_for_phase_1 = info.get('max_for_phase_1', None)
         job.concurrency_disregard_phase = info.get('concurrency_disregard_phase', None)
         job.concurrency_disregard_phase_delay = info.get('concurrency_disregard_phase_delay', None)
+        job.temporary2_destination_sync = info.get('temporary2_destination_sync', False)
 
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']
@@ -129,7 +130,6 @@ def start_work(job, chia_location, log_directory):
     logging.info(f'Job log file path: {log_file_path}')
     destination_directory, temporary2_directory = get_target_directories(job)
     logging.info(f'Job destination directory: {destination_directory}')
-    logging.info(f'Job temporary2 directory: {temporary2_directory}')
 
     work = deepcopy(Work())
     work.job = job
@@ -138,6 +138,11 @@ def start_work(job, chia_location, log_directory):
     work.work_id = job.current_work_id
 
     job.current_work_id += 1
+
+    if job.temporary2_destination_sync:
+        logging.info(f'Job temporary2 and destination sync')
+        temporary2_directory = destination_directory
+    logging.info(f'Job temporary2 directory: {temporary2_directory}')
 
     plot_command = plots.create(
         chia_location=chia_location,

@@ -45,7 +45,7 @@ def get_chia_executable_name():
     return f'chia{".exe" if is_windows() else ""}'
 
 
-def get_plot_drives(commands):
+def get_plot_directories(commands):
     try:
         temporary_index = commands.index('-t') + 1
         destination_index = commands.index('-d') + 1
@@ -55,11 +55,23 @@ def get_plot_drives(commands):
         temporary2_index = commands.index('-2') + 1
     except ValueError:
         temporary2_index = None
-    temporary_drive = commands[temporary_index].split('\\')[0]
-    destination_drive = commands[destination_index].split('\\')[0]
-    temporary2_drive = None
+    temporary_directory = commands[temporary_index]
+    destination_directory = commands[destination_index]
+    temporary2_directory = None
     if temporary2_index:
-        temporary2_drive = commands[temporary2_index].split('\\')[0]
+        temporary2_directory = commands[temporary2_index]
+    return temporary_directory, temporary2_directory, destination_directory
+
+
+def get_plot_drives(commands, drives=None):
+    if not drives:
+        drives = get_system_drives()
+    temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=commands)
+    temporary_drive = identify_drive(file_path=temporary_directory, drives=drives)
+    destination_drive = identify_drive(file_path=destination_directory, drives=drives)
+    temporary2_drive = None
+    if temporary2_directory:
+        temporary2_drive = identify_drive(file_path=temporary2_directory, drives=drives)
     return temporary_drive, temporary2_drive, destination_drive
 
 
@@ -90,6 +102,23 @@ def get_chia_drives():
     return drive_stats
 
 
+def get_system_drives():
+    drives = []
+    for disk in psutil.disk_partitions():
+        drive = disk.mountpoint
+        drives.append(drive)
+    drives.sort(reverse=True)
+    return drives
+
+
+def identify_drive(file_path, drives):
+    for drive in drives:
+        if drive not in file_path:
+            continue
+        return drive
+    return None
+
+
 def get_running_plots(jobs, running_work):
     chia_processes = []
     logging.info(f'Getting running plots')
@@ -106,28 +135,31 @@ def get_running_plots(jobs, running_work):
 
     for datetime_start, process in chia_processes:
         logging.info(f'Finding log file for process: {process.pid}')
-        drives = []
         log_file_path = None
+        temp_file_size = 0
         for file in process.open_files():
             if '.mui' == file.path[-4:]:
                 continue
             if file.path[-4:] not in ['.log', '.txt']:
-                drives.append(file.path[0])
                 continue
             log_file_path = file.path
             logging.info(f'Found log file: {log_file_path}')
-        drives = list(set(drives))
         assumed_job = None
         logging.info(f'Finding associated job')
+
+        temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=process.cmdline())
         for job in jobs:
-            if job.temporary_directory[0] not in drives:
+            if temporary_directory != job.temporary_directory:
+                continue
+            if destination_directory not in job.destination_directory:
+                continue
+            if temporary2_directory and temporary2_directory not in job.temporary2_directory:
                 continue
             logging.info(f'Found job: {job.name}')
             assumed_job = job
             break
 
         temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
-
         work = deepcopy(Work())
         work.job = assumed_job
         work.log_file = log_file_path

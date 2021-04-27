@@ -3,6 +3,7 @@ import logging
 import os
 import psutil
 import re
+import socket
 
 from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
@@ -187,6 +188,10 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
             job.total_running -= 1
             job.total_completed += 1
 
-            send_notifications(title='Plot Completed', body='You completed a plot!', settings=notification_settings)
+            send_notifications(
+                title='Plot Completed',
+                body=f'You completed a plot on {socket.gethostname()}!',
+                settings=notification_settings,
+            )
             break
         del running_work[pid]
