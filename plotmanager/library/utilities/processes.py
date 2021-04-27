@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 import psutil
 import re
@@ -138,6 +139,7 @@ def get_running_plots(jobs, running_work):
         log_file_path = None
         temp_file_size = 0
         for file in process.open_files():
+            temp_file_size += os.path.getsize(file.path)
             if '.mui' == file.path[-4:]:
                 continue
             if file.path[-4:] not in ['.log', '.txt']:
@@ -174,6 +176,7 @@ def get_running_plots(jobs, running_work):
         work.temporary_drive = temporary_drive
         work.temporary2_drive = temporary2_drive
         work.destination_drive = destination_drive
+        work.temp_file_size = temp_file_size
 
         running_work[work.pid] = work
     logging.info(f'Finished finding running plots')

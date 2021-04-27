@@ -13,18 +13,18 @@ def _get_row_info(pid, running_work):
     elapsed_time = pretty_print_time(elapsed_time.seconds)
     row = [work.job.name if work.job else '?', pid, work.datetime_start.strftime('%Y-%m-%d %H:%M:%S'),
            elapsed_time, work.current_phase, phase_times.get(1, ''), phase_times.get(2, ''), phase_times.get(3, ''),
-           phase_times.get(4, ''), work.progress]
+           phase_times.get(4, ''), work.progress, pretty_print_bytes(work.temp_file_size, 'gb', " GiB")]
     return [str(cell) for cell in row]
 
 
-def pretty_print_bytes(size, size_type):
+def pretty_print_bytes(size, size_type, suffix=''):
     if size_type.lower() == 'gb':
         power = 3
     elif size_type.lower() == 'tb':
         power = 4
     else:
         raise Exception('Failed to identify size_type.')
-    return round(size / (1024 ** power), 2)
+    return f"{round(size / (1024 ** power), 2)}{suffix}"
 
 
 def pretty_print_time(seconds):
@@ -53,7 +53,7 @@ def pretty_print_table(rows):
 
 def get_job_data(jobs, running_work):
     rows = []
-    headers = ['num', 'job', 'pid', 'start', 'elapsed_time', 'current', 'phase1', 'phase2', 'phase3', 'phase4', 'progress']
+    headers = ['num', 'job', 'pid', 'start', 'elapsed_time', 'current', 'phase1', 'phase2', 'phase3', 'phase4', 'progress', 'temp_size']
     added_pids = []
     for job in jobs:
         for pid in job.running_work:
@@ -80,8 +80,8 @@ def get_drive_data(drives):
     for drive_type, drives in drives.items():
         for drive in drives:
             usage = psutil.disk_usage(drive)
-            rows.append([drive_type, drive, f'{pretty_print_bytes(usage.used, "tb")}TB',
-                         f'{pretty_print_bytes(usage.total, "tb")}TB', f'{usage.percent}%',
+            rows.append([drive_type, drive, f'{pretty_print_bytes(usage.used, "tb", "TiB")}',
+                         f'{pretty_print_bytes(usage.total, "tb", "TiB")}', f'{usage.percent}%',
                          str(chia_drives[drive_type].get(drive, '?'))])
     return pretty_print_table(rows)
 
