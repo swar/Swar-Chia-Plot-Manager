@@ -107,6 +107,8 @@ def get_system_drives():
     drives = []
     for disk in psutil.disk_partitions():
         drive = disk.mountpoint
+        if is_windows():
+            drive = os.path.splitdrive(drive)[0]
         drives.append(drive)
     drives.sort(reverse=True)
     return drives
