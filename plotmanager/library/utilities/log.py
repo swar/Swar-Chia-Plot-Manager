@@ -188,6 +188,10 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
             job.total_running -= 1
             job.total_completed += 1
 
-            send_notifications(title='Plot Completed', body='You completed a plot on ' + socket.gethostname() +'!', settings=notification_settings)
+            send_notifications(
+                title='Plot Completed',
+                body=f'You completed a plot on {socket.gethostname()}!',
+                settings=notification_settings,
+            )
             break
         del running_work[pid]
