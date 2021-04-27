@@ -25,19 +25,21 @@ def _get_row_info(pid, running_work, view_settings):
         work.current_phase,
         ' / '.join(phase_time_log),
         work.progress,
-        pretty_print_bytes(work.temp_file_size, 'gb', " GiB"),
+        pretty_print_bytes(work.temp_file_size, 'gb', 0, " GiB"),
     ]
     return [str(cell) for cell in row]
 
 
-def pretty_print_bytes(size, size_type, suffix=''):
+def pretty_print_bytes(size, size_type, significant_digits=2, suffix=''):
     if size_type.lower() == 'gb':
         power = 3
     elif size_type.lower() == 'tb':
         power = 4
     else:
         raise Exception('Failed to identify size_type.')
-    return f"{round(size / (1024 ** power), 2)}{suffix}"
+    calculated_value = round(size / (1024 ** power), significant_digits)
+    calculated_value = f'{calculated_value:.{significant_digits}f}'
+    return f"{calculated_value}{suffix}"
 
 
 def pretty_print_time(seconds, include_seconds=True):
@@ -79,7 +81,7 @@ def get_job_data(jobs, running_work, view_settings):
             continue
         rows.append(_get_row_info(pid, running_work, view_settings))
         added_pids.append(pid)
-    rows.sort(key=lambda x: (x[3]), reverse=True)
+    rows.sort(key=lambda x: (x[4]), reverse=True)
     for i in range(len(rows)):
         rows[i] = [str(i+1)] + rows[i]
     rows = [headers] + rows
@@ -93,8 +95,8 @@ def get_drive_data(drives):
     for drive_type, drives in drives.items():
         for drive in drives:
             usage = psutil.disk_usage(drive)
-            rows.append([drive_type, drive, f'{pretty_print_bytes(usage.used, "tb", "TiB")}',
-                         f'{pretty_print_bytes(usage.total, "tb", "TiB")}', f'{usage.percent}%',
+            rows.append([drive_type, drive, f'{pretty_print_bytes(usage.used, "tb", 2, "TiB")}',
+                         f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}', f'{usage.percent}%',
                          str(chia_drives[drive_type].get(drive, '?'))])
     return pretty_print_table(rows)
 
@@ -124,7 +126,7 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
         print(f'CPU Usage: {psutil.cpu_percent()}%')
     if view_settings.get('include_ram'):
         ram_usage = psutil.virtual_memory()
-        print(f'RAM Usage: {pretty_print_bytes(ram_usage.used, "gb")}/{pretty_print_bytes(ram_usage.total, "gb", "GiB")}'
+        print(f'RAM Usage: {pretty_print_bytes(ram_usage.used, "gb")}/{pretty_print_bytes(ram_usage.total, "gb", 2, "GiB")}'
               f'({ram_usage.percent}%)')
     print()
     if view_settings.get('include_plot_stats'):
