@@ -96,9 +96,14 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
         if job.concurrency_disregard_phase is not None:
             for pid in job.running_work:
                 work = running_work[pid]
+                try:
+                    disregard_date = work.phase_dates[job.concurrency_disregard_phase - 1]
+                except KeyError:
+                    disregard_date = work.datetime_start
+
                 if work.current_phase < job.concurrency_disregard_phase:
                     continue
-                if datetime.now() <= (work.phase_dates[job.concurrency_disregard_phase - 1] + timedelta(minutes=job.concurrency_disregard_phase_delay)):
+                if datetime.now() <= (disregard_date + timedelta(minutes=job.concurrency_disregard_phase_delay)):
                     continue
                 discount_running += 1
         if (job.total_running - discount_running) >= job.max_concurrent:
