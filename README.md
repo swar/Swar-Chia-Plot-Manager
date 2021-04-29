@@ -6,6 +6,18 @@
 
 This is a cross-platform Chia Plot Manager that will work on the major operating systems. This is not a plotter. The purpose of this library is to manage your plotting and kick off new plots with the settings that you configure. Everyone's system is unique so customization is an important feature that was engraved into this library.
 
+This library is simple, easy-to-use, and reliable to keep the plots generating.
+
+This library has been tested for Windows and Linux.
+
+## Features
+
+* Stagger your plots so that your computer resources can avoid high peaks.
+* Allow for a list of destination directories.
+* Utilize temporary space to its maximum potential by starting a new plot early.
+* Run a maximum number of plots concurrently to avoid bottlenecks or limit resource hogging.
+* More in-depth active plot screen.
+
 ## Installation
 
 The installation of this library is straightforward. I have attached detailed instructions below that should help you get started. 
