@@ -130,6 +130,32 @@ def identify_drive(file_path, drives):
     return None
 
 
+def get_plot_id(file_path=None, contents=None):
+    if not contents:
+        f = open(file_path, 'r')
+        contents = f.read()
+        f.close()
+
+    match = re.search(rf'^ID: (.*?)$', contents, flags=re.M)
+    if match:
+        return match.groups()[0]
+    return None
+
+
+def get_temp_size(plot_id, temporary_directory, temporary2_directory):
+    if not plot_id:
+        return 0
+    temp_size = 0
+    directories = [os.path.join(temporary_directory, file) for file in os.listdir(temporary_directory)]
+    if temporary2_directory:
+        directories += [os.path.join(temporary2_directory, file) for file in os.listdir(temporary2_directory)]
+    for file_path in directories:
+        if plot_id not in file_path:
+            continue
+        temp_size += os.path.getsize(file_path)
+    return temp_size
+
+
 def get_running_plots(jobs, running_work):
     chia_processes = []
     logging.info(f'Getting running plots')
@@ -151,13 +177,7 @@ def get_running_plots(jobs, running_work):
     for datetime_start, process in chia_processes:
         logging.info(f'Finding log file for process: {process.pid}')
         log_file_path = None
-        temp_file_size = 0
         for file in process.open_files():
-            # TODO: Fix, because not all temp files are openned so we're missing some. We need to get plot_id and then try to add sizes.
-            try:
-                temp_file_size += os.path.getsize(file.path)
-            except FileNotFoundError:
-                pass
             if '.mui' == file.path[-4:]:
                 continue
             if file.path[-4:] not in ['.log', '.txt']:
@@ -185,6 +205,13 @@ def get_running_plots(jobs, running_work):
             assumed_job = job
             break
 
+        plot_id = None
+        if log_file_path:
+            plot_id = get_plot_id(file_path=log_file_path)
+
+        temp_file_size = get_temp_size(plot_id=plot_id, temporary_directory=temporary_directory,
+                                       temporary2_directory=temporary2_directory)
+
         temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
         k_size = get_plot_k_size(commands=process.cmdline())
         work = deepcopy(Work())
@@ -192,6 +219,7 @@ def get_running_plots(jobs, running_work):
         work.log_file = log_file_path
         work.datetime_start = datetime_start
         work.pid = process.pid
+        work.plot_id = plot_id
         work.work_id = '?'
         if assumed_job:
             work.work_id = assumed_job.current_work_id

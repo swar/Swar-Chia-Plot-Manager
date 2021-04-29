@@ -33,6 +33,7 @@ class Work:
     work_id = None
     job = None
     pid = None
+    plot_id = None
     log_file = None
 
     temporary_drive = None
