@@ -139,6 +139,10 @@ def get_running_plots(jobs, running_work):
             continue
         if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
+        if process.parent():
+            parent_commands = process.parent().cmdline()
+            if 'plots' in parent_commands and 'create' in parent_commands:
+                continue
         logging.info(f'Found chia plotting process: {process.pid}')
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])
