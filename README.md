@@ -2,6 +2,8 @@
 
 #### A plot manager for Chia plotting: https://www.chia.net/
 
+![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
+
 ##### Development Version: v0.0.1
 
 This is a cross-platform Chia Plot Manager that will work on the major operating systems. This is not a plotter. The purpose of this library is to manage your plotting and kick off new plots with the settings that you configure. Everyone's system is unique so customization is an important feature that was engraved into this library.
