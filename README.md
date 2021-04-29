@@ -66,11 +66,9 @@ This plot manager works based on the idea of jobs. Each job will have its own se
 
 This is a single variable that should contain the location of your chia executable file. This is the blockchain executable.
 
-Windows Example: `C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe`
-
-Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
-
-Another Linux Example: `/home/swar/chia-blockchain/venv/bin/chia`
+* Windows Example: `C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe`
+* Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
+* Another Linux Example: `/home/swar/chia-blockchain/venv/bin/chia`
 
 ### manager
 
