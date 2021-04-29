@@ -50,9 +50,10 @@ The installation of this library is straightforward. I have attached detailed in
 5. Install the required modules: `pip install -r requirements.txt`
 6. Copy `config.yaml.default` and name it as `config.yaml` in the same directory.
 7. Edit and set up the config.yaml to your own personal settings. There is more help on this below.
-8. Run the Manager: `python manager.py start`
+	* You will need to add the `chia_location` as well! This should point to your chia executable.
+9. Run the Manager: `python manager.py start`
    * This will start a process in the background that will manage plots based on your inputted settings.
-9. Run the View: `python manager.py view`
+10. Run the View: `python manager.py view`
    * This will loop through a view screen with details about active plots.
 
 
@@ -66,9 +67,9 @@ This plot manager works based on the idea of jobs. Each job will have its own se
 
 This is a single variable that should contain the location of your chia executable file. This is the blockchain executable.
 
-Windows Example: `C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe`
-
-Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
+* Windows Example: `C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe`
+* Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
+* Another Linux Example: `/home/swar/chia-blockchain/venv/bin/chia`
 
 ### manager
 
