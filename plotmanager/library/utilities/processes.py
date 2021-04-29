@@ -88,7 +88,7 @@ def get_chia_drives():
     drive_stats = {'temp': {}, 'temp2': {}, 'dest': {}}
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        if process.name() != chia_executable_name:
+        if chia_executable_name not in process.name():
             continue
         if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
@@ -164,7 +164,7 @@ def get_running_plots(jobs, running_work):
     logging.info(f'Getting running plots')
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        if process.name() != chia_executable_name:
+        if chia_executable_name not in process.name():
             continue
         if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
