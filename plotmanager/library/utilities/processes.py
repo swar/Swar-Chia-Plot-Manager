@@ -146,9 +146,9 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     if not plot_id:
         return 0
     temp_size = 0
-    directories = [os.path.join(temporary_directory, file) for file in os.listdir(temporary_directory)]
+    directories = [os.path.join(temporary_directory, file) for file in os.listdir(temporary_directory) if file]
     if temporary2_directory:
-        directories += [os.path.join(temporary2_directory, file) for file in os.listdir(temporary2_directory)]
+        directories += [os.path.join(temporary2_directory, file) for file in os.listdir(temporary2_directory) if file]
     for file_path in directories:
         if plot_id not in file_path:
             continue
