@@ -45,23 +45,23 @@ notifications:
 
   # DISCORD
   notify_discord: false
-  discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  # discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
   # PLAY AUDIO SOUND
   notify_sound: false
-  song: audio.mp3
+  # song: audio.mp3
 
   # PUSHOVER PUSH SERVICE
   notify_pushover: false
-  pushover_user_key: xx
-  pushover_api_key: xx
+  # pushover_user_key: xx
+  # pushover_api_key: xx
   
   # TWILIO
   notify_twilio: false
-  twilio_account_sid: xxxxx
-  twilio_auth_token: xxxxx
-  twilio_from_phone: +1234657890
-  twilio_to_phone: +1234657890
+  # twilio_account_sid: xxxxx
+  # twilio_auth_token: xxxxx
+  # twilio_from_phone: +1234657890
+  # twilio_to_phone: +1234657890
 
 
 progress:
