@@ -24,10 +24,10 @@ This library has been tested for Windows and Linux.
 
 This library took a lot of time and effort in order to get it before you today. Consider sponsoring or supporting the library. This is not necessary but more a kind gestures.
 
-* XCH Address: 
-* ETH Address:
-* BTC Address: 
-* Paypal: 
+* XCH Address: xch134evwwqkq50nnsmgehnnag4gc856ydc7ached3xxr6jdk7e8l4usdnw39t
+* ETH Address: 0xf8F7BD24B94D75E54BFD9557fF6904DBE239322E
+* BTC Address: 36gnjnHqkttcBiKjjAekoy68z6C3BJ9ekS
+* Paypal: https://www.paypal.com/biz/fund?id=XGVS7J69KYBTY
 
 
 ## Installation
