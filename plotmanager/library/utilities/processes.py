@@ -90,7 +90,10 @@ def get_chia_drives():
     for process in psutil.process_iter():
         if chia_executable_name not in process.name():
             continue
-        if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
+        try:
+            if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
+                continue
+        except psutil.ZombieProcess:
             continue
         commands = process.cmdline()
         temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
@@ -168,7 +171,10 @@ def get_running_plots(jobs, running_work):
     for process in psutil.process_iter():
         if chia_executable_name not in process.name():
             continue
-        if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
+        try:
+            if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
+                continue
+        except psutil.ZombieProcess:
             continue
         if process.parent():
             parent_commands = process.parent().cmdline()
