@@ -71,11 +71,11 @@ jobs:
     buckets: 128
     memory_buffer: 5000
     max_concurrent: 6
-    max_concurrent_with_disregard: 7
+    max_concurrent_with_start_early: 7
     stagger_minutes: 60
     max_for_phase_1: 2
-    concurrency_disregard_phase: 4
-    concurrency_disregard_phase_delay: 0
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
 
   - name: inland
@@ -95,9 +95,9 @@ jobs:
     buckets: 128
     memory_buffer: 5000
     max_concurrent: 2
-    max_concurrent_with_disregard: 3
+    max_concurrent_with_start_early: 3
     stagger_minutes: 180
     max_for_phase_1: 1
-    concurrency_disregard_phase: 4
-    concurrency_disregard_phase_delay: 0
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false

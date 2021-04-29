@@ -8,14 +8,14 @@ class Job:
     total_running = 0
     total_completed = 0
     max_concurrent = 0
-    max_concurrent_with_disregard = 0
+    max_concurrent_with_start_early = 0
     max_plots = 0
     temporary2_destination_sync = None
 
     stagger_minutes = None
     max_for_phase_1 = None
-    concurrency_disregard_phase = None
-    concurrency_disregard_phase_delay = None
+    concurrency_start_early_phase = None
+    concurrency_start_early_phase_delay = None
 
     running_work = []
 

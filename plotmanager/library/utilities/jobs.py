@@ -43,12 +43,12 @@ def load_jobs(config_jobs):
         job.farmer_public_key = info.get('farmer_public_key', None)
         job.pool_public_key = info.get('pool_public_key', None)
         job.max_concurrent = info['max_concurrent']
-        job.max_concurrent_with_disregard = info['max_concurrent_with_disregard']
+        job.max_concurrent_with_start_early = info['max_concurrent_with_start_early']
         job.max_for_phase_1 = info['max_for_phase_1']
         job.stagger_minutes = info.get('stagger_minutes', None)
         job.max_for_phase_1 = info.get('max_for_phase_1', None)
-        job.concurrency_disregard_phase = info.get('concurrency_disregard_phase', None)
-        job.concurrency_disregard_phase_delay = info.get('concurrency_disregard_phase_delay', None)
+        job.concurrency_start_early_phase = info.get('concurrency_start_early_phase', None)
+        job.concurrency_start_early_phase_delay = info.get('concurrency_start_early_phase_delay', None)
         job.temporary2_destination_sync = info.get('temporary2_destination_sync', False)
 
         job.temporary_directory = info['temporary_directory']
@@ -93,24 +93,24 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
             logging.info(f'Waiting for job stagger, skipping. Next allowable time: {next_job_work[job.name]}')
             continue
         discount_running = 0
-        if job.concurrency_disregard_phase is not None:
+        if job.concurrency_start_early_phase is not None:
             for pid in job.running_work:
                 work = running_work[pid]
                 try:
-                    disregard_date = work.phase_dates[job.concurrency_disregard_phase - 1]
+                    start_early_date = work.phase_dates[job.concurrency_start_early_phase - 1]
                 except KeyError:
-                    disregard_date = work.datetime_start
+                    start_early_date = work.datetime_start
 
-                if work.current_phase < job.concurrency_disregard_phase:
+                if work.current_phase < job.concurrency_start_early_phase:
                     continue
-                if datetime.now() <= (disregard_date + timedelta(minutes=job.concurrency_disregard_phase_delay)):
+                if datetime.now() <= (start_early_date + timedelta(minutes=job.concurrency_start_early_phase_delay)):
                     continue
                 discount_running += 1
         if (job.total_running - discount_running) >= job.max_concurrent:
-            logging.info(f'Job\'s max concurrent limit has been met, skipping. Max concurrent minus disregard: '
+            logging.info(f'Job\'s max concurrent limit has been met, skipping. Max concurrent minus start_early: '
                          f'{job.total_running - discount_running}, Max concurrent: {job.max_concurrent}')
             continue
-        if job.total_running >= job.max_concurrent_with_disregard:
+        if job.total_running >= job.max_concurrent_with_start_early:
             logging.info(f'Max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
             continue
         if job.stagger_minutes:
