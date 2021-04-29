@@ -10,6 +10,7 @@ This library is simple, easy-to-use, and reliable to keep the plots generating.
 
 This library has been tested for Windows and Linux.
 
+
 ## Features
 
 * Stagger your plots so that your computer resources can avoid high peaks.
@@ -17,6 +18,17 @@ This library has been tested for Windows and Linux.
 * Utilize temporary space to its maximum potential by starting a new plot early.
 * Run a maximum number of plots concurrently to avoid bottlenecks or limit resource hogging.
 * More in-depth active plot screen.
+
+
+## Sponsor / Support this Library
+
+This library took a lot of time and effort in order to get it before you today. Consider sponsoring or supporting the library. This is not necessary but more a kind gestures.
+
+* XCH Address: 
+* ETH Address:
+* BTC Address: 
+* Paypal: 
+
 
 ## Installation
 
