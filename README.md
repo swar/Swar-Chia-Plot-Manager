@@ -70,6 +70,8 @@ Windows Example: `C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\re
 
 Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
 
+Another Linux Example: `/home/swar/chia-blockchain/venv/bin/chia`
+
 ### manager
 
 These are the config settings that will only be used by the plot manager.
