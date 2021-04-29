@@ -8,10 +8,10 @@ manager:
 
 log:
   folder_path: S:\Chia\Logs\Plotter
-  check_interval: 60
 
 
 view:
+  check_interval: 60
   datetime_format: "%Y-%m-%d %H:%M:%S"
   include_seconds_for_phase: false
   include_drive_info: true

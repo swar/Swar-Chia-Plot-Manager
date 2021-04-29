@@ -43,9 +43,9 @@ def _get_log_settings(config):
     if 'log' not in config:
         raise InvalidYAMLConfigException('Failed to find the log parameter in the YAML.')
     log = config['log']
-    expected_parameters = ['folder_path', 'check_interval']
+    expected_parameters = ['folder_path']
     _check_parameters(parameter=log, expected_parameters=expected_parameters, parameter_type='log')
-    return log['folder_path'], log['check_interval']
+    return log['folder_path']
 
 
 def _get_jobs(config):
@@ -80,8 +80,8 @@ def _get_view_settings(config):
         raise InvalidYAMLConfigException('Failed to find view parameter in the YAML.')
     view = config['view']
     expected_parameters = ['datetime_format', 'include_seconds_for_phase', 'include_drive_info', 'include_cpu', 'include_ram',
-                           'include_plot_stats']
-    _check_parameters(parameter=view, expected_parameters=expected_parameters, parameter_type='notification')
+                           'include_plot_stats', 'check_interval']
+    _check_parameters(parameter=view, expected_parameters=expected_parameters, parameter_type='view')
     return view
 
 
@@ -102,7 +102,7 @@ def get_config_info():
     config = _get_config()
     chia_location = _get_chia_location(config=config)
     manager_check_interval, log_level = _get_manager_settings(config=config)
-    log_directory, log_check_interval = _get_log_settings(config=config)
+    log_directory = _get_log_settings(config=config)
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
     jobs = _get_jobs(config=config)
@@ -111,5 +111,5 @@ def get_config_info():
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
 
-    return chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
+    return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
         progress_settings, notification_settings, log_level, view_settings

@@ -28,8 +28,8 @@ def start_manager():
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
 
-    chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings, debug_level, view_settings = get_config_info()
+    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
+        notification_settings, debug_level, view_settings = get_config_info()
 
     extra_args = []
     if is_windows():
@@ -70,8 +70,9 @@ def stop_manager():
 
 
 def view():
-    chia_location, log_directory, config_jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings, debug_level, view_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
+        notification_settings, debug_level, view_settings = get_config_info()
+    view_check_interval = view_settings['check_interval']
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
@@ -107,7 +108,7 @@ def view():
                                notification_settings=notification_settings, view_settings=view_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=60), view_settings=view_settings)
-            time.sleep(60)
+            time.sleep(view_check_interval)
             has_file = False
             if len(running_work.values()) == 0:
                 has_file = True
@@ -126,6 +127,6 @@ def view():
 
 
 def analyze_logs():
-    chia_location, log_directory, jobs, manager_check_interval, log_check_interval, max_concurrent, \
-        progress_settings, notification_settings, debug_level, view_settings = get_config_info()
+    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
+       notification_settings, debug_level, view_settings = get_config_info()
     analyze_log_times(log_directory)
