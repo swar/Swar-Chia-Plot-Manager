@@ -123,6 +123,8 @@ def get_system_drives():
 
 
 def identify_drive(file_path, drives):
+    if not file_path:
+        return None
     for drive in drives:
         if drive not in file_path:
             continue
