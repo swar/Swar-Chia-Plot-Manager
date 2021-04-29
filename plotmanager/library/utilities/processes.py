@@ -152,7 +152,10 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     for file_path in directories:
         if plot_id not in file_path:
             continue
-        temp_size += os.path.getsize(file_path)
+        try:
+            temp_size += os.path.getsize(file_path)
+        except FileNotFoundError:
+            pass
     return temp_size
 
 
