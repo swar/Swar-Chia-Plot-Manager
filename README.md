@@ -46,7 +46,7 @@ The installation of this library is straightforward. I have attached detailed in
 	   * Example Linux: `./venv/bin/activate`
 	3. Confirm that it has activated by seeing the `(venv)` prefix. The prefix will change depending on what you named it.
 5. Install the required modules: `pip install -r requirements.txt`
-6. Copy `config.yaml.DEFAULT` and name it as `config.yaml` in the same directory.
+6. Copy `config.yaml.default` and name it as `config.yaml` in the same directory.
 7. Edit and set up the config.yaml to your own personal settings. There is more help on this below.
 8. Run the Manager: `python manager.py start`
    * This will start a process in the background that will manage plots based on your inputted settings.
