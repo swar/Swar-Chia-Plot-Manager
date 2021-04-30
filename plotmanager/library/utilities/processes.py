@@ -88,15 +88,9 @@ def get_chia_drives():
     drive_stats = {'temp': {}, 'temp2': {}, 'dest': {}}
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        try:
-            if chia_executable_name not in process.name() and 'python' not in process.name().lower():
-                continue
-        except psutil.AccessDenied:
+        if process.name() != chia_executable_name:
             continue
-        try:
-            if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
-                continue
-        except psutil.ZombieProcess:
+        if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
         commands = process.cmdline()
         temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
@@ -129,8 +123,6 @@ def get_system_drives():
 
 
 def identify_drive(file_path, drives):
-    if not file_path:
-        return None
     for drive in drives:
         if drive not in file_path:
             continue
@@ -154,9 +146,9 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     if not plot_id:
         return 0
     temp_size = 0
-    directories = [os.path.join(temporary_directory, file) for file in os.listdir(temporary_directory) if file]
+    directories = [os.path.join(temporary_directory, file) for file in os.listdir(temporary_directory)]
     if temporary2_directory:
-        directories += [os.path.join(temporary2_directory, file) for file in os.listdir(temporary2_directory) if file]
+        directories += [os.path.join(temporary2_directory, file) for file in os.listdir(temporary2_directory)]
     for file_path in directories:
         if plot_id not in file_path:
             continue
@@ -172,15 +164,9 @@ def get_running_plots(jobs, running_work):
     logging.info(f'Getting running plots')
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
-        try:
-            if chia_executable_name not in process.name() and 'python' not in process.name().lower():
-                continue
-        except psutil.AccessDenied:
+        if process.name() != chia_executable_name:
             continue
-        try:
-            if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
-                continue
-        except psutil.ZombieProcess:
+        if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
             continue
         if process.parent():
             parent_commands = process.parent().cmdline()
