@@ -55,7 +55,10 @@ def get_completed_log_files(log_directory, skip=None):
         if file_path in skip:
             continue
         f = open(file_path, 'r')
-        contents = f.read()
+        try:
+            contents = f.read()
+        except UnicodeDecodeError:
+            continue
         f.close()
         if 'Total time = ' not in contents:
             continue
