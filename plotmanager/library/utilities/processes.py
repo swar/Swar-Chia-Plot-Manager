@@ -205,7 +205,7 @@ def get_running_plots(jobs, running_work):
                 log_file_path = file.path
                 logging.info(f'Found log file: {log_file_path}')
                 break
-        except psutil.AccessDenied:
+        except (psutil.AccessDenied, RuntimeError):
             logging.info(f'Failed to find log file: {process.pid}')
 
         assumed_job = None
