@@ -201,6 +201,8 @@ def get_running_plots(jobs, running_work):
                 continue
             if file.path[-4:] not in ['.log', '.txt']:
                 continue
+            if file.path[-11:] == 'manager.log':
+                continue
             log_file_path = file.path
             logging.info(f'Found log file: {log_file_path}')
         assumed_job = None
