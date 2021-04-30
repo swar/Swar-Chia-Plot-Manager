@@ -173,7 +173,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         work.current_phase = current_phase
         work.progress = f'{progress:.2f}%'
 
-        if psutil.pid_exists(pid) and 'renamed final file from ' not in data:
+        if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
             logging.info(f'PID still alive: {pid}')
             continue
 
