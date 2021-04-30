@@ -44,7 +44,7 @@ def start_manager():
     start_process(args=args, log_file=manager_log_file)
     time.sleep(3)
     if not get_manager_processes():
-        raise ManagerError('Failed to start Manager.')
+        raise ManagerError('Failed to start Manager. Please look at manager.log for more details on the error. It is in the same folder as manager.py.')
 
     send_notifications(
         title='Plot manager started',
