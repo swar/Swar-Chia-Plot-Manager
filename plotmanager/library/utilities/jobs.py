@@ -98,7 +98,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
                 work = running_work[pid]
                 try:
                     start_early_date = work.phase_dates[job.concurrency_start_early_phase - 1]
-                except KeyError:
+                except (KeyError, AttributeError):
                     start_early_date = work.datetime_start
 
                 if work.current_phase < job.concurrency_start_early_phase:
