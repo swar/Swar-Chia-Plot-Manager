@@ -196,15 +196,20 @@ def get_running_plots(jobs, running_work):
     for datetime_start, process in chia_processes:
         logging.info(f'Finding log file for process: {process.pid}')
         log_file_path = None
-        for file in process.open_files():
-            if '.mui' == file.path[-4:]:
-                continue
-            if file.path[-4:] not in ['.log', '.txt']:
-                continue
-            if file.path[-11:] == 'manager.log':
-                continue
-            log_file_path = file.path
-            logging.info(f'Found log file: {log_file_path}')
+        try:
+            for file in process.open_files():
+                if '.mui' == file.path[-4:]:
+                    continue
+                if file.path[-4:] not in ['.log', '.txt']:
+                    continue
+                if file.path[-11:] == 'manager.log':
+                    continue
+                log_file_path = file.path
+                logging.info(f'Found log file: {log_file_path}')
+                break
+        except (psutil.AccessDenied, RuntimeError):
+            logging.info(f'Failed to find log file: {process.pid}')
+
         assumed_job = None
         logging.info(f'Finding associated job')
 
