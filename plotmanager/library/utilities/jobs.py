@@ -50,6 +50,7 @@ def load_jobs(config_jobs):
         job.concurrency_start_early_phase = info.get('concurrency_start_early_phase', None)
         job.concurrency_start_early_phase_delay = info.get('concurrency_start_early_phase_delay', None)
         job.temporary2_destination_sync = info.get('temporary2_destination_sync', False)
+        job.exclude_final_dir = info.get('exclude_final_dir', False)
 
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']
@@ -161,6 +162,7 @@ def start_work(job, chia_location, log_directory):
         threads=job.threads,
         buckets=job.buckets,
         bitfield=job.bitfield,
+        exclude_final_dir=job.exclude_final_dir,
     )
     logging.info(f'Starting with plot command: {plot_command}')
 
