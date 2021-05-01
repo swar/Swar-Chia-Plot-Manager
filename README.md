@@ -45,7 +45,7 @@ The installation of this library is straightforward. I have attached detailed in
 	   * The second `venv` can be renamed to whatever you want. I prefer `venv` because it's a standard.
 	2. Activate the virtual environment. This must be done *every single time* you open a new window.
 	   * Example Windows: `venv\Scripts\activate`
-	   * Example Linux: `./venv/bin/activate`
+	   * Example Linux: `. ./venv/bin/activate` or `source ./venv/bin/activate`
 	3. Confirm that it has activated by seeing the `(venv)` prefix. The prefix will change depending on what you named it.
 5. Install the required modules: `pip install -r requirements.txt`
 6. Copy `config.yaml.default` and name it as `config.yaml` in the same directory.
