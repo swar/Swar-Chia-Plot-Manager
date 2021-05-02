@@ -18,7 +18,7 @@ from plotmanager.library.utilities.processes import is_windows, get_manager_proc
 
 def start_manager():
     if get_manager_processes():
-        raise ManagerError('Manger is already running.')
+        raise ManagerError('Manager is already running.')
 
     directory = pathlib.Path().resolve()
     stateless_manager_path = os.path.join(directory, 'stateless-manager.py')
