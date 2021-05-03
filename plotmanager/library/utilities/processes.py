@@ -185,9 +185,12 @@ def get_running_plots(jobs, running_work):
         except psutil.ZombieProcess:
             continue
         if process.parent():
-            parent_commands = process.parent().cmdline()
-            if 'plots' in parent_commands and 'create' in parent_commands:
-                continue
+            try:
+                parent_commands = process.parent().cmdline()
+                if 'plots' in parent_commands and 'create' in parent_commands:
+                    continue
+            except (psutil.AccessDenied, psutil.ZombieProcess):
+                pass
         logging.info(f'Found chia plotting process: {process.pid}')
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])
