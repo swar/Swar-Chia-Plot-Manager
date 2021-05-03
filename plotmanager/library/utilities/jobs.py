@@ -111,7 +111,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
                          f'{job.total_running - discount_running}, Max concurrent: {job.max_concurrent}')
             continue
         if job.total_running >= job.max_concurrent_with_start_early:
-            logging.info(f'Max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
+            logging.info(f'Job\'s max concurrnet limit with start early has been met, skipping. Max: {job.max_concurrent_with_start_early}')
             continue
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
