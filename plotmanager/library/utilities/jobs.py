@@ -126,9 +126,9 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
 
 def start_work(job, chia_location, log_directory):
     logging.info(f'Starting new plot for job: {job.name}')
-    nice_val = 15
+    nice_val = 10
     if is_windows():
-        nice_val = psutil.REALTIME_PRIORITY_CLASS
+        nice_val = psutil.NORMAL_PRIORITY_CLASS
 
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
