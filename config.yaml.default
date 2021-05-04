@@ -65,7 +65,7 @@ notifications:
   twilio_to_phone: +1234657890
 
 instrumentation:
-  prometheus_enabled: true
+  prometheus_enabled: false
   prometheus_port: 9093
 
 
