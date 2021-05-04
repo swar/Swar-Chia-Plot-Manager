@@ -5,6 +5,7 @@ import psutil
 import re
 import socket
 
+from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
 
@@ -191,6 +192,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
                 job.running_work.remove(pid)
             job.total_running -= 1
             job.total_completed += 1
+            increment_plots_completed(1, job.name)
 
             send_notifications(
                 title='Plot Completed',
