@@ -9,6 +9,7 @@ from copy import deepcopy
 from datetime import datetime
 
 from plotmanager.library.utilities.objects import Work
+from plotmanager.library.utilities.instrumentation import set_plots_running
 
 
 def _contains_in_list(string, lst, case_insensitive=False):
@@ -229,6 +230,7 @@ def get_running_plots(jobs, running_work):
                 if not job.temporary2_destination_sync and temporary2_directory not in job_temporary2_directory:
                     continue
             logging.info(f'Found job: {job.name}')
+            set_plots_running(job.total_running, job.name)
             assumed_job = job
             break
 
