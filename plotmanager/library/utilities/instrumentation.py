@@ -9,8 +9,8 @@ settings = get_instrumentation_settings()
 
 def _get_metrics():
     if settings.prometheus_enabled:
-        gauge_plots_running = Gauge('chia_running_plots', 'Number of running plots', ['hostname', 'job'])
-        counter_plots_completed = Counter('chia_completed_plots', 'Total completed plots', ['hostname', 'job'])
+        gauge_plots_running = Gauge('chia_running_plots', 'Number of running plots', ['hostname', 'queue'])
+        counter_plots_completed = Counter('chia_completed_plots', 'Total completed plots', ['hostname', 'queue'])
         start_http_server(settings.prometheus_port)
         return gauge_plots_running, counter_plots_completed
     else:
@@ -24,13 +24,13 @@ gauge_plots_running, counter_plots_completed = _get_metrics()
 
 def set_plots_running(num_plots, job):
     if settings.prometheus_enabled:
-        gauge_plots_running.labels(hostname=hostname, job=job).set(num_plots)
+        gauge_plots_running.labels(hostname=hostname, queue=job).set(num_plots)
     else:
         logging.debug('Prometheus instrumentation not enabled')
 
 
 def increment_plots_completed(amount, job):
     if settings.prometheus_enabled:
-        counter_plots_completed.labels(hostname=hostname, job=job).inc(amount)
+        counter_plots_completed.labels(hostname=hostname, queue=job).inc(amount)
     else:
         logging.debug('Prometheus instrumentation not enabled')
