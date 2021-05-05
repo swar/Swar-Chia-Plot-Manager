@@ -230,7 +230,6 @@ def get_running_plots(jobs, running_work):
                 if not job.temporary2_destination_sync and temporary2_directory not in job_temporary2_directory:
                     continue
             logging.info(f'Found job: {job.name}')
-            set_plots_running(job.total_running, job.name)
             assumed_job = job
             break
 
@@ -254,6 +253,7 @@ def get_running_plots(jobs, running_work):
             work.work_id = assumed_job.current_work_id
             assumed_job.current_work_id += 1
             assumed_job.total_running += 1
+            set_plots_running(assumed_job.total_running, assumed_job.name)
             assumed_job.running_work = assumed_job.running_work + [process.pid]
         work.temporary_drive = temporary_drive
         work.temporary2_drive = temporary2_drive
