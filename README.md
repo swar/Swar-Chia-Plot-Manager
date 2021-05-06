@@ -1,6 +1,7 @@
 # Swar's Chia Plot Manager 
 
 #### A plot manager for Chia plotting: https://www.chia.net/
+[English](README.md) / [Русский](README.RU.md)
 
 ![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
 
@@ -30,6 +31,33 @@ This library took a lot of time and effort in order to get it before you today. 
 * ETH Address: 0xf8F7BD24B94D75E54BFD9557fF6904DBE239322E
 * BTC Address: 36gnjnHqkttcBiKjjAekoy68z6C3BJ9ekS
 * Paypal: https://www.paypal.com/biz/fund?id=XGVS7J69KYBTY
+
+
+## Support / Questions
+
+Please do not use GitHub issues for questions or support regarding your own personal setups. Issues should pertain to actual bugs in the code and ideas. It has been tested to work on Windows, Linux, and Mac OS by numerous people at this point. So any questions relating to tech support, configuration setup, or things pertaining to your own personal use cases should be posted at any of the links below.
+* Official Chia Keybase Team: https://keybase.io/team/chia_network.public
+    * The channel is #swar 
+* GitHub Discussion Board: https://github.com/swar/Swar-Chia-Plot-Manager/discussions
+
+
+## Frequently Asked Questions
+
+##### Can I reload my config?
+* Yes, your config can be reloaded with the `python manager.py restart` command or separately you can stop and start manager again. Please note that your job counts will be reset and the temporary2 and destination directories order will be reset.
+* Please note that if you change any of the directories for a job, it will mess with existing jobs and `manager` and `view` will not be able to identify the old job. If you are changing job directories while having active plots, please change the `max_plots` for the current job to 0 and make a separate job with the new directories. I **do not recommend** changing directories while plots are running.
+
+##### If I stop manager will it kill my plots?
+* No. Plots are kicked off in the background and they will not kill your existing plots. If you want to kill them, you have access to the PIDs which you can use to track them down in Task Manager (or the appropriate software for your OS) and kill them manually. Please note you will have to delete the .tmp files as well. I do not handle this for you.
+
+##### How are temporary2 and destination selected if I have a list?
+* They are chosen in order. If you have two directories the first plot will select the first one, the second the second one, and the third plot will select the first one.
+
+##### What is `temporary2_destination_sync`?
+* Some users like having the option to always have the same temporary2 and destination directory. Enabling this setting will always have temporary2 be the drive that is used as destination. You can use an empty temporary2 directory list if you are using this setting.
+
+##### What is the best config for my setup?
+* Please forward this question to Keybase or the Discussion tab.
 
 
 ## Installation
