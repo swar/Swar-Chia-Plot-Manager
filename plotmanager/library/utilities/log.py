@@ -55,7 +55,10 @@ def get_completed_log_files(log_directory, skip=None):
         if file_path in skip:
             continue
         f = open(file_path, 'r')
-        contents = f.read()
+        try:
+            contents = f.read()
+        except UnicodeDecodeError:
+            continue
         f.close()
         if 'Total time = ' not in contents:
             continue
@@ -173,7 +176,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         work.current_phase = current_phase
         work.progress = f'{progress:.2f}%'
 
-        if psutil.pid_exists(pid) and 'renamed final file from ' not in data:
+        if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
             logging.info(f'PID still alive: {pid}')
             continue
 

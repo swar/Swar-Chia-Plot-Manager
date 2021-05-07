@@ -185,9 +185,12 @@ def get_running_plots(jobs, running_work):
         except psutil.ZombieProcess:
             continue
         if process.parent():
-            parent_commands = process.parent().cmdline()
-            if 'plots' in parent_commands and 'create' in parent_commands:
-                continue
+            try:
+                parent_commands = process.parent().cmdline()
+                if 'plots' in parent_commands and 'create' in parent_commands:
+                    continue
+            except (psutil.AccessDenied, psutil.ZombieProcess):
+                pass
         logging.info(f'Found chia plotting process: {process.pid}')
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])
@@ -196,13 +199,18 @@ def get_running_plots(jobs, running_work):
     for datetime_start, process in chia_processes:
         logging.info(f'Finding log file for process: {process.pid}')
         log_file_path = None
-        for file in process.open_files():
-            if '.mui' == file.path[-4:]:
-                continue
-            if file.path[-4:] not in ['.log', '.txt']:
-                continue
-            log_file_path = file.path
-            logging.info(f'Found log file: {log_file_path}')
+        try:
+            for file in process.open_files():
+                if '.mui' == file.path[-4:]:
+                    continue
+                if file.path[-4:] not in ['.log', '.txt']:
+                    continue
+                log_file_path = file.path
+                logging.info(f'Found log file: {log_file_path}')
+                break
+        except (psutil.AccessDenied, RuntimeError):
+            logging.info(f'Failed to find log file: {process.pid}')
+
         assumed_job = None
         logging.info(f'Finding associated job')
 
