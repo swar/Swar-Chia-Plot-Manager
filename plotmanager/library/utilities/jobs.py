@@ -21,14 +21,17 @@ def get_target_directories(job):
     job_offset = job.total_completed + job.total_running
 
     destination_directory = job.destination_directory
+    temporary_directory = job.temporary_directory
     temporary2_directory = job.temporary2_directory
 
     if isinstance(job.destination_directory, list):
         destination_directory = job.destination_directory[job_offset % len(job.destination_directory)]
+    if isinstance(job.temporary_directory, list):
+        temporary_directory = job.temporary_directory[job_offset % len(job.temporary_directory)]
     if isinstance(job.temporary2_directory, list):
         temporary2_directory = job.temporary2_directory[job_offset % len(job.temporary2_directory)]
 
-    return destination_directory, temporary2_directory
+    return destination_directory, temporary_directory, temporary2_directory
 
 
 def load_jobs(config_jobs):
@@ -133,7 +136,7 @@ def start_work(job, chia_location, log_directory):
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
     logging.info(f'Job log file path: {log_file_path}')
-    destination_directory, temporary2_directory = get_target_directories(job)
+    destination_directory, temporary_directory, temporary2_directory = get_target_directories(job)
     logging.info(f'Job destination directory: {destination_directory}')
 
     work = deepcopy(Work())
@@ -155,7 +158,7 @@ def start_work(job, chia_location, log_directory):
         pool_public_key=job.pool_public_key,
         size=job.size,
         memory_buffer=job.memory_buffer,
-        temporary_directory=job.temporary_directory,
+        temporary_directory=temporary_directory,
         temporary2_directory=temporary2_directory,
         destination_directory=destination_directory,
         threads=job.threads,
