@@ -69,7 +69,17 @@ def load_jobs(config_jobs):
     return jobs
 
 
-def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory, next_log_check):
+def monitor_jobs_to_start(
+        jobs,
+        running_work,
+        max_concurrent,
+        next_job_work,
+        chia_location,
+        log_directory,
+        next_log_check,
+        enable_cpu_affinity,
+        cpu_affinity
+):
     for i, job in enumerate(jobs):
         logging.info(f'Checking to queue work for job: {job.name}')
         if len(running_work.values()) >= max_concurrent:
@@ -116,7 +126,13 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
             logging.info(f'Calculating new job stagger time. Next stagger kickoff: {next_job_work[job.name]}')
-        job, work = start_work(job=job, chia_location=chia_location, log_directory=log_directory)
+        job, work = start_work(
+            job=job,
+            chia_location=chia_location,
+            log_directory=log_directory,
+            enable_cpu_affinity=enable_cpu_affinity,
+            cpu_affinity=cpu_affinity
+        )
         jobs[i] = deepcopy(job)
         next_log_check = datetime.now()
         running_work[work.pid] = work
@@ -124,7 +140,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
     return jobs, running_work, next_job_work, next_log_check
 
 
-def start_work(job, chia_location, log_directory):
+def start_work(job, chia_location, log_directory, enable_cpu_affinity, cpu_affinity):
     logging.info(f'Starting new plot for job: {job.name}')
     nice_val = 10
     if is_windows():
@@ -173,6 +189,10 @@ def start_work(job, chia_location, log_directory):
     logging.info(f'Setting priority level: {nice_val}')
     psutil.Process(pid).nice(nice_val)
     logging.info(f'Set priority level')
+    if enable_cpu_affinity:
+        logging.info(f'Setting process cpu affinity: {cpu_affinity}')
+        psutil.Process(pid).cpu_affinity(cpu_affinity)
+        logging.info(f'Set process cpu affinity')
 
     work.pid = pid
     job.total_running += 1

@@ -29,7 +29,9 @@ def start_manager():
     python_file_path = sys.executable
 
     chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+        notification_settings, debug_level, view_settings, \
+        enable_cpu_affinity, cpu_affinity \
+        = get_config_info()
 
     extra_args = []
     if is_windows():
@@ -71,7 +73,9 @@ def stop_manager():
 
 def view():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+        notification_settings, debug_level, view_settings, \
+        enable_cpu_affinity, cpu_affinity \
+        = get_config_info()
     view_check_interval = view_settings['check_interval']
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
@@ -128,5 +132,7 @@ def view():
 
 def analyze_logs():
     chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
-       notification_settings, debug_level, view_settings = get_config_info()
+       notification_settings, debug_level, view_settings, \
+       enable_cpu_affinity, cpu_affinity \
+       = get_config_info()
     analyze_log_times(log_directory)
