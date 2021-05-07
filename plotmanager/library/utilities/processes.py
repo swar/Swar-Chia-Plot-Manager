@@ -33,7 +33,7 @@ def get_manager_processes():
                     not _contains_in_list('stateless-manager.py', process.cmdline()):
                 continue
             processes.append(process)
-        except psutil.NoSuchProcess:
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
     return processes
 
