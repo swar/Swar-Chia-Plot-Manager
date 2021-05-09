@@ -3,7 +3,7 @@
 # WINDOWS EXAMPLE: C:\Users\Swar\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe
 #   LINUX EXAMPLE: /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia
 #  LINUX2 EXAMPLE: /home/swar/chia-blockchain/venv/bin/chia
-chia_location:
+chia_location: /home/root/chia-blockchain/venv/bin/chia
 
 
 manager:
@@ -18,7 +18,7 @@ manager:
 
 log:
   # folder_path: This is the folder where your log files for plots will be saved.
-  folder_path: S:\Chia\Logs\Plotter
+  folder_path: /root/chia/logs
 
 
 view:
