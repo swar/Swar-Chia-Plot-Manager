@@ -77,10 +77,9 @@ def view():
     drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
     for job in jobs:
-        drive = job.temporary_directory.split('\\')[0]
-        drives['temp'].append(drive)
         directories = {
             'dest': job.destination_directory,
+            'temp': job.temporary_directory,
             'temp2': job.temporary2_directory,
         }
         for key, directory_list in directories.items():
