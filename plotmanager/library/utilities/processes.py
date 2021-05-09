@@ -218,7 +218,9 @@ def get_running_plots(jobs, running_work):
 
         temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=process.cmdline())
         for job in jobs:
-            if temporary_directory != job.temporary_directory:
+            if isinstance(job.temporary_directory, list) and temporary_directory not in job.temporary_directory:
+                continue
+            if not isinstance(job.temporary_directory, list) and temporary_directory != job.temporary_directory:
                 continue
             if destination_directory not in job.destination_directory:
                 continue
