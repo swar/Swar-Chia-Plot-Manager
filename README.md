@@ -157,5 +157,5 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `stagger_minutes` - The amount of minutes to wait before the next job can get kicked off. You can even set this to zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
 * `max_for_phase_1` - The maximum number of plots on phase 1 for this job.
 * `concurrency_start_early_phase` - The phase in which you want to start a plot early. It is recommended to use 4 for this field.
-* `concurrency_start_early_phase_delay` - The maximum number of seconds to wait before a new plot gets kicked off when the start early phase has been detected.
+* `concurrency_start_early_phase_delay` - The maximum number of minutes to wait before a new plot gets kicked off when the start early phase has been detected.
 * `temporary2_destination_sync` - This field will always submit the destination directory as the temporary2 directory. These two directories will be in sync so that they will always be submitted as the same value.
