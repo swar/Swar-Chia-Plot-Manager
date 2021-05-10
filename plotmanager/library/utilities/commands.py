@@ -109,7 +109,8 @@ def view():
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
                                                    instrumentation_settings=instrumentation_settings)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
-                               notification_settings=notification_settings, view_settings=view_settings)
+                               notification_settings=notification_settings, view_settings=view_settings,
+                               instrumentation_settings=instrumentation_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=60), view_settings=view_settings)
             time.sleep(view_check_interval)
