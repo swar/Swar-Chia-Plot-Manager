@@ -68,7 +68,6 @@ def pretty_print_table(rows):
 
 def get_job_data(jobs, running_work, view_settings):
     rows = []
-    headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
     added_pids = []
     for job in jobs:
         for pid in job.running_work:
@@ -84,23 +83,41 @@ def get_job_data(jobs, running_work, view_settings):
     rows.sort(key=lambda x: (x[4]), reverse=True)
     for i in range(len(rows)):
         rows[i] = [str(i+1)] + rows[i]
-    rows = [headers] + rows
+    return rows
+
+def pretty_print_job_data(job_data):
+    headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
+    rows = [headers] + job_data
     return pretty_print_table(rows)
 
 
-def get_drive_data(drives):
+def get_drive_data(drives, running_work, job_data):
     chia_drives = get_chia_drives()
-    headers = ['type', 'drive', 'used', 'total', 'percent', 'plots']
+    headers = ['type', 'drive', 'used', 'total', 'percent', 'plots', 'temp drive', 'temp2 drive', 'dest drive']
     rows = [headers]
+
+    pid_to_num = {}
+    for job in job_data:
+        pid_to_num[job[3]] = job[0]
+
     for drive_type, drives in drives.items():
-        for drive in drives:
+        for drive in drives: 
+            temp, temp2, dest = [], [], []
+            for job in running_work:
+                if running_work[job].temporary_drive == drive:
+                    temp.append(pid_to_num[str(running_work[job].pid)])
+                if running_work[job].temporary2_drive == drive:
+                    temp2.append(pid_to_num[str(running_work[job].pid)])
+                if running_work[job].destination_drive == drive:
+                    dest.append(pid_to_num[str(running_work[job].pid)])
+
             try:
                 usage = psutil.disk_usage(drive)
             except FileNotFoundError:
                 continue
             rows.append([drive_type, drive, f'{pretty_print_bytes(usage.used, "tb", 2, "TiB")}',
                          f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}', f'{usage.percent}%',
-                         str(chia_drives[drive_type].get(drive, '?'))])
+                         str(chia_drives[drive_type].get(drive, '?')), ", ".join(temp), ", ".join(temp2), ", ".join(dest)])
     return pretty_print_table(rows)
 
 
@@ -111,7 +128,7 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
     # Drive Table
     drive_data = ''
     if view_settings.get('include_drive_info'):
-        drive_data = get_drive_data(drives)
+        drive_data = get_drive_data(drives, running_work, job_data)
 
     manager_processes = get_manager_processes()
 
@@ -119,7 +136,7 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
         os.system('cls')
     else:
         os.system('clear')
-    print(job_data)
+    print(pretty_print_job_data(job_data))
     print(f'Manager Status: {"Running" if manager_processes else "Stopped"}')
     print()
 
