@@ -205,6 +205,8 @@ def get_running_plots(jobs, running_work):
                     continue
                 if file.path[-4:] not in ['.log', '.txt']:
                     continue
+                if file.path[-11:] == 'manager.log':
+                    continue
                 log_file_path = file.path
                 logging.info(f'Found log file: {log_file_path}')
                 break
@@ -216,7 +218,9 @@ def get_running_plots(jobs, running_work):
 
         temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=process.cmdline())
         for job in jobs:
-            if temporary_directory != job.temporary_directory:
+            if isinstance(job.temporary_directory, list) and temporary_directory not in job.temporary_directory:
+                continue
+            if not isinstance(job.temporary_directory, list) and temporary_directory != job.temporary_directory:
                 continue
             if destination_directory not in job.destination_directory:
                 continue
