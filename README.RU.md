@@ -36,6 +36,8 @@
 ## Support / Questions [Нужен перевод]
 
 Please do not use GitHub issues for questions or support regarding your own personal setups. Issues should pertain to actual bugs in the code and ideas. It has been tested to work on Windows, Linux, and Mac OS by numerous people at this point. So any questions relating to tech support, configuration setup, or things pertaining to your own personal use cases should be posted at any of the links below.
+* Discord Server: https://discord.gg/XyvMzeQpu2
+    * This is the Official Discord Server - Swar's Chia Community 
 * Official Chia Keybase Team: https://keybase.io/team/chia_network.public
     * The channel is #swar 
 * GitHub Discussion Board: https://github.com/swar/Swar-Chia-Plot-Manager/discussions
