@@ -126,6 +126,18 @@ These are the settings that will be used by the view.
 
 These are different settings in order to send notifications when the plot manager starts and when a plot has been completed.
 
+### instrumentation
+
+Settings for enabling Prometheus to gather metrics.
+
+* `prometheus_enabled` - If enabled, metrics will be gathered and an HTTP server will start up to expose the metrics for Prometheus.
+* `prometheus_port` - HTTP server port.
+
+### List of metrics gathered
+
+- **chia_running_plots**: A [Gauge](https://prometheus.io/docs/concepts/metric_types/#gauge) to see how many plots are currently being created
+- **chia_completed_plots**: A [Counter](https://prometheus.io/docs/concepts/metric_types/#counter) for completed plots
+
 ### progress
 
 * `phase_line_end` - These are the settings that will be used to dictate when a phase ends in the progress bar. It is supposed to reflect the line at which the phase will end so the progress calculations can use that information with the existing log file to calculate a progress percent. 

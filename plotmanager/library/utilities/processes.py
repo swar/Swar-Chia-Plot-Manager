@@ -9,6 +9,7 @@ from copy import deepcopy
 from datetime import datetime
 
 from plotmanager.library.utilities.objects import Work
+from plotmanager.library.utilities.instrumentation import set_plots_running
 
 
 def _contains_in_list(string, lst, case_insensitive=False):
@@ -256,6 +257,7 @@ def get_running_plots(jobs, running_work):
             work.work_id = assumed_job.current_work_id
             assumed_job.current_work_id += 1
             assumed_job.total_running += 1
+            set_plots_running(assumed_job.total_running, assumed_job.name)
             assumed_job.running_work = assumed_job.running_work + [process.pid]
         work.temporary_drive = temporary_drive
         work.temporary2_drive = temporary2_drive

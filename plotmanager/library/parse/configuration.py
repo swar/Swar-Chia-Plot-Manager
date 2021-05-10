@@ -113,3 +113,13 @@ def get_config_info():
 
     return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
         progress_settings, notification_settings, log_level, view_settings
+
+
+def get_instrumentation_settings():
+    config = _get_config()
+    if 'instrumentation' not in config:
+        raise InvalidYAMLConfigException('Failed to find instrumentation parameter in the YAML.')
+    instrumentation = config['instrumentation']
+    expected_parameters = ['prometheus_enabled']
+    _check_parameters(parameter=instrumentation, expected_parameters=expected_parameters, parameter_type='instrumentation')
+    return instrumentation
