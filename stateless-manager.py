@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
 from plotmanager.library.utilities.log import check_log_progress
-from plotmanager.library.utilities.processes import get_running_plots
+from plotmanager.library.utilities.processes import get_running_plots, get_system_drives
 
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
@@ -30,6 +30,10 @@ jobs = load_jobs(config_jobs)
 next_log_check = datetime.now()
 next_job_work = {}
 running_work = {}
+
+logging.info(f'Grabbing system drives.')
+system_drives = get_system_drives()
+logging.info(f"Found System Drives: {system_drives}")
 
 logging.info(f'Grabbing running plots.')
 jobs, running_work = get_running_plots(jobs, running_work)
@@ -63,7 +67,10 @@ while has_active_jobs_and_work(jobs):
         chia_location=chia_location,
         log_directory=log_directory,
         next_log_check=next_log_check,
+        system_drives=system_drives,
     )
 
     logging.info(f'Sleeping for {manager_check_interval} seconds.')
     time.sleep(manager_check_interval)
+
+logging.info(f'Manager has exited loop because there are no more active jobs.')
