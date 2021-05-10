@@ -5,7 +5,8 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 
 from plotmanager.library.commands import plots
-from plotmanager.library.utilities.processes import is_windows, start_process
+from plotmanager.library.utilities.exceptions import ManagerError
+from plotmanager.library.utilities.processes import identify_drive, is_windows, get_system_drives, start_process
 from plotmanager.library.utilities.objects import Job, Work
 from plotmanager.library.utilities.log import get_log_file_name
 
@@ -20,12 +21,12 @@ def has_active_jobs_and_work(jobs):
 def get_target_directories(job):
     job_offset = job.total_completed + job.total_running
 
-    destination_directory = job.destination_directory
+    destination_directory = remove_full_destinations(job.destination_directory)
     temporary_directory = job.temporary_directory
     temporary2_directory = job.temporary2_directory
 
-    if isinstance(job.destination_directory, list):
-        destination_directory = job.destination_directory[job_offset % len(job.destination_directory)]
+    if isinstance(destination_directory, list):
+        destination_directory = destination_directory[job_offset % len(destination_directory)]
     if isinstance(job.temporary_directory, list):
         temporary_directory = job.temporary_directory[job_offset % len(job.temporary_directory)]
     if isinstance(job.temporary2_directory, list):
@@ -34,6 +35,29 @@ def get_target_directories(job):
     return destination_directory, temporary_directory, temporary2_directory
 
 
+def remove_full_destinations(destination_directory):
+    system_drives = get_system_drives()
+    filtered_destinations = destination_directory
+
+    if isinstance(destination_directory, list):
+        for directory in destination_directory:
+            drive = identify_drive(directory, system_drives)
+            usage = psutil.disk_usage(drive)
+            if (usage.total - usage.used < 108000000000):
+                logging.error(f'Drive {drive} is low on space. This directory is no longer in use.')
+                filtered_destinations.remove(directory)
+    else:
+        drive = identify_drive(directory, system_drives)
+        usage = psutil.disk_usage(drive)
+        if (usage.total - usage.used < 108000000000):
+            logging.error(f'Drive {drive} is low on space. This directory is no longer in use.')
+            filtered_destinations = None
+    if (filtered_destinations == None or len(filtered_destinations) == 0):
+        raise ManagerError('Manager stopped. All your destination drives are out of space.')
+
+    return filtered_destinations
+
+        
 def load_jobs(config_jobs):
     jobs = []
     for info in config_jobs:
