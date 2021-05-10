@@ -29,7 +29,7 @@ def start_manager():
     python_file_path = sys.executable
 
     chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
 
     extra_args = []
     if is_windows():
@@ -71,7 +71,7 @@ def stop_manager():
 
 def view():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
@@ -102,7 +102,8 @@ def view():
         try:
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             jobs = load_jobs(config_jobs)
-            jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work)
+            jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
+                                                   instrumentation_settings=instrumentation_settings)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                                notification_settings=notification_settings, view_settings=view_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
@@ -127,5 +128,5 @@ def view():
 
 def analyze_logs():
     chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
-       notification_settings, debug_level, view_settings = get_config_info()
+       notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     analyze_log_times(log_directory)

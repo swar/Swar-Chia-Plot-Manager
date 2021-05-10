@@ -1,36 +1,35 @@
 import socket
 import logging
-from prometheus_client import Counter, Gauge, start_http_server
-from plotmanager.library.parse.configuration import get_instrumentation_settings
-
-hostname = socket.gethostname()
-settings = get_instrumentation_settings()
 
 
-def _get_metrics():
-    if settings['prometheus_enabled']:
+def _get_metrics(instrumentation_settings):
+    from prometheus_client import Counter, Gauge, start_http_server
+    gauge_plots_running = None
+    counter_plots_completed = None
+    if instrumentation_settings.get('prometheus_enabled', False):
         gauge_plots_running = Gauge('chia_running_plots', 'Number of running plots', ['hostname', 'queue'])
         counter_plots_completed = Counter('chia_completed_plots', 'Total completed plots', ['hostname', 'queue'])
-        start_http_server(settings['prometheus_port'])
-        return gauge_plots_running, counter_plots_completed
-    else:
-        gauge_plots_running = None
-        counter_plots_completed = None
-        return gauge_plots_running, counter_plots_completed
+        port = instrumentation_settings.get('prometheus_port', 9090)
+        logging.info(f'Prometheus port: {port}')
+        start_http_server(port)
+    return gauge_plots_running, counter_plots_completed
 
 
-gauge_plots_running, counter_plots_completed = _get_metrics()
-
-
-def set_plots_running(num_plots, job):
-    if settings['prometheus_enabled']:
-        gauge_plots_running.labels(hostname=hostname, queue=job).set(num_plots)
+def set_plots_running(total_running_plots, job_name, instrumentation_settings):
+    gauge_plots_running, counter_plots_completed = _get_metrics(instrumentation_settings)
+    if instrumentation_settings.get('prometheus_enabled', False):
+        logging.info(f'Prometheus: Setting running plots {job_name}')
+        hostname = socket.gethostname()
+        gauge_plots_running.labels(hostname=hostname, queue=job_name).set(total_running_plots)
     else:
         logging.debug('Prometheus instrumentation not enabled')
 
 
-def increment_plots_completed(amount, job):
-    if settings['prometheus_enabled']:
-        counter_plots_completed.labels(hostname=hostname, queue=job).inc(amount)
+def increment_plots_completed(increment, job_name, instrumentation_settings):
+    gauge_plots_running, counter_plots_completed = _get_metrics(instrumentation_settings)
+    if instrumentation_settings.get('prometheus_enabled'):
+        logging.info(f'Prometheus: Incrementing plots {job_name}')
+        hostname = socket.gethostname()
+        counter_plots_completed.labels(hostname=hostname, queue=job_name).inc(increment)
     else:
         logging.debug('Prometheus instrumentation not enabled')
