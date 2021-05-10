@@ -64,9 +64,11 @@ notifications:
   twilio_from_phone: +1234657890
   twilio_to_phone: +1234657890
 
+
 instrumentation:
+  # This setting is here in case you wanted to enable instrumentation using Prometheus.
   prometheus_enabled: false
-  prometheus_port: 9093
+  prometheus_port: 9090
 
 
 progress:
