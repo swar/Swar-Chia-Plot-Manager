@@ -8,6 +8,7 @@ import time
 from datetime import datetime, timedelta
 
 from plotmanager.library.parse.configuration import get_config_info
+from plotmanager.library.utilities.configuration import test_configuration
 from plotmanager.library.utilities.exceptions import ManagerError, TerminationException
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
@@ -30,6 +31,9 @@ def start_manager():
 
     chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
         notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+
+    test_configuration(chia_location=chia_location, notification_settings=notification_settings,
+                       instrumentation_settings=instrumentation_settings)
 
     extra_args = []
     if is_windows():
