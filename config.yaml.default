@@ -157,6 +157,7 @@ jobs:
     concurrency_start_early_phase: 4
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
+    exclude_final_directory: false
 
   - name: inland
     max_plots: 999
@@ -181,3 +182,4 @@ jobs:
     concurrency_start_early_phase: 4
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
+    exclude_final_directory: false
