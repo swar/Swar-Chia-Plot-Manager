@@ -5,7 +5,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 
 from plotmanager.library.commands import plots
-from plotmanager.library.utilities.processes import is_windows, start_process
+from plotmanager.library.utilities.processes import identify_drive, is_windows, start_process
 from plotmanager.library.utilities.objects import Job, Work
 from plotmanager.library.utilities.log import get_log_file_name
 
@@ -17,12 +17,16 @@ def has_active_jobs_and_work(jobs):
     return False
 
 
-def get_target_directories(job):
+def get_target_directories(job, drives_free_space):
     job_offset = job.total_completed + job.total_running
 
+    job = check_valid_destinations(job, drives_free_space)
     destination_directory = job.destination_directory
     temporary_directory = job.temporary_directory
     temporary2_directory = job.temporary2_directory
+
+    if not destination_directory:
+        return None, None, None, job
 
     if isinstance(job.destination_directory, list):
         destination_directory = job.destination_directory[job_offset % len(job.destination_directory)]
@@ -31,9 +35,31 @@ def get_target_directories(job):
     if isinstance(job.temporary2_directory, list):
         temporary2_directory = job.temporary2_directory[job_offset % len(job.temporary2_directory)]
 
-    return destination_directory, temporary_directory, temporary2_directory
+    return destination_directory, temporary_directory, temporary2_directory, job
 
 
+def check_valid_destinations(job, drives_free_space):
+    job_size = determine_job_size(job.size)
+    drives = list(drives_free_space.keys())
+    destination_directories = job.destination_directory
+    if not isinstance(destination_directories, list):
+        destination_directories = [destination_directories]
+
+    valid_destinations = []
+    for directory in destination_directories:
+        drive = identify_drive(file_path=directory, drives=drives)
+        if drives_free_space[drive] is None or drives_free_space[drive] >= job_size:
+            valid_destinations.append(directory)
+        logging.error(f'Drive "{drive}" does not have enough space. This directory will be skipped.')
+
+    if not valid_destinations:
+        job.max_plots = 0
+        logging.error(f'Job "{job.name}" has no more destination directories with enough space for more work.')
+    job.destination_directory = valid_destinations
+
+    return job
+
+        
 def load_jobs(config_jobs):
     jobs = []
     for info in config_jobs:
@@ -73,7 +99,44 @@ def load_jobs(config_jobs):
     return jobs
 
 
-def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory, next_log_check):
+def determine_job_size(k_size):
+    base_k_size = 32
+    size = 109000000000
+    if k_size < base_k_size:
+        # Why 2.058? Just some quick math.
+        size /= pow(2.058, base_k_size-k_size)
+    if k_size > base_k_size:
+        # Why 2.06? Just some quick math from my current plots.
+        size *= pow(2.06, k_size-base_k_size)
+    return size
+
+
+def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory,
+                          next_log_check, system_drives):
+    drives_free_space = {}
+    for job in jobs:
+        directories = [job.destination_directory]
+        if isinstance(job.destination_directory, list):
+            directories = job.destination_directory
+        for directory in directories:
+            drive = identify_drive(file_path=directory, drives=system_drives)
+            if drive in drives_free_space:
+                continue
+            try:
+                free_space = psutil.disk_usage(drive).free
+            except:
+                logging.exception(f"Failed to get disk_usage of drive {drive}.")
+                # I need to do this because if Manager fails, I don't want it to break.
+                free_space = None
+            drives_free_space[drive] = free_space
+
+    for pid, work in running_work.items():
+        drive = work.destination_drive
+        if drive not in drives_free_space or drives_free_space[drive] is not None:
+            continue
+        work_size = determine_job_size(work.k_size)
+        drives_free_space[drive] -= work_size
+
     for i, job in enumerate(jobs):
         logging.info(f'Checking to queue work for job: {job.name}')
         if len(running_work.values()) >= max_concurrent:
@@ -120,15 +183,17 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
             logging.info(f'Calculating new job stagger time. Next stagger kickoff: {next_job_work[job.name]}')
-        job, work = start_work(job=job, chia_location=chia_location, log_directory=log_directory)
+        job, work = start_work(job=job, chia_location=chia_location, log_directory=log_directory, drives_free_space=drives_free_space)
         jobs[i] = deepcopy(job)
+        if work is None:
+            continue
         next_log_check = datetime.now()
         running_work[work.pid] = work
 
     return jobs, running_work, next_job_work, next_log_check
 
 
-def start_work(job, chia_location, log_directory):
+def start_work(job, chia_location, log_directory, drives_free_space):
     logging.info(f'Starting new plot for job: {job.name}')
     nice_val = 10
     if is_windows():
@@ -137,7 +202,12 @@ def start_work(job, chia_location, log_directory):
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
     logging.info(f'Job log file path: {log_file_path}')
-    destination_directory, temporary_directory, temporary2_directory = get_target_directories(job)
+    destination_directory, temporary_directory, temporary2_directory, job = \
+        get_target_directories(job, drives_free_space=drives_free_space)
+    if not destination_directory:
+        return job, None
+
+    logging.info(f'Job temporary directory: {temporary_directory}')
     logging.info(f'Job destination directory: {destination_directory}')
 
     work = deepcopy(Work())
