@@ -76,6 +76,7 @@ The installation of this library is straightforward. I have attached detailed in
 	   * Example Linux: `. ./venv/bin/activate` or `source ./venv/bin/activate`
 	3. Confirm that it has activated by seeing the `(venv)` prefix. The prefix will change depending on what you named it.
 5. Install the required modules: `pip install -r requirements.txt`
+	* If you plan on using Notifications or Prometheus then run the following to install the required modules: `pip install -r requirements-notification.txt`
 6. Copy `config.yaml.default` and name it as `config.yaml` in the same directory.
 7. Edit and set up the config.yaml to your own personal settings. There is more help on this below.
 	* You will need to add the `chia_location` as well! This should point to your chia executable.
@@ -133,10 +134,10 @@ Settings for enabling Prometheus to gather metrics.
 * `prometheus_enabled` - If enabled, metrics will be gathered and an HTTP server will start up to expose the metrics for Prometheus.
 * `prometheus_port` - HTTP server port.
 
-### List of metrics gathered
+List of Metrics Gathered
 
-- **chia_running_plots**: A [Gauge](https://prometheus.io/docs/concepts/metric_types/#gauge) to see how many plots are currently being created
-- **chia_completed_plots**: A [Counter](https://prometheus.io/docs/concepts/metric_types/#counter) for completed plots
+- **chia_running_plots**: A [Gauge](https://prometheus.io/docs/concepts/metric_types/#gauge) to see how many plots are currently being created.
+- **chia_completed_plots**: A [Counter](https://prometheus.io/docs/concepts/metric_types/#counter) for completed plots.
 
 ### progress
 
