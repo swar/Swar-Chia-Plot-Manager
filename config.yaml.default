@@ -1,6 +1,6 @@
 # This is a single variable that should contain the location of your chia executable file. This is the blockchain executable.
 #
-# WINDOWS EXAMPLE: C:\Users\Swar\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe
+# WINDOWS EXAMPLE: C:\Users\Swar\AppData\Local\chia-blockchain\app-1.1.5\resources\app.asar.unpacked\daemon\chia.exe
 #   LINUX EXAMPLE: /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia
 #  LINUX2 EXAMPLE: /home/swar/chia-blockchain/venv/bin/chia
 chia_location:
@@ -126,7 +126,7 @@ jobs:
   # max_for_phase_1: The maximum number of plots on phase 1 for this job.
   # concurrency_start_early_phase: The phase in which you want to start a plot early. It is recommended to use 4 for
   #                                this field.
-  # concurrency_start_early_phase_delay: The maximum number of seconds to wait before a new plot gets kicked off when
+  # concurrency_start_early_phase_delay: The maximum number of minutes to wait before a new plot gets kicked off when
   #                                      the start early phase has been detected.
   # temporary2_destination_sync: This field will always submit the destination directory as the temporary2 directory.
   #                              These two directories will be in sync so that they will always be submitted as the
@@ -142,7 +142,7 @@ jobs:
     bitfield: true
     threads: 8
     buckets: 128
-    memory_buffer: 5000
+    memory_buffer: 4000
     max_concurrent: 6
     max_concurrent_with_start_early: 7
     stagger_minutes: 60
@@ -166,7 +166,7 @@ jobs:
     bitfield: true
     threads: 8
     buckets: 128
-    memory_buffer: 5000
+    memory_buffer: 4000
     max_concurrent: 2
     max_concurrent_with_start_early: 3
     stagger_minutes: 180
