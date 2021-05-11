@@ -126,7 +126,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
 
 def start_work(job, chia_location, log_directory):
     logging.info(f'Starting new plot for job: {job.name}')
-    nice_val = 10
+    nice_val = 0
     if is_windows():
         nice_val = psutil.NORMAL_PRIORITY_CLASS
 
