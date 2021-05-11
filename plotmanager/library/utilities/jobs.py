@@ -12,7 +12,7 @@ from plotmanager.library.utilities.log import get_log_file_name
 
 def has_active_jobs_and_work(jobs):
     for job in jobs:
-        if job.total_completed < job.max_plots:
+        if job.total_kicked_off < job.max_plots:
             return True
     return False
 
@@ -48,8 +48,10 @@ def check_valid_destinations(job, drives_free_space):
     valid_destinations = []
     for directory in destination_directories:
         drive = identify_drive(file_path=directory, drives=drives)
+        logging.info(f'Drive "{drive}" has {drives_free_space[drive]} free space.')
         if drives_free_space[drive] is None or drives_free_space[drive] >= job_size:
             valid_destinations.append(directory)
+            continue
         logging.error(f'Drive "{drive}" does not have enough space. This directory will be skipped.')
 
     if not valid_destinations:
@@ -100,6 +102,10 @@ def load_jobs(config_jobs):
 
 
 def determine_job_size(k_size):
+    try:
+        k_size = int(k_size)
+    except ValueError:
+        return 0
     base_k_size = 32
     size = 109000000000
     if k_size < base_k_size:
@@ -130,12 +136,15 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
                 free_space = None
             drives_free_space[drive] = free_space
 
+    logging.info(f'Free space before checking active jobs: {drives_free_space}')
     for pid, work in running_work.items():
         drive = work.destination_drive
-        if drive not in drives_free_space or drives_free_space[drive] is not None:
+        if drive not in drives_free_space or drives_free_space[drive] is None:
             continue
         work_size = determine_job_size(work.k_size)
         drives_free_space[drive] -= work_size
+        logging.info(drive)
+    logging.info(f'Free space after checking active jobs: {drives_free_space}')
 
     for i, job in enumerate(jobs):
         logging.info(f'Checking to queue work for job: {job.name}')
@@ -152,9 +161,9 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
         if job.max_for_phase_1 and phase_1_count >= job.max_for_phase_1:
             logging.info(f'Max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
             continue
-        if job.total_completed >= job.max_plots:
-            logging.info(f'Job\'s total completed greater than or equal to max plots, skipping. Total Completed: '
-                         f'{job.total_completed}, Max Plots: {job.max_plots}')
+        if job.total_kicked_off >= job.max_plots:
+            logging.info(f'Job\'s total kicked off greater than or equal to max plots, skipping. Total Kicked Off: '
+                         f'{job.total_kicked_off}, Max Plots: {job.max_plots}')
             continue
         if job.name in next_job_work and next_job_work[job.name] > datetime.now():
             logging.info(f'Waiting for job stagger, skipping. Next allowable time: {next_job_work[job.name]}')
@@ -251,6 +260,7 @@ def start_work(job, chia_location, log_directory, drives_free_space):
 
     work.pid = pid
     job.total_running += 1
+    job.total_kicked_off += 1
     job.running_work = job.running_work + [pid]
     logging.info(f'Job total running: {job.total_running}')
     logging.info(f'Job running: {job.running_work}')

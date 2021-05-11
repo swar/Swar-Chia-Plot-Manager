@@ -6,6 +6,7 @@ class Job:
     pool_public_key = None
 
     total_running = 0
+    total_kicked_off = 0
     total_completed = 0
     max_concurrent = 0
     max_concurrent_with_start_early = 0
