@@ -106,7 +106,7 @@ def view():
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                                notification_settings=notification_settings, view_settings=view_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
-                       next_log_check=datetime.now() + timedelta(seconds=60), view_settings=view_settings)
+                       next_log_check=datetime.now() + timedelta(seconds=view_check_interval), view_settings=view_settings)
             time.sleep(view_check_interval)
             has_file = False
             if len(running_work.values()) == 0:
