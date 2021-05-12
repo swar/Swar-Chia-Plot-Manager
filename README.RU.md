@@ -76,6 +76,7 @@ Please do not use GitHub issues for questions or support regarding your own pers
 	2. Активация виртуальной среды. Это обязательно делать *каждый раз* открывая новое окно.
 	   * Пример Windows: `venv\Scripts\activate`
 	   * Пример Linux: `. ./venv/bin/activate` или `source ./venv/bin/activate`
+	   * Пример Mac OS: `/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia`
 	3. Убедитесь что появился префикс `(venv)` в подтверждение активации среды. Префикс будет меняться в зависимости от того, как вы её назвали.
 5. Установите необходимые модули: `pip install -r requirements.txt`
 6. Скопируйте `config.yaml.default` и переименуйте в `config.yaml` в той же директории.
