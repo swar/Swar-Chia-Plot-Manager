@@ -96,6 +96,11 @@ def load_jobs(config_jobs):
         job.threads = info['threads']
         job.buckets = info['buckets']
         job.memory_buffer = info['memory_buffer']
+
+        job.enable_cpu_affinity = info.get('enable_cpu_affinity', False)
+        if job.enable_cpu_affinity:
+            job.cpu_affinity = info['cpu_affinity']
+
         jobs.append(job)
 
     return jobs
@@ -192,7 +197,13 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
             logging.info(f'Calculating new job stagger time. Next stagger kickoff: {next_job_work[job.name]}')
-        job, work = start_work(job=job, chia_location=chia_location, log_directory=log_directory, drives_free_space=drives_free_space)
+
+        job, work = start_work(
+            job=job,
+            chia_location=chia_location,
+            log_directory=log_directory,
+            drives_free_space=drives_free_space,
+        )
         jobs[i] = deepcopy(job)
         if work is None:
             continue
@@ -257,6 +268,10 @@ def start_work(job, chia_location, log_directory, drives_free_space):
     logging.info(f'Setting priority level: {nice_val}')
     psutil.Process(pid).nice(nice_val)
     logging.info(f'Set priority level')
+    if job.enable_cpu_affinity:
+        logging.info(f'Setting process cpu affinity: {job.cpu_affinity}')
+        psutil.Process(pid).cpu_affinity(job.cpu_affinity)
+        logging.info(f'Set process cpu affinity')
 
     work.pid = pid
     job.total_running += 1

@@ -174,6 +174,10 @@ List of Metrics Gathered
 * `concurrency_start_early_phase` - Фаза, в которой вы хотите начать засеивание заранее. Рекомендуется использовать 4.
 * `concurrency_start_early_phase_delay` - Максимальное количество минут ожидания до запуска нового участка при обнаружении ранней фазы запуска.
 * `temporary2_destination_sync` - Представлять каталог назначения как каталог второй временный каталог. Эти два каталога будут синхронизированы, так что они всегда будут представлены как одно и то же значение.
+* `exclude_final_directory` - Whether to skip adding `destination_directory` to harvester for farming. This is a Chia feature.
+* `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
+* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
+
 
 ### Перевод на Русский
 Оригинальный текст на Английском языке Вы можете найти по адресу [https://github.com/swar/Swar-Chia-Plot-Manager](https://github.com/swar/Swar-Chia-Plot-Manager)

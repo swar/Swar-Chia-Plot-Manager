@@ -30,6 +30,9 @@ class Job:
     buckets = None
     memory_buffer = None
 
+    enable_cpu_affinity = False
+    cpu_affinity = []
+
 
 class Work:
     work_id = None
