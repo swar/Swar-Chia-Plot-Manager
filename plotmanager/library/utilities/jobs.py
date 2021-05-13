@@ -96,6 +96,11 @@ def load_jobs(config_jobs):
         job.threads = info['threads']
         job.buckets = info['buckets']
         job.memory_buffer = info['memory_buffer']
+
+        job.enable_cpu_affinity = info.get('enable_cpu_affinity', False)
+        if job.enable_cpu_affinity:
+            job.cpu_affinity = info['cpu_affinity']
+
         jobs.append(job)
 
     return jobs
@@ -118,7 +123,7 @@ def determine_job_size(k_size):
 
 
 def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory,
-                          next_log_check, system_drives, enable_cpu_affinity, cpu_affinity):
+                          next_log_check, system_drives):
     drives_free_space = {}
     for job in jobs:
         directories = [job.destination_directory]
@@ -198,8 +203,6 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
             chia_location=chia_location,
             log_directory=log_directory,
             drives_free_space=drives_free_space,
-            enable_cpu_affinity=enable_cpu_affinity,
-            cpu_affinity=cpu_affinity,
         )
         jobs[i] = deepcopy(job)
         if work is None:
@@ -210,7 +213,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
     return jobs, running_work, next_job_work, next_log_check
 
 
-def start_work(job, chia_location, log_directory, drives_free_space, enable_cpu_affinity, cpu_affinity):
+def start_work(job, chia_location, log_directory, drives_free_space):
     logging.info(f'Starting new plot for job: {job.name}')
     nice_val = 10
     if is_windows():
@@ -265,9 +268,9 @@ def start_work(job, chia_location, log_directory, drives_free_space, enable_cpu_
     logging.info(f'Setting priority level: {nice_val}')
     psutil.Process(pid).nice(nice_val)
     logging.info(f'Set priority level')
-    if enable_cpu_affinity:
-        logging.info(f'Setting process cpu affinity: {cpu_affinity}')
-        psutil.Process(pid).cpu_affinity(cpu_affinity)
+    if job.enable_cpu_affinity:
+        logging.info(f'Setting process cpu affinity: {job.cpu_affinity}')
+        psutil.Process(pid).cpu_affinity(job.cpu_affinity)
         logging.info(f'Set process cpu affinity')
 
     work.pid = pid
