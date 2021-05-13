@@ -76,6 +76,9 @@ def load_jobs(config_jobs):
         job.max_concurrent = info['max_concurrent']
         job.max_concurrent_with_start_early = info['max_concurrent_with_start_early']
         job.max_for_phase_1 = info['max_for_phase_1']
+        job.initial_delay_minutes = info.get('initial_delay_minutes', 0)
+        if not job.initial_delay_minutes:
+            job.initial_delay_minutes = 0
         job.stagger_minutes = info.get('stagger_minutes', None)
         job.max_for_phase_1 = info.get('max_for_phase_1', None)
         job.concurrency_start_early_phase = info.get('concurrency_start_early_phase', None)
