@@ -120,7 +120,7 @@ def get_chia_drives():
 
 def get_system_drives():
     drives = []
-    for disk in psutil.disk_partitions():
+    for disk in psutil.disk_partitions(all=True):
         drive = disk.mountpoint
         if is_windows():
             drive = os.path.splitdrive(drive)[0]
