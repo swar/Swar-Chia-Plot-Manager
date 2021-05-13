@@ -32,6 +32,8 @@ def start_manager():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
         notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
 
+    load_jobs(config_jobs)
+
     test_configuration(chia_location=chia_location, notification_settings=notification_settings,
                        instrumentation_settings=instrumentation_settings)
 
