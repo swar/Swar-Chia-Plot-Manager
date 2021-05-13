@@ -10,7 +10,8 @@ from plotmanager.library.utilities.processes import get_running_plots, get_syste
 
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-    notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+    notification_settings, debug_level, view_settings, instrumentation_settings, enable_cpu_affinity, cpu_affinity \
+    = get_config_info()
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
@@ -24,6 +25,8 @@ logging.info(f'Progress Settings: {progress_settings}')
 logging.info(f'Notification Settings: {notification_settings}')
 logging.info(f'View Settings: {view_settings}')
 logging.info(f'Instrumentation Settings: {instrumentation_settings}')
+logging.info(f'Enable CPU Affinity: {enable_cpu_affinity}')
+logging.info(f'CPU Affinity: {cpu_affinity}')
 
 logging.info(f'Loading jobs into objects.')
 jobs = load_jobs(config_jobs)
@@ -71,6 +74,8 @@ while has_active_jobs_and_work(jobs):
         log_directory=log_directory,
         next_log_check=next_log_check,
         system_drives=system_drives,
+        enable_cpu_affinity=enable_cpu_affinity,
+        cpu_affinity=cpu_affinity
     )
 
     logging.info(f'Sleeping for {manager_check_interval} seconds.')

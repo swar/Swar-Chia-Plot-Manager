@@ -57,7 +57,7 @@ notifications:
   notify_pushover: false
   pushover_user_key: xx
   pushover_api_key: xx
-  
+
   # TWILIO
   notify_twilio: false
   twilio_account_sid: xxxxx
@@ -91,9 +91,16 @@ progress:
 global:
   # These are the settings that will be used globally by the plot manager.
   #
-  # max_concurrent: The maximum number of plots that your system can run. The manager will not kick off more than this
-  #                 number of plots total over time.
+  #      max_concurrent: The maximum number of plots that your system can run. The manager will not kick off more than
+  #                      this number of plots total over time.
+  # enable_cpu_affinity: Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see
+  #                      improved harvester or node performance when excluding one or two threads for plotting process.
+  #        cpu_affinity: List of cpu (or threads) to allocate for plot processes. The default example assumes you have
+  #                      a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use
+  #                      logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
   max_concurrent: 10
+  enable_cpu_affinity: false
+  cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
 
 
 jobs:

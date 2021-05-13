@@ -149,6 +149,8 @@ List of Metrics Gathered
 
 ### global
 * `max_concurrent` - The maximum number of plots that your system can run. The manager will not kick off more than this number of plots total over time.
+* `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
+* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
 
 ### job
 

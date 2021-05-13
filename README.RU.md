@@ -146,8 +146,10 @@ List of Metrics Gathered
 * `phase_line_end` - параметр, который будет использоваться для определения того, когда заканчивается фаза. Предполагается, что этот параметр указывает на порядковый номер строки, на которой завершится фаза. Параметр используется механизмом вычисления прогресса вместе с существующим файлом журнала для вычисления процента прогресса.
 * `phase_weight` - вес, который следует присвоить каждой фазе в расчетах хода выполнения. Как правило, фазы 1 и 3 являются самыми длинными фазами, поэтому они будут иметь больший вес, чем другие.
 
-### global
+### global [Нужен перевод]
 * `max_concurrent` - Максимальное количество полей, которые может засеять ваша система. Менеджер не будет паралелльно запускать больше, чем это количество участков на протяжении всего времени.
+* `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
+* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
 
 ### job
 

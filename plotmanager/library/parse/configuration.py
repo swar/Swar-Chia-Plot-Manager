@@ -92,6 +92,16 @@ def _get_instrumentation_settings(config):
     return instrumentation
 
 
+def _get_cpu_affinity(config):
+    if 'global' not in config:
+        raise InvalidYAMLConfigException('Failed to find global parameter in the YAML.')
+    if 'enable_cpu_affinity' not in config['global']:
+        raise InvalidYAMLConfigException('Failed to find enable_cpu_affinity in the global parameter in the YAML.')
+    if 'cpu_affinity' not in config['global']:
+        raise InvalidYAMLConfigException('Failed to find cpu_affinity in the global parameter in the YAML.')
+    return config['global']['enable_cpu_affinity'], config['global']['cpu_affinity']
+
+
 def _check_parameters(parameter, expected_parameters, parameter_type):
     failed_checks = []
     checks = expected_parameters
@@ -118,6 +128,8 @@ def get_config_info():
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
     instrumentation_settings = _get_instrumentation_settings(config=config)
+    enable_cpu_affinity, cpu_affinity = _get_cpu_affinity(config=config)
 
     return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
-        progress_settings, notification_settings, log_level, view_settings, instrumentation_settings
+        progress_settings, notification_settings, log_level, view_settings, instrumentation_settings, \
+        enable_cpu_affinity, cpu_affinity
