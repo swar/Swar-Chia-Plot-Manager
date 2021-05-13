@@ -216,7 +216,7 @@ def get_running_plots(jobs, running_work):
 
         temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=process.cmdline())
         for job in jobs:
-            if temporary_directory != job.temporary_directory:
+            if temporary_directory not in job.temporary_directory:
                 continue
             if destination_directory not in job.destination_directory:
                 continue
@@ -235,7 +235,7 @@ def get_running_plots(jobs, running_work):
         plot_id = None
         if log_file_path:
             plot_id = get_plot_id(file_path=log_file_path)
-
+        logging.info(f'Temp file location: {temporary_directory}')            
         temp_file_size = get_temp_size(plot_id=plot_id, temporary_directory=temporary_directory,
                                        temporary2_directory=temporary2_directory)
 
