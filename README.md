@@ -176,5 +176,12 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `concurrency_start_early_phase_delay` - The maximum number of minutes to wait before a new plot gets kicked off when the start early phase has been detected.
 * `temporary2_destination_sync` - This field will always submit the destination directory as the temporary2 directory. These two directories will be in sync so that they will always be submitted as the same value.
 * `exclude_final_directory` - Whether to skip adding `destination_directory` to harvester for farming. This is a Chia feature.
+* `unix_process_priority` - UNIX Only. This is the priority that plots will be given when they are spawned. UNIX values must be between -20 and 20. The higher the value, the lower the priority of the process.
+* `windows_process_priority` - Windows Only. This is the priority that plots will be given when they are spawned. Windows values vary and should be set to one of the following values:
+	* 16384 `BELOW_NORMAL_PRIORITY_CLASS`
+	* 32    `NORMAL_PRIORITY_CLASS`
+	* 32768 `ABOVE_NORMAL_PRIORITY_CLASS`
+	* 128   `HIGH_PRIORITY_CLASS`
+	* 256   `REALTIME_PRIORITY_CLASS`
 * `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
 * `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).

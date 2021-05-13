@@ -139,6 +139,15 @@ jobs:
   #                              These two directories will be in sync so that they will always be submitted as the
   #                              same value.
   # exclude_final_directory: Whether to skip adding `destination_directory` to harvester for farming
+  # unix_process_priority: UNIX Only. This is the priority that plots will be given when they are spawned. UNIX values
+  #                        must be between -20 and 20. The higher the value, the lower the priority of the process.
+  # windows_process_priority: Windows Only. This is the priority that plots will be given when they are spawned.
+  #                           Windows values vary and should be set to one of the following values:
+  #                             - 16384 (BELOW_NORMAL_PRIORITY_CLASS)
+  #                             - 32    (NORMAL_PRIORITY_CLASS)
+  #                             - 32768 (ABOVE_NORMAL_PRIORITY_CLASS)
+  #                             - 128   (HIGH_PRIORITY_CLASS)
+  #                             - 256   (REALTIME_PRIORITY_CLASS)
   # enable_cpu_affinity: Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see
   #                      improved harvester or node performance when excluding one or two threads for plotting process.
   #        cpu_affinity: List of cpu (or threads) to allocate for plot processes. The default example assumes you have
@@ -164,6 +173,8 @@ jobs:
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
     exclude_final_directory: false
+    unix_process_priority: 10
+    windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
 
@@ -191,5 +202,7 @@ jobs:
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
     exclude_final_directory: false
+    unix_process_priority: 10
+    windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 ]

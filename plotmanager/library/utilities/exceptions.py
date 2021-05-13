@@ -7,6 +7,10 @@ class InvalidChiaLocationException(Exception):
     pass
 
 
+class InvalidConfigurationSetting(Exception):
+    pass
+
+
 class InvalidYAMLConfigException(Exception):
     pass
 

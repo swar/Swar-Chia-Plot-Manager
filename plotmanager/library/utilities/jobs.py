@@ -5,6 +5,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 
 from plotmanager.library.commands import plots
+from plotmanager.library.utilities.exceptions import InvalidConfigurationSetting
 from plotmanager.library.utilities.processes import identify_drive, is_windows, start_process
 from plotmanager.library.utilities.objects import Job, Work
 from plotmanager.library.utilities.log import get_log_file_name
@@ -96,6 +97,15 @@ def load_jobs(config_jobs):
         job.threads = info['threads']
         job.buckets = info['buckets']
         job.memory_buffer = info['memory_buffer']
+
+        job.unix_process_priority = info.get('unix_process_priority', 10)
+        if not -20 <= job.unix_process_priority <= 20:
+            raise InvalidConfigurationSetting('UNIX Process Priority must be between -20 and 20.')
+        job.windows_process_priority = info.get('windows_process_priority', 32)
+        if job.windows_process_priority not in [64, 16384, 32, 32768, 128, 256]:
+            raise InvalidConfigurationSetting('Windows Process Priority must any of the following: [64, 16384, 32, '
+                                              '32768, 128, 256]. Please view README for more details. If you don\'t '
+                                              'know what you are doing, please use 32.')
 
         job.enable_cpu_affinity = info.get('enable_cpu_affinity', False)
         if job.enable_cpu_affinity:
@@ -215,9 +225,9 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
 
 def start_work(job, chia_location, log_directory, drives_free_space):
     logging.info(f'Starting new plot for job: {job.name}')
-    nice_val = 10
+    nice_val = job.unix_process_priority
     if is_windows():
-        nice_val = psutil.NORMAL_PRIORITY_CLASS
+        nice_val = job.windows_process_priority
 
     now = datetime.now()
     log_file_path = get_log_file_name(log_directory, job, now)
