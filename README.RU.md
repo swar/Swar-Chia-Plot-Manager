@@ -62,7 +62,7 @@ Please do not use GitHub issues for questions or support regarding your own pers
 * Please forward this question to Keybase or the Discussion tab.
 
 
-## Установка
+## Установка [Нужен перевод]
 
 Установка этой библиотеки проста. Ниже я приложил подробные инструкции, которые помогут вам начать работу.
 
@@ -79,6 +79,7 @@ Please do not use GitHub issues for questions or support regarding your own pers
 	   * Пример Mac OS: `/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia`
 	3. Убедитесь что появился префикс `(venv)` в подтверждение активации среды. Префикс будет меняться в зависимости от того, как вы её назвали.
 5. Установите необходимые модули: `pip install -r requirements.txt`
+	* If you plan on using Notifications or Prometheus then run the following to install the required modules: `pip install -r requirements-notification.txt`
 6. Скопируйте `config.yaml.default` и переименуйте в `config.yaml` в той же директории.
 7. Отредактируйте и настройте config.yaml на ваши персональные установки. Ниже приведена дополнительная информация по этому вопросу.
 	* Вам также нужно будет добавить параметр `chia_location`! Который должен указывать на ваш исполняемый файл chia.
@@ -127,6 +128,18 @@ Plot manager работает на основе идеи заданий. Каж�
 ### notifications
 
 Различные настройки уведомлений при запуске Plot Manager'а и когда новое поле готово.
+
+### instrumentation [Нужен перевод]
+
+Settings for enabling Prometheus to gather metrics.
+
+* `prometheus_enabled` - If enabled, metrics will be gathered and an HTTP server will start up to expose the metrics for Prometheus.
+* `prometheus_port` - HTTP server port.
+
+List of Metrics Gathered
+
+- **chia_running_plots**: A [Gauge](https://prometheus.io/docs/concepts/metric_types/#gauge) to see how many plots are currently being created.
+- **chia_completed_plots**: A [Counter](https://prometheus.io/docs/concepts/metric_types/#counter) for completed plots.
 
 ### progress
 

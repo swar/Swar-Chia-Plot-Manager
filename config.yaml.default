@@ -66,6 +66,12 @@ notifications:
   twilio_to_phone: +1234657890
 
 
+instrumentation:
+  # This setting is here in case you wanted to enable instrumentation using Prometheus.
+  prometheus_enabled: false
+  prometheus_port: 9090
+
+
 progress:
   # phase_line_end: These are the settings that will be used to dictate when a phase ends in the progress bar. It is
   #                 supposed to reflect the line at which the phase will end so the progress calculations can use that
@@ -152,6 +158,7 @@ jobs:
     concurrency_start_early_phase: 4
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
+    exclude_final_directory: false
 
   - name: inland
     max_plots: 999
@@ -176,3 +183,4 @@ jobs:
     concurrency_start_early_phase: 4
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
+    exclude_final_directory: false

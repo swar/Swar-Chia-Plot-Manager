@@ -85,6 +85,13 @@ def _get_view_settings(config):
     return view
 
 
+def _get_instrumentation_settings(config):
+    if 'instrumentation' not in config:
+        raise InvalidYAMLConfigException('Failed to find instrumentation parameter in the YAML.')
+    instrumentation = config.get('instrumentation', {})
+    return instrumentation
+
+
 def _check_parameters(parameter, expected_parameters, parameter_type):
     failed_checks = []
     checks = expected_parameters
@@ -110,6 +117,7 @@ def get_config_info():
     progress_settings = _get_progress_settings(config=config)
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
+    instrumentation_settings = _get_instrumentation_settings(config=config)
 
     return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
-        progress_settings, notification_settings, log_level, view_settings
+        progress_settings, notification_settings, log_level, view_settings, instrumentation_settings

@@ -10,7 +10,7 @@ from plotmanager.library.utilities.processes import get_running_plots, get_syste
 
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-    notification_settings, debug_level, view_settings = get_config_info()
+    notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
@@ -23,6 +23,7 @@ logging.info(f'Max Concurrent: {max_concurrent}')
 logging.info(f'Progress Settings: {progress_settings}')
 logging.info(f'Notification Settings: {notification_settings}')
 logging.info(f'View Settings: {view_settings}')
+logging.info(f'Instrumentation Settings: {instrumentation_settings}')
 
 logging.info(f'Loading jobs into objects.')
 jobs = load_jobs(config_jobs)
@@ -36,7 +37,8 @@ system_drives = get_system_drives()
 logging.info(f"Found System Drives: {system_drives}")
 
 logging.info(f'Grabbing running plots.')
-jobs, running_work = get_running_plots(jobs, running_work)
+jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
+                                       instrumentation_settings=instrumentation_settings)
 for job in jobs:
     max_date = None
     for pid in job.running_work:
@@ -54,7 +56,8 @@ while has_active_jobs_and_work(jobs):
     # CHECK LOGS FOR DELETED WORK
     logging.info(f'Checking log progress..')
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
-                       notification_settings=notification_settings, view_settings=view_settings)
+                       notification_settings=notification_settings, view_settings=view_settings,
+                       instrumentation_settings=instrumentation_settings)
     next_log_check = datetime.now() + timedelta(seconds=manager_check_interval)
 
     # DETERMINE IF JOB NEEDS TO START
