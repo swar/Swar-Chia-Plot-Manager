@@ -169,6 +169,7 @@ List of Metrics Gathered
 * `memory_buffer` - Объем памяти, который вы хотите выделить задаче.
 * `max_concurrent` - Максимальное количество участков для этой задачи на всё время.
 * `max_concurrent_with_start_early` - Максимальное количество участков для этой задачи в любой момент времени, включая фазы, которые начались раньше.
+* `initial_delay_minutes` - This is the initial delay that is used when initiate the first job. It is only ever considered once. If you restart manager, it will still adhere to this value.
 * `stagger_minutes` - Количество минут ожидания перед запуском следующего задания. Вы можете установить это значение равным нулю, если хотите, чтобы ваши засевы запускались немедленно, когда это позволяют одновременные ограничения
 * `max_for_phase_1` - Максимальное число засевов в фазе 1 для этой задачи.
 * `concurrency_start_early_phase` - Фаза, в которой вы хотите начать засеивание заранее. Рекомендуется использовать 4.

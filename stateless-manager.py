@@ -46,9 +46,17 @@ for job in jobs:
         start = work.datetime_start
         if not max_date or start > max_date:
             max_date = start
+    initial_delay_date = datetime.now() + timedelta(minutes=job.initial_delay_minutes)
+    if job.initial_delay_minutes:
+        next_job_work[job.name] = initial_delay_date
     if not max_date:
         continue
-    next_job_work[job.name] = max_date + timedelta(minutes=job.stagger_minutes)
+    max_date = max_date + timedelta(minutes=job.stagger_minutes)
+    if job.initial_delay_minutes and initial_delay_date > max_date:
+        logging.info(f'{job.name} Found. Setting initial dalay date to {next_job_work[job.name]} which is '
+                     f'{job.initial_delay_minutes} minutes.')
+        continue
+    next_job_work[job.name] = max_date
     logging.info(f'{job.name} Found. Setting next stagger date to {next_job_work[job.name]}')
 
 logging.info(f'Starting loop.')

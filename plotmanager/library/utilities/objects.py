@@ -13,6 +13,7 @@ class Job:
     max_plots = 0
     temporary2_destination_sync = None
 
+    initial_delay_minutes = None
     stagger_minutes = None
     max_for_phase_1 = None
     concurrency_start_early_phase = None
