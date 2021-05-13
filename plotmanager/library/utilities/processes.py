@@ -35,6 +35,8 @@ def get_manager_processes():
             processes.append(process)
         except psutil.NoSuchProcess:
             pass
+        except psutil.AccessDenied:
+            pass
     return processes
 
 
