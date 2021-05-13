@@ -31,6 +31,9 @@ class Job:
     buckets = None
     memory_buffer = None
 
+    unix_process_priority = 10
+    windows_process_priority = 32
+
     enable_cpu_affinity = False
     cpu_affinity = []
 
