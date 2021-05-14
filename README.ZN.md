@@ -56,7 +56,7 @@ GitHub讨论区: [https://github.com/swar/Swar-Chia-Plot-Manager/discussions](ht
 
 **如果我有一个列表，如何选择临时2和目的地？**
 
-- 它们是按顺序选择的。如果你有两个目录，第一个绘图会选择第一个，第二个会选择第二个，而第三个会选择第一个。
+- 库
 
 **什么是 temporary2_destination_sync？**
 
@@ -163,7 +163,7 @@ GitHub讨论区: [https://github.com/swar/Swar-Chia-Plot-Manager/discussions](ht
 - [OPTIONAL]`temporary2_directory `- 可以是一个单一的值或一个值的列表。这是一个可选的参数，如果你想使用 Chia 绘图的 temporary2 目录功能，可以使用这个参数。
 - `destination_directory` - 可以是一个单一的值或一个值的列表。这是绘图完成后将被转移到的最终目录。如果你提供一个列表，它将逐一循环浏览每个驱动器。
 - `size` - 这指的是绘图的k大小。你可以在这里输入32、33、34、35......这样的内容。
-- `bitfield` - 这指的是你是否想在你的绘图中使用bitfield。通常情况下，你希望保持为真。
+- `bitfield` - 这指的是你是否想在你的绘图中使用bitfield。通常情况下，你希望保持为 true。
 - `threads` - 这是将分配给绘图仪的线程数。只有第1阶段使用1个以上的线程。
 - `buckets` - 要使用的桶的数量。Chia提供的默认值是128。
 - `memory_buffer` - 你想分配给进程的内存数量。
