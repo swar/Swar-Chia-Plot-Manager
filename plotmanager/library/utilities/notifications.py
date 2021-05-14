@@ -1,6 +1,7 @@
 import discord_notify
 import playsound
 import pushover
+import telegram_notifier
 
 
 def _send_notifications(title, body, settings):
@@ -14,6 +15,10 @@ def _send_notifications(title, body, settings):
     if settings.get('notify_pushover') is True:
         client = pushover.Client(settings.get('pushover_user_key'), api_token=settings.get('pushover_api_key'))
         client.send_message(body, title=title)
+    
+    if settings.get('notify_telegram') is True:
+        notifier = telegram_notifier.TelegramNotifier(settings.get('telegram_token'), parse_mode="HTML")
+        notifier.send(body)
 
 
 def send_notifications(title, body, settings):
