@@ -22,6 +22,14 @@ This library has been tested for Windows and Linux.
 * Run a maximum number of plots concurrently to avoid bottlenecks or limit resource hogging.
 * More in-depth active plot screen.
 
+## Command list
+
+* `python manager.py start` start manager 
+* `python manager.py restart` stop and restart manager
+* `python manager.py stop` stop manager
+* `python manager.py view` view manager progress
+* `python manager.py analyze_logs` analyze your logs for more akurate numbers for your `config.yaml` -> `phase_line_end` and `phase_weight`
+
 
 ## Sponsor / Support this Library
 
