@@ -28,7 +28,7 @@ This library has been tested for Windows and Linux.
 * `python manager.py restart` stop and restart manager
 * `python manager.py stop` stop manager
 * `python manager.py view` view manager progress
-* `python manager.py analyze_logs` analyze your logs for more akurate numbers for your `config.yaml` -> `phase_line_end` and `phase_weight`
+* `python manager.py analyze_logs` analyze your logs for more accurate numbers for your `config.yaml` -> `phase_line_end` and `phase_weight`
 
 
 ## Sponsor / Support this Library
@@ -144,7 +144,7 @@ These are the settings that will be used by the view.
 These are different settings in order to send notifications when the plot manager starts and when a plot has been completed.
 
 ### progress
-use the analyzer `python manager.py analyze_logs` if you want more akurate numbers. 
+use the analyzer `python manager.py analyze_logs` if you want more accurate numbers. 
 * `phase_line_end` - These are the settings that will be used to dictate when a phase ends in the progress bar. It is supposed to reflect the line at which the phase will end so the progress calculations can use that information with the existing log file to calculate a progress percent. 
 * `phase_weight` - These are the weight to assign to each phase in the progress calculations. Typically, Phase 1 and 3 are the longest phases so they will hold more weight than the others.
 
