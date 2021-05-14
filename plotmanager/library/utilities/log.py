@@ -96,12 +96,14 @@ def analyze_log_times(log_directory):
                 break
             new_lines += split.count('\n')
             line_numbers[phase].append(new_lines)
+    try:
+        for phase in range(1, 5):
+            print(f'  phase{phase}_line_end: {int(round(sum(line_numbers[phase]) / len(line_numbers[phase]), 0))}')
 
-    for phase in range(1, 5):
-        print(f'  phase{phase}_line_end: {int(round(sum(line_numbers[phase]) / len(line_numbers[phase]), 0))}')
-
-    for phase in range(1, 5):
-        print(f'  phase{phase}_weight: {round(total_times[phase] / sum(total_times.values()) * 100, 2)}')
+        for phase in range(1, 5):
+            print(f'  phase{phase}_weight: {round(total_times[phase] / sum(total_times.values()) * 100, 2)}')
+    except ZeroDivisionError: 
+        print("Sorry ! You dont have any logs to analyze ")
 
 
 def get_phase_info(contents, view_settings=None, pretty_print=True):
