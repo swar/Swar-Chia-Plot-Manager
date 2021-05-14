@@ -21,7 +21,7 @@
 同时运行最大数量的绘图，以避免瓶颈或限制资源占用。
 更深入的活动绘图屏幕。
 赞助/支持本库
-这个库花费了大量的时间和精力，才有了今天的它。考虑赞助或支持这个图书馆。这不是必须的，但更多的是一种善意的支持。
+这个库花费了大量的时间和精力，才有了今天的它。考虑赞助或支持这个库。这不是必须的，但更多的是一种善意的支持。
 
 XCH地址: xch134evwwqkq50nnsmgehnnag4gc856ydc7ached3xxr6jdk7e8l4usdnw39t
 
@@ -56,7 +56,7 @@ GitHub讨论区: [https://github.com/swar/Swar-Chia-Plot-Manager/discussions](ht
 
 **如果我有一个列表，如何选择临时2和目的地？**
 
-- 库
+- 它们是按顺序选择的。如果你有两个目录，第一个绘图会选择第一个，第二个会选择第二个，而第三个会选择第一个
 
 **什么是 temporary2_destination_sync？**
 
@@ -163,7 +163,7 @@ GitHub讨论区: [https://github.com/swar/Swar-Chia-Plot-Manager/discussions](ht
 - [OPTIONAL]`temporary2_directory `- 可以是一个单一的值或一个值的列表。这是一个可选的参数，如果你想使用 Chia 绘图的 temporary2 目录功能，可以使用这个参数。
 - `destination_directory` - 可以是一个单一的值或一个值的列表。这是绘图完成后将被转移到的最终目录。如果你提供一个列表，它将逐一循环浏览每个驱动器。
 - `size` - 这指的是绘图的k大小。你可以在这里输入32、33、34、35......这样的内容。
-- `bitfield` - 这指的是你是否想在你的绘图中使用bitfield。通常情况下，你希望保持为 true。
+- `bitfield` - 这指的是你是否想在你的绘图中使用bitfield。通常情况下，你希望保持为。
 - `threads` - 这是将分配给绘图仪的线程数。只有第1阶段使用1个以上的线程。
 - `buckets` - 要使用的桶的数量。Chia提供的默认值是128。
 - `memory_buffer` - 你想分配给进程的内存数量。
