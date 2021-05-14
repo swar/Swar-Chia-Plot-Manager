@@ -1,7 +1,7 @@
 # Swar's Chia Plot Manager 
 
 #### A plot manager for Chia plotting: https://www.chia.net/
-[English](README.md) / [Русский](README.RU.md)
+[English](README.md) / [Русский](README.RU.md) / [中文](README.ZN.md)
 
 ![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
 
