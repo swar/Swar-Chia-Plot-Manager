@@ -71,20 +71,27 @@ The installation of this library is straightforward. I have attached detailed in
 3. Open CommandPrompt / PowerShell / Terminal and `cd` into the main library folder.
    * Example: `cd C:\Users\Swar\Documents\Swar-Chia-Plot-Manager`
 4. OPTIONAL: Create a virtual environment for Python. This is recommended if you use Python for other things.
-	1. Create a new python environment: `python -m venv venv`
+	4.1. Create a new python environment: `python -m venv venv`
 	   * The second `venv` can be renamed to whatever you want. I prefer `venv` because it's a standard.
-	2. Activate the virtual environment. This must be done *every single time* you open a new window.
+	4.2. Activate the virtual environment. This must be done *every single time* you open a new window.
 	   * Example Windows: `venv\Scripts\activate`
 	   * Example Linux: `. ./venv/bin/activate` or `source ./venv/bin/activate`
-	3. Confirm that it has activated by seeing the `(venv)` prefix. The prefix will change depending on what you named it.
+	4.3. Confirm that it has activated by seeing the `(venv)` prefix. The prefix will change depending on what you named it.
 5. Install the required modules: `pip install -r requirements.txt`
-6. Copy `config.yaml.default` and name it as `config.yaml` in the same directory.
-7. Edit and set up the config.yaml to your own personal settings. There is more help on this below.
+6. Edit and set up the `config.yaml` to your own personal settings. There is more help on this below.
 	* You will need to add the `chia_location` as well! This should point to your chia executable.
-9. Run the Manager: `python manager.py start`
+7. Run the Manager: `python manager.py start`
    * This will start a process in the background that will manage plots based on your inputted settings.
-10. Run the View: `python manager.py view`
+8. Run the View: `python manager.py view`
    * This will loop through a view screen with details about active plots.
+
+## Installation Windows
+
+1. Download and Install Python 3.7 or higher: https://www.python.org/
+2. Download or clone this repo.
+3. Edit and set up the `config.yaml` to your own personal settings. There is more help on this below.
+	* You will need to add the `chia_location` as well! This should point to your chia executable.
+4. Run the View: `run.bat`
 
 
 ## Configuration
@@ -129,7 +136,7 @@ These are the settings that will be used by the view.
 These are different settings in order to send notifications when the plot manager starts and when a plot has been completed.
 
 ### progress
-
+use the analyzer `python manager.py analyze_logs` if you want more akurate numbers. 
 * `phase_line_end` - These are the settings that will be used to dictate when a phase ends in the progress bar. It is supposed to reflect the line at which the phase will end so the progress calculations can use that information with the existing log file to calculate a progress percent. 
 * `phase_weight` - These are the weight to assign to each phase in the progress calculations. Typically, Phase 1 and 3 are the longest phases so they will hold more weight than the others.
 
