@@ -85,7 +85,7 @@ GitHub讨论区: [https://github.com/swar/Swar-Chia-Plot-Manager/discussions](ht
 - 第二个venv可以重命名为你想要的任何东西。我更喜欢venv，因为它是一个标准。
 
 - 激活这个虚拟环境。每次打开新窗口时都必须这样做。
-    -  Windows：`venv/Scripts/activate`
+    -  Windows：`venv\Scripts\activate`
     -  Linux: `./venv/bin/activate` 或 `source ./venv/bin/activate`
 
 - 通过看到(venv)的前缀来确认它已经激活。前缀会根据你给它起的名字而改变。
