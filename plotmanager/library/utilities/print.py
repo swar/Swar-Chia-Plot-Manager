@@ -10,7 +10,7 @@ def _get_row_info(pid, running_work, view_settings):
     work = running_work[pid]
     phase_times = work.phase_times
     elapsed_time = (datetime.now() - work.datetime_start)
-    elapsed_time = pretty_print_time(elapsed_time.seconds)
+    elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
     phase_time_log = []
     for i in range(1, 5):
         if phase_times.get(i):

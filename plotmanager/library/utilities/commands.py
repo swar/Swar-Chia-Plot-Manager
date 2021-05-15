@@ -8,6 +8,7 @@ import time
 from datetime import datetime, timedelta
 
 from plotmanager.library.parse.configuration import get_config_info
+from plotmanager.library.utilities.configuration import test_configuration
 from plotmanager.library.utilities.exceptions import ManagerError, TerminationException
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
@@ -28,8 +29,13 @@ def start_manager():
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
 
-    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
+        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+
+    load_jobs(config_jobs)
+
+    test_configuration(chia_location=chia_location, notification_settings=notification_settings,
+                       instrumentation_settings=instrumentation_settings)
 
     extra_args = []
     if is_windows():
@@ -71,16 +77,15 @@ def stop_manager():
 
 def view():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
     for job in jobs:
-        drive = job.temporary_directory.split('\\')[0]
-        drives['temp'].append(drive)
         directories = {
             'dest': job.destination_directory,
+            'temp': job.temporary_directory,
             'temp2': job.temporary2_directory,
         }
         for key, directory_list in directories.items():
@@ -103,11 +108,13 @@ def view():
         try:
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             jobs = load_jobs(config_jobs)
-            jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work)
+            jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
+                                                   instrumentation_settings=instrumentation_settings)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
-                               notification_settings=notification_settings, view_settings=view_settings)
+                               notification_settings=notification_settings, view_settings=view_settings,
+                               instrumentation_settings=instrumentation_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
-                       next_log_check=datetime.now() + timedelta(seconds=60), view_settings=view_settings)
+                       next_log_check=datetime.now() + timedelta(seconds=view_check_interval), view_settings=view_settings)
             time.sleep(view_check_interval)
             has_file = False
             if len(running_work.values()) == 0:
@@ -127,6 +134,6 @@ def view():
 
 
 def analyze_logs():
-    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
-       notification_settings, debug_level, view_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
+        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     analyze_log_times(log_directory)
