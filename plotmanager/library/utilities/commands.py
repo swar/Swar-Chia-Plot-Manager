@@ -129,7 +129,7 @@ def json_output():
     exit()
 
 
-def view(loop=False):
+def view(loop=True):
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
         notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
