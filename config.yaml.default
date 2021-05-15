@@ -60,7 +60,7 @@ notifications:
   
   # TELEGRAM
   notify_telegram: false
-  telegram_token: 270485614:AAHfiqksKZ8WmR2zSjiQ7_v4TMAKdiHm9T0
+  telegram_token: xxxxx
   
   # TWILIO
   notify_twilio: false
