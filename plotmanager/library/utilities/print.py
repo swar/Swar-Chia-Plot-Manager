@@ -85,6 +85,7 @@ def get_job_data(jobs, running_work, view_settings):
         rows[i] = [str(i+1)] + rows[i]
     return rows
 
+
 def pretty_print_job_data(job_data):
     headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
     rows = [headers] + job_data
@@ -92,16 +93,38 @@ def pretty_print_job_data(job_data):
 
 
 def get_drive_data(drives, running_work, job_data):
-    chia_drives = get_chia_drives()
-    headers = ['type', 'drive', 'used', 'total', 'percent', 'plots', 'temp drive', 'temp2 drive', 'dest drive']
-    rows = [headers]
+    headers = ['type', 'drive', 'used', 'total', '%', '#', 'temp', 'dest']
+    rows = []
 
     pid_to_num = {}
     for job in job_data:
         pid_to_num[job[3]] = job[0]
 
-    for drive_type, drives in drives.items():
-        for drive in drives: 
+    drive_types = {}
+    has_temp2 = False
+    for drive_type, all_drives in drives.items():
+        for drive in all_drives:
+            if drive in drive_types:
+                drive_type_list = drive_types[drive]
+            else:
+                drive_type_list = ['-', '-', '-']
+            if drive_type == 'temp':
+                drive_type_list[0] = 't'
+            elif drive_type == 'temp2':
+                has_temp2 = True
+                drive_type_list[1] = '2'
+            elif drive_type == 'dest':
+                drive_type_list[2] = 'd'
+            else:
+                raise Exception(f'Invalid drive type: {drive_type}')
+            drive_types[drive] = drive_type_list
+
+    checked_drives = []
+    for all_drives in drives.values():
+        for drive in all_drives:
+            if drive in checked_drives:
+                continue
+            checked_drives.append(drive)
             temp, temp2, dest = [], [], []
             for job in running_work:
                 if running_work[job].temporary_drive == drive:
@@ -115,9 +138,35 @@ def get_drive_data(drives, running_work, job_data):
                 usage = psutil.disk_usage(drive)
             except FileNotFoundError:
                 continue
-            rows.append([drive_type, drive, f'{pretty_print_bytes(usage.used, "tb", 2, "TiB")}',
-                         f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}', f'{usage.percent}%',
-                         str(chia_drives[drive_type].get(drive, '?')), ", ".join(temp), ", ".join(temp2), ", ".join(dest)])
+
+            counts = ['-', '-', '-']
+            if temp:
+                counts[0] = str(len(temp))
+            if temp2:
+                counts[1] = str(len(temp2))
+            if dest:
+                counts[2] = str(len(dest))
+            if not has_temp2:
+                del counts[1]
+                del drive_types[drive][1]
+            drive_type = '/'.join(drive_types[drive])
+
+            row = [
+                drive_type,
+                drive,
+                f'{pretty_print_bytes(usage.used, "tb", 2, "TiB")}',
+                f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}',
+                f'{usage.percent}%',
+                '/'.join(counts),
+                '/'.join(temp),
+                '/'.join(dest),
+            ]
+            if has_temp2:
+                row.insert(-1, '/'.join(temp2))
+            rows.append(row)
+    if has_temp2:
+        headers.insert(-1, 'temp2')
+    rows = [headers] + rows
     return pretty_print_table(rows)
 
 
