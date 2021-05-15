@@ -96,6 +96,7 @@ def analyze_log_times(log_directory):
                 break
             new_lines += split.count('\n')
             line_numbers[phase].append(new_lines)
+    
     try:
         for phase in range(1, 5):
             print(f'  phase{phase}_line_end: {int(round(sum(line_numbers[phase]) / len(line_numbers[phase]), 0))}')
@@ -155,7 +156,30 @@ def get_progress(line_count, progress_settings):
         progress += phase4_weight * ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
     return progress
 
+def get_current_phase(log_file):
+    phase_subphases = {}
+    with open(log_file, 'r') as f:
+        for line in f:
+            m = re.match(r'^Starting phase (\d).*', line)
+            if m:
+                phase = int(m.group(1))
+                phase_subphases[phase] = 0
+            m = re.match(r'^Computing table (\d).*', line)
+            if m:
+                phase_subphases[1] = max(phase_subphases[1], int(m.group(1)))
+            m = re.match(r'^Backpropagating on table (\d).*', line)
+            if m:
+                phase_subphases[2] = max(phase_subphases[2], 7 - int(m.group(1)))
+            m = re.match(r'^Compressing tables (\d) and (\d).*', line)
+            if m:
+                phase_subphases[3] = max(phase_subphases[3], int(m.group(1)))
 
+    if phase_subphases:
+        phase = max(phase_subphases.keys())
+        return (phase, phase_subphases[phase])
+    else:
+        return (0, 0)
+        
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
@@ -170,12 +194,12 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         progress = get_progress(line_count=line_count, progress_settings=progress_settings)
 
         phase_times, phase_dates = get_phase_info(data, view_settings)
-        current_phase = 1
-        if phase_times:
-            current_phase = max(phase_times.keys()) + 1
+        # current_phase = 1
+        # if phase_times:
+        #     current_phase = max(phase_times.keys()) + 1
         work.phase_times = phase_times
         work.phase_dates = phase_dates
-        work.current_phase = current_phase
+        work.current_phase = get_current_phase(work.log_file)
         work.progress = f'{progress:.2f}%'
 
         if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
