@@ -29,6 +29,7 @@ The version log history will be kept in this file.
 - Fixed a bug where psutil going stale on Linux users was not allowing the script to restart on its own. ([#197](https://github.com/swar/Swar-Chia-Plot-Manager/pull/197))
 - Fixed a bug where NFS drives weren't being identified. ([#284](https://github.com/swar/Swar-Chia-Plot-Manager/pull/284))
 - Removed the hardcoded next log check date in the view.
+- Fixed a bug where NoSuchProcess error pops up when viewing opened files.
 
 ### v0.0.1
 This is the initial public release of the plot manager with additional bug fixes to account for edge cases on various operating systems.
