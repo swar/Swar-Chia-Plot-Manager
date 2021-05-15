@@ -74,7 +74,8 @@ def load_jobs(config_jobs):
 
         job.name = info['name']
         if job.name in checked_job_names:
-            raise InvalidConfigurationSetting('Found the same job name for multiple jobs. Job names should be unique.')
+            raise InvalidConfigurationSetting(f'Found the same job name for multiple jobs. Job names should be unique. '
+                                              f'Duplicate: {job.name}')
         checked_job_names.append(info['name'])
         job.max_plots = info['max_plots']
 
