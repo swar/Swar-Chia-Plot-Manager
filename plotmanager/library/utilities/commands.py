@@ -126,7 +126,7 @@ def view():
                 break
             if not has_file:
                 print("Restarting view due to psutil going stale...")
-                system_args = [f'"{sys.executable}"'] + sys.argv
+                system_args = ['python'] + sys.argv
                 os.execv(sys.executable, system_args)
         except KeyboardInterrupt:
             print("Stopped view.")
