@@ -57,7 +57,11 @@ notifications:
   notify_pushover: false
   pushover_user_key: xx
   pushover_api_key: xx
-
+  
+  # TELEGRAM
+  notify_telegram: false
+  telegram_token: xxxxx
+  
   # TWILIO
   notify_twilio: false
   twilio_account_sid: xxxxx
