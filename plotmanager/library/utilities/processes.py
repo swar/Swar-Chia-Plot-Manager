@@ -9,6 +9,7 @@ from copy import deepcopy
 from datetime import datetime
 
 from plotmanager.library.utilities.objects import Work
+from plotmanager.library.utilities.instrumentation import set_plots_running
 
 
 def _contains_in_list(string, lst, case_insensitive=False):
@@ -33,7 +34,7 @@ def get_manager_processes():
                     not _contains_in_list('stateless-manager.py', process.cmdline()):
                 continue
             processes.append(process)
-        except psutil.NoSuchProcess:
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
     return processes
 
@@ -119,7 +120,7 @@ def get_chia_drives():
 
 def get_system_drives():
     drives = []
-    for disk in psutil.disk_partitions():
+    for disk in psutil.disk_partitions(all=True):
         drive = disk.mountpoint
         if is_windows():
             drive = os.path.splitdrive(drive)[0]
@@ -169,7 +170,7 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     return temp_size
 
 
-def get_running_plots(jobs, running_work):
+def get_running_plots(jobs, running_work, instrumentation_settings):
     chia_processes = []
     logging.info(f'Getting running plots')
     chia_executable_name = get_chia_executable_name()
@@ -185,9 +186,12 @@ def get_running_plots(jobs, running_work):
         except psutil.ZombieProcess:
             continue
         if process.parent():
-            parent_commands = process.parent().cmdline()
-            if 'plots' in parent_commands and 'create' in parent_commands:
-                continue
+            try:
+                parent_commands = process.parent().cmdline()
+                if 'plots' in parent_commands and 'create' in parent_commands:
+                    continue
+            except (psutil.AccessDenied, psutil.ZombieProcess):
+                pass
         logging.info(f'Found chia plotting process: {process.pid}')
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])
@@ -202,6 +206,8 @@ def get_running_plots(jobs, running_work):
                     continue
                 if file.path[-4:] not in ['.log', '.txt']:
                     continue
+                if file.path[-11:] == 'manager.log':
+                    continue
                 log_file_path = file.path
                 logging.info(f'Found log file: {log_file_path}')
                 break
@@ -213,7 +219,9 @@ def get_running_plots(jobs, running_work):
 
         temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=process.cmdline())
         for job in jobs:
-            if temporary_directory != job.temporary_directory:
+            if isinstance(job.temporary_directory, list) and temporary_directory not in job.temporary_directory:
+                continue
+            if not isinstance(job.temporary_directory, list) and temporary_directory != job.temporary_directory:
                 continue
             if destination_directory not in job.destination_directory:
                 continue
@@ -249,6 +257,8 @@ def get_running_plots(jobs, running_work):
             work.work_id = assumed_job.current_work_id
             assumed_job.current_work_id += 1
             assumed_job.total_running += 1
+            set_plots_running(total_running_plots=assumed_job.total_running, job_name=assumed_job.name,
+                              instrumentation_settings=instrumentation_settings)
             assumed_job.running_work = assumed_job.running_work + [process.pid]
         work.temporary_drive = temporary_drive
         work.temporary2_drive = temporary2_drive

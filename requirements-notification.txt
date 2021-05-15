@@ -1,0 +1,5 @@
+discord_notify==1.0.0
+playsound==1.2.2
+prometheus-client==0.10.1
+python_pushover==0.4
+telegram_notifier==0.2

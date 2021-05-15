@@ -70,7 +70,7 @@ def _get_notifications_settings(config):
         raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
     notifications = config['notifications']
     expected_parameters = ['notify_discord', 'discord_webhook_url', 'notify_sound', 'song', 'notify_pushover',
-                           'pushover_user_key', 'pushover_api_key']
+                           'pushover_user_key', 'pushover_api_key', 'notify_telegram', 'telegram_token']
     _check_parameters(parameter=notifications, expected_parameters=expected_parameters, parameter_type='notification')
     return notifications
 
@@ -83,6 +83,13 @@ def _get_view_settings(config):
                            'include_plot_stats', 'check_interval']
     _check_parameters(parameter=view, expected_parameters=expected_parameters, parameter_type='view')
     return view
+
+
+def _get_instrumentation_settings(config):
+    if 'instrumentation' not in config:
+        raise InvalidYAMLConfigException('Failed to find instrumentation parameter in the YAML.')
+    instrumentation = config.get('instrumentation', {})
+    return instrumentation
 
 
 def _check_parameters(parameter, expected_parameters, parameter_type):
@@ -110,6 +117,7 @@ def get_config_info():
     progress_settings = _get_progress_settings(config=config)
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
+    instrumentation_settings = _get_instrumentation_settings(config=config)
 
     return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
-        progress_settings, notification_settings, log_level, view_settings
+        progress_settings, notification_settings, log_level, view_settings, instrumentation_settings
