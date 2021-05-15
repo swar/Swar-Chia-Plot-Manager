@@ -1,7 +1,7 @@
 import argparse
 
 from plotmanager.library.utilities.exceptions import InvalidArgumentException
-from plotmanager.library.utilities.commands import start_manager, stop_manager, view, analyze_logs
+from plotmanager.library.utilities.commands import start_manager, stop_manager, view, jsonout, analyze_logs
 
 
 parser = argparse.ArgumentParser(description='This is the central manager for Swar\'s Chia Plot Manager.')
@@ -33,10 +33,14 @@ elif args.action == 'restart':
 elif args.action == 'stop':
     stop_manager()
 elif args.action == 'view':
-    view()
+    view(False)
+elif args.action == 'json':
+    jsonout()
+elif args.action == 'status':
+    view(True)
 elif args.action == 'analyze_logs':
     analyze_logs()
 else:
-    error_message = 'Invalid action provided. The valid options are "start", "restart", "stop", "view", and ' \
+    error_message = 'Invalid action provided. The valid options are "start", "restart", "stop", "view", "status", "json" and ' \
                     '"analyze_logs".'
     raise InvalidArgumentException(error_message)
