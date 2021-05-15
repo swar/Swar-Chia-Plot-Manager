@@ -3,7 +3,7 @@
 #### Plot Manager для засева Chia: https://www.chia.net/
 [English](README.md) / [Русский](README.RU.md)
 
-![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
+![The view of the manager](https://i.imgur.com/hIhjXt0.png "View")
 
 ##### Development Version: v0.0.1
 
