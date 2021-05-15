@@ -28,7 +28,7 @@ def start_manager():
     manager_log_file = open(manager_log_file_path, 'a')
     python_file_path = sys.executable
 
-    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
+    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, minutes_between_jobs, progress_settings, \
         notification_settings, debug_level, view_settings = get_config_info()
 
     extra_args = []
@@ -70,7 +70,7 @@ def stop_manager():
 
 
 def view():
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, minutes_between_jobs, progress_settings, \
         notification_settings, debug_level, view_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
     analysis = {'files': {}}
@@ -127,6 +127,6 @@ def view():
 
 
 def analyze_logs():
-    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
+    chia_location, log_directory, jobs, manager_check_interval, max_concurrent, minutes_between_jobs,  progress_settings, \
        notification_settings, debug_level, view_settings = get_config_info()
     analyze_log_times(log_directory)

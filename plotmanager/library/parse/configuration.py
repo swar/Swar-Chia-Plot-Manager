@@ -64,6 +64,16 @@ def _get_global_max_concurrent_config(config):
         raise Exception('global -> max_concurrent should be a integer value.')
     return max_concurrent
 
+def _get_global_minutes_between_jobs_config(config):
+    if 'global' not in config:
+        raise InvalidYAMLConfigException('Failed to find global parameter in the YAML.')
+    if 'minutes_between_jobs' not in config['global']:
+        return 0
+    minutes_between_jobs = config['global']['minutes_between_jobs']
+    if not isinstance(minutes_between_jobs, int):
+        raise Exception('global -> max_concurrent should be a integer value.')
+    return minutes_between_jobs
+
 
 def _get_notifications_settings(config):
     if 'notifications' not in config:
@@ -107,9 +117,10 @@ def get_config_info():
         os.makedirs(log_directory)
     jobs = _get_jobs(config=config)
     max_concurrent = _get_global_max_concurrent_config(config=config)
+    minutes_between_jobs = _get_global_minutes_between_jobs_config(config=config)
     progress_settings = _get_progress_settings(config=config)
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
 
-    return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
+    return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, minutes_between_jobs, \
         progress_settings, notification_settings, log_level, view_settings

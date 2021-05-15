@@ -86,7 +86,10 @@ global:
   #
   # max_concurrent: The maximum number of plots that your system can run. The manager will not kick off more than this
   #                 number of plots total over time.
+  # minutes_between_jobs: The minimum number of minutes before starting a new ploting job, this prevents multiple jobs
+  # 			   from starting at the exact same time (aleviates congestion on destination drive). Set to 0 to disable.
   max_concurrent: 10
+  minutes_between_jobs: 30
 
 
 jobs:
