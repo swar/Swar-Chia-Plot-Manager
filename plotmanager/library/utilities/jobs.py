@@ -21,7 +21,9 @@ def has_active_jobs_and_work(jobs):
 def get_target_directories(job, drives_free_space):
     job_offset = job.total_completed + job.total_running
 
-    job = check_valid_destinations(job, drives_free_space)
+    if job.skip_full_destinations:
+        logging.info('Checking for full destinations.')
+        job = check_valid_destinations(job, drives_free_space)
     destination_directory = job.destination_directory
     temporary_directory = job.temporary_directory
     temporary2_directory = job.temporary2_directory
@@ -91,6 +93,7 @@ def load_jobs(config_jobs):
         job.concurrency_start_early_phase_delay = info.get('concurrency_start_early_phase_delay', None)
         job.temporary2_destination_sync = info.get('temporary2_destination_sync', False)
         job.exclude_final_directory = info.get('exclude_final_directory', False)
+        job.skip_full_destinations = info.get('skip_full_destinations', True)
 
         job.temporary_directory = info['temporary_directory']
         job.destination_directory = info['destination_directory']

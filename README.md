@@ -177,6 +177,7 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `concurrency_start_early_phase_delay` - The maximum number of minutes to wait before a new plot gets kicked off when the start early phase has been detected.
 * `temporary2_destination_sync` - This field will always submit the destination directory as the temporary2 directory. These two directories will be in sync so that they will always be submitted as the same value.
 * `exclude_final_directory` - Whether to skip adding `destination_directory` to harvester for farming. This is a Chia feature.
+* `skip_full_destinations` - When this is enabled it will calculate the sizes of all running plots and the future plot to determine if there is enough space left on the drive to start a job. If there is not, it will skip the destination and move onto the next one. Once all are full, it will disable the job.
 * `unix_process_priority` - UNIX Only. This is the priority that plots will be given when they are spawned. UNIX values must be between -20 and 20. The higher the value, the lower the priority of the process.
 * `windows_process_priority` - Windows Only. This is the priority that plots will be given when they are spawned. Windows values vary and should be set to one of the following values:
 	* 16384 `BELOW_NORMAL_PRIORITY_CLASS`
