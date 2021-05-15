@@ -1,9 +1,35 @@
 import os
 import psutil
+import json
 
 from datetime import datetime, timedelta
 
-from plotmanager.library.utilities.processes import get_manager_processes, get_chia_drives
+from plotmanager.library.utilities.processes import get_manager_processes
+
+
+def _get_json(pid, running_work, view_settings):
+    work = running_work[pid]
+    phase_times = work.phase_times
+    elapsed_time = (datetime.now() - work.datetime_start)
+    elapsed_time = pretty_print_time(elapsed_time.seconds)
+    phase_time_log = []
+    for i in range(1, 5):
+        if phase_times.get(i):
+            phase_time_log.append(phase_times.get(i))
+
+    row = [
+        work.job.name if work.job else '?',
+        work.k_size,
+        pid,
+        work.datetime_start.strftime(view_settings['datetime_format']),
+        elapsed_time,
+        work.current_phase,
+        ' / '.join(phase_time_log),
+        work.progress,
+        pretty_print_bytes(work.temp_file_size, 'gb', 0, " GiB"),
+    ]
+
+    return row
 
 
 def _get_row_info(pid, running_work, view_settings):
@@ -64,6 +90,28 @@ def pretty_print_table(rows):
         console.append("   ".join([cell.ljust(max_characters[i]) for i, cell in enumerate(row)]))
     console.append(separator)
     return "\n".join(console)
+
+
+def get_job_json(jobs, running_work, view_settings):
+    rows = []
+    added_pids = []
+    for job in jobs:
+        for pid in job.running_work:
+            if pid not in running_work:
+                continue
+            rows.append(_get_json(pid, running_work, view_settings))
+            added_pids.append(pid)
+    for pid in running_work.keys():
+        if pid in added_pids:
+            continue
+        rows.append(_get_json(pid, running_work, view_settings))
+        added_pids.append(pid)
+    rows.sort(key=lambda x: (x[4]), reverse=True)
+    for i in range(len(rows)):
+        rows[i] = [str(i + 1)] + rows[i]
+    jobs = dict(jobs=rows)
+    print(json.dumps(jobs, separators=(',', ':')))
+    return rows
 
 
 def get_job_data(jobs, running_work, view_settings):
@@ -170,7 +218,11 @@ def get_drive_data(drives, running_work, job_data):
     return pretty_print_table(rows)
 
 
-def print_view(jobs, running_work, analysis, drives, next_log_check, view_settings):
+def print_json(jobs, running_work, view_settings):
+    get_job_json(jobs=jobs, running_work=running_work, view_settings=view_settings)
+
+
+def print_view(jobs, running_work, analysis, drives, next_log_check, view_settings, loop):
     # Job Table
     job_data = get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings)
 
@@ -202,5 +254,6 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
         print(f'Plots Completed Yesterday: {analysis["summary"].get(datetime.now().date() - timedelta(days=1), 0)}')
         print(f'Plots Completed Today: {analysis["summary"].get(datetime.now().date(), 0)}')
         print()
-    print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
+    if loop:
+        print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     print()

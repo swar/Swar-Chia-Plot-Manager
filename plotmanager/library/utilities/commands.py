@@ -13,8 +13,9 @@ from plotmanager.library.utilities.exceptions import ManagerError, TerminationEx
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
 from plotmanager.library.utilities.notifications import send_notifications
-from plotmanager.library.utilities.print import print_view
-from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, start_process
+from plotmanager.library.utilities.print import print_view, print_json
+from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, \
+    start_process, identify_drive, get_system_drives
 
 
 def start_manager():
@@ -75,7 +76,60 @@ def stop_manager():
     print("Successfully stopped manager processes.")
 
 
-def view():
+def json_output():
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
+        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+
+    all_drives = get_system_drives()
+
+    analysis = {'files': {}}
+    drives = {'temp': [], 'temp2': [], 'dest': []}
+    jobs = load_jobs(config_jobs)
+    for job in jobs:
+        drive = job.temporary_directory.split('\\')[0]
+        drives['temp'].append(drive)
+        directories = {
+            'dest': job.destination_directory,
+            'temp2': job.temporary2_directory,
+        }
+        for key, directory_list in directories.items():
+            if directory_list is None:
+                continue
+            if not isinstance(directory_list, list):
+                directory_list = [directory_list]
+            for directory in directory_list:
+                drive = identify_drive(file_path=directory, drives=all_drives)
+                if drive in drives[key]:
+                    continue
+                drives[key].append(drive)
+
+    running_work = {}
+
+    analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
+    jobs = load_jobs(config_jobs)
+    jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
+                                           instrumentation_settings=instrumentation_settings)
+    check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
+                       notification_settings=notification_settings, view_settings=view_settings,
+                       instrumentation_settings=instrumentation_settings)
+    print_json(jobs=jobs, running_work=running_work, view_settings=view_settings)
+
+    has_file = False
+    if len(running_work.values()) == 0:
+        has_file = True
+    for work in running_work.values():
+        if not work.log_file:
+            continue
+        has_file = True
+        break
+    if not has_file:
+        print("Restarting view due to psutil going stale...")
+        system_args = [f'"{sys.executable}"'] + sys.argv
+        os.execv(sys.executable, system_args)
+    exit()
+
+
+def view(loop=False):
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
         notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
@@ -114,7 +168,10 @@ def view():
                                notification_settings=notification_settings, view_settings=view_settings,
                                instrumentation_settings=instrumentation_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
-                       next_log_check=datetime.now() + timedelta(seconds=view_check_interval), view_settings=view_settings)
+                       next_log_check=datetime.now() + timedelta(seconds=view_check_interval),
+                       view_settings=view_settings, loop=loop)
+            if not loop:
+                break
             time.sleep(view_check_interval)
             has_file = False
             if len(running_work.values()) == 0:
