@@ -149,6 +149,7 @@ List of Metrics Gathered
 
 ### global
 * `max_concurrent` - The maximum number of plots that your system can run. The manager will not kick off more than this number of plots total over time.
+* `max_for_phase_1` - The maximum number of plots that your system can run in phase 1.
 
 ### job
 

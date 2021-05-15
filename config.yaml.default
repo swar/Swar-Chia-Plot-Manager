@@ -97,7 +97,9 @@ global:
   #
   # max_concurrent: The maximum number of plots that your system can run. The manager will not kick off more than this
   #                 number of plots total over time.
+  # max_for_phase_1: The maximum number of plots that your system can run in phase 1.
   max_concurrent: 10
+  max_for_phase_1: 3
 
 
 jobs:

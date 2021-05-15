@@ -8,6 +8,7 @@ The version log history will be kept in this file.
 - Adding `exclude_final_directory` as an option in the `config.yaml`. ([#35](https://github.com/swar/Swar-Chia-Plot-Manager/pull/35))
 - Skipping `manager.log` as a file and renaming to `debug.log`. ([#38](https://github.com/swar/Swar-Chia-Plot-Manager/pull/38))
 - Added destination directory skipping when a drive is full using `skip_full_destinations` at the job level. It will calculate size of total running plots and the predicted size of the new plot prior to making that judgement. ([#36](https://github.com/swar/Swar-Chia-Plot-Manager/pull/36), [#193](https://github.com/swar/Swar-Chia-Plot-Manager/pull/193))
+- Added global setting for `max_for_phase_1`.
 - Added list support for temporary directories. This will cycle through all temporary directories in the order that they are listed for a job. ([#150](https://github.com/swar/Swar-Chia-Plot-Manager/pull/150), [#153](https://github.com/swar/Swar-Chia-Plot-Manager/pull/153/files), [#182](https://github.com/swar/Swar-Chia-Plot-Manager/pull/182))
 - Added CPU affinity support on the job level. This allows you to select and dedicate specific threads to your jobs. ([#134](https://github.com/swar/Swar-Chia-Plot-Manager/pull/134), [#281](https://github.com/swar/Swar-Chia-Plot-Manager/pull/281))
 - Added process priority levels on the job level. This allows you to set the priority levels to whatever you choose. Some people want low priority, while others want higher priorities. ([#282](https://github.com/swar/Swar-Chia-Plot-Manager/pull/282))

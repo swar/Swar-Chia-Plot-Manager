@@ -148,8 +148,8 @@ def determine_job_size(k_size):
     return size
 
 
-def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chia_location, log_directory,
-                          next_log_check, system_drives):
+def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, next_job_work, chia_location,
+                          log_directory, next_log_check, system_drives):
     drives_free_space = {}
     for job in jobs:
         directories = [job.destination_directory]
@@ -177,11 +177,21 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
         logging.info(drive)
     logging.info(f'Free space after checking active jobs: {drives_free_space}')
 
+    total_phase_1_count = 0
+    for pid in running_work.keys():
+        if running_work[pid].current_phase > 1:
+            continue
+        total_phase_1_count += 1
+
     for i, job in enumerate(jobs):
         logging.info(f'Checking to queue work for job: {job.name}')
         if len(running_work.values()) >= max_concurrent:
             logging.info(f'Global concurrent limit met, skipping. Running plots: {len(running_work.values())}, '
                          f'Max global concurrent limit: {max_concurrent}')
+            continue
+        if total_phase_1_count >= max_for_phase_1:
+            logging.info(f'Global max for phase 1 limit has been met, skipping. Count: {total_phase_1_count}, '
+                         f'Setting Max: f{max_for_phase_1}')
             continue
         phase_1_count = 0
         for pid in job.running_work:
@@ -190,7 +200,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
             phase_1_count += 1
         logging.info(f'Total jobs in phase 1: {phase_1_count}')
         if job.max_for_phase_1 and phase_1_count >= job.max_for_phase_1:
-            logging.info(f'Max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
+            logging.info(f'Job max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
             continue
         if job.total_kicked_off >= job.max_plots:
             logging.info(f'Job\'s total kicked off greater than or equal to max plots, skipping. Total Kicked Off: '
@@ -233,6 +243,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, next_job_work, chi
         jobs[i] = deepcopy(job)
         if work is None:
             continue
+        total_phase_1_count += 1
         next_log_check = datetime.now()
         running_work[work.pid] = work
 

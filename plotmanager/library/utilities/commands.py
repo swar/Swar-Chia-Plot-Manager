@@ -30,8 +30,9 @@ def start_manager():
     debug_log_file = open(debug_log_file_path, 'a')
     python_file_path = sys.executable
 
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+        progress_settings, notification_settings, debug_level, view_settings, instrumentation_settings = \
+        get_config_info()
 
     load_jobs(config_jobs)
 
@@ -77,12 +78,12 @@ def stop_manager():
 
 
 def json_output():
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+        progress_settings, notification_settings, debug_level, view_settings, instrumentation_settings = \
+        get_config_info()
 
-    all_drives = get_system_drives()
+    system_drives = get_system_drives()
 
-    analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
     for job in jobs:
@@ -98,14 +99,13 @@ def json_output():
             if not isinstance(directory_list, list):
                 directory_list = [directory_list]
             for directory in directory_list:
-                drive = identify_drive(file_path=directory, drives=all_drives)
+                drive = identify_drive(file_path=directory, drives=system_drives)
                 if drive in drives[key]:
                     continue
                 drives[key].append(drive)
 
     running_work = {}
 
-    analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
     jobs = load_jobs(config_jobs)
     jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
                                            instrumentation_settings=instrumentation_settings)
@@ -130,9 +130,11 @@ def json_output():
 
 
 def view(loop=True):
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+        progress_settings, notification_settings, debug_level, view_settings, instrumentation_settings = \
+        get_config_info()
     view_check_interval = view_settings['check_interval']
+    system_drives = get_system_drives()
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
@@ -145,14 +147,10 @@ def view(loop=True):
         for key, directory_list in directories.items():
             if directory_list is None:
                 continue
-            if isinstance(directory_list, list):
-                for directory in directory_list:
-                    drive = directory.split('\\')[0]
-                    if drive in drives[key]:
-                        continue
-                    drives[key].append(drive)
-            else:
-                drive = directory_list.split('\\')[0]
+            if not isinstance(directory_list, list):
+                directory_list = [directory_list]
+            for directory in directory_list:
+                drive = identify_drive(file_path=directory, drives=system_drives)
                 if drive in drives[key]:
                     continue
                 drives[key].append(drive)
@@ -191,6 +189,7 @@ def view(loop=True):
 
 
 def analyze_logs():
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1,\
+        progress_settings, notification_settings, debug_level, view_settings, instrumentation_settings = \
+        get_config_info()
     analyze_log_times(log_directory)
