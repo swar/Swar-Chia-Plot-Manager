@@ -1,7 +1,11 @@
 # Swar's Chia Plot Manager 粉丝版本尽兴翻译
+ 
+原地址：https://github.com/swar/Swar-Chia-Plot-Manager
+
+
 它是一个 chia 的绘图管理器：[https://www.chia.net/](https://www.chia.net/)
 
-[English](README.md) / [Русский](README.RU.md) / [中文](README.ZN.md)
+[English](README_EN.md) / [中文](README.ZN.md)
 
 ![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
 
