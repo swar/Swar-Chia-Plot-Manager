@@ -206,7 +206,7 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
                     continue
                 if file.path[-4:] not in ['.log', '.txt']:
                     continue
-                if file.path[-11:] == 'manager.log':
+                if file.path[-9:] == 'debug.log':
                     continue
                 log_file_path = file.path
                 logging.info(f'Found log file: {log_file_path}')
