@@ -1,163 +1,166 @@
-# Swar's Chia Plot Manager 
+# Swar's Chia Plot Manager 粉丝版本尽兴翻译
+它是一个 chia 的绘图管理器：[https://www.chia.net/](https://www.chia.net/)
 
-#### A plot manager for Chia plotting: https://www.chia.net/
 [English](README.md) / [Русский](README.RU.md) / [中文](README.ZN.md)
 
 ![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
 
-##### Development Version: v0.0.1
+开发版本：v0.0.1
 
-This is a cross-platform Chia Plot Manager that will work on the major operating systems. This is not a plotter. The purpose of this library is to manage your plotting and kick off new plots with the settings that you configure. Everyone's system is unique so customization is an important feature that was engraved into this library.
+这是一个跨平台的 Chia  绘图管理器，可以在主流的操作系统上工作。它不是用来绘图的。绘图还是 chia 做的事情，这个库的目的是管理你的 chia 尽兴绘图，并使用你配置的 config.yaml 置来启动新的绘图。每个人的系统都不尽相同，所以定制是这个库中的一个重要特征。
 
-This library is simple, easy-to-use, and reliable to keep the plots generating.
+这个库很简单，易于使用，而且可靠，可以保持绘图的生成。
 
-This library has been tested for Windows and Linux.
+这个库已经在 Windows 和 Linux 上进行了测试，我本人（卧底小哥）在 mac 和 windows 上进行了测试
 
+## 特点
 
-## Features
+错开你的绘图，这样你的计算机资源就可以避免高峰期。
+允许一个目标目录列表。
+通过交错时间提前启动一个新的绘图，最大限度地利用临时空间。
+同时运行最大数量的绘图，以避免瓶颈或限制资源占用。
+更深入的检测绘制过程。
+ 
+## 支持/问题
 
-* Stagger your plots so that your computer resources can avoid high peaks.
-* Allow for a list of destination directories.
-* Utilize temporary space to its maximum potential by starting a new plot early.
-* Run a maximum number of plots concurrently to avoid bottlenecks or limit resource hogging.
-* More in-depth active plot screen.
+请不要使用GitHub问题来提问或支持你自己的个人设置，问题应该与代码错误有关，因为在这一点上，它已经被许多人测试过，可以在 Windows、Linux 和 Mac OS 上工作。因此，任何与技术支持、配置设置有关的问题，或者与你自己的个人使用情况有关的问题，都应该在下面的任何一个链接中提问。
 
+Discord：[https://discord.gg/XyvMzeQpu2](https://discord.gg/XyvMzeQpu2)
+这是官方 Discord 服务器 - Swar's Chia 社区
 
-## Sponsor / Support this Library
+官方Chia Keybase团队：[https://keybase.io/team/chia_network.public](https://keybase.io/team/chia_network.public)频道是#swar
 
-This library took a lot of time and effort in order to get it before you today. Consider sponsoring or supporting the library. This is not necessary but more a kind gestures.
-
-* XCH Address: xch134evwwqkq50nnsmgehnnag4gc856ydc7ached3xxr6jdk7e8l4usdnw39t
-* ETH Address: 0xf8F7BD24B94D75E54BFD9557fF6904DBE239322E
-* BTC Address: 36gnjnHqkttcBiKjjAekoy68z6C3BJ9ekS
-* Paypal: https://www.paypal.com/biz/fund?id=XGVS7J69KYBTY
-
-
-## Support / Questions
-
-Please do not use GitHub issues for questions or support regarding your own personal setups. Issues should pertain to actual bugs in the code and ideas. It has been tested to work on Windows, Linux, and Mac OS by numerous people at this point. So any questions relating to tech support, configuration setup, or things pertaining to your own personal use cases should be posted at any of the links below.
-* Discord Server: https://discord.gg/XyvMzeQpu2
-    * This is the Official Discord Server - Swar's Chia Community 
-* Official Chia Keybase Team: https://keybase.io/team/chia_network.public
-    * The channel is #swar 
-* GitHub Discussion Board: https://github.com/swar/Swar-Chia-Plot-Manager/discussions
+GitHub讨论区: [https://github.com/swar/Swar-Chia-Plot-Manager/discussions](https://github.com/swar/Swar-Chia-Plot-Manager/discussions)
 
 
-## Frequently Asked Questions
-
-##### Can I reload my config?
-* Yes, your config can be reloaded with the `python manager.py restart` command or separately you can stop and start manager again. Please note that your job counts will be reset and the temporary2 and destination directories order will be reset.
-* Please note that if you change any of the directories for a job, it will mess with existing jobs and `manager` and `view` will not be able to identify the old job. If you are changing job directories while having active plots, please change the `max_plots` for the current job to 0 and make a separate job with the new directories. I **do not recommend** changing directories while plots are running.
-
-##### If I stop manager will it kill my plots?
-* No. Plots are kicked off in the background and they will not kill your existing plots. If you want to kill them, you have access to the PIDs which you can use to track them down in Task Manager (or the appropriate software for your OS) and kill them manually. Please note you will have to delete the .tmp files as well. I do not handle this for you.
-
-##### How are temporary2 and destination selected if I have a list?
-* They are chosen in order. If you have two directories the first plot will select the first one, the second the second one, and the third plot will select the first one.
-
-##### What is `temporary2_destination_sync`?
-* Some users like having the option to always have the same temporary2 and destination directory. Enabling this setting will always have temporary2 be the drive that is used as destination. You can use an empty temporary2 directory list if you are using this setting.
-
-##### What is the best config for my setup?
-* Please forward this question to Keybase or the Discussion tab.
+## 常见的问题
 
 
-## Installation
+**我可以重新加载我的配置吗？**
+- 是的，你的配置可以通过`python [manager.py](http://manager.py/) restart`命令来重新加载，或者单独停止并重新启动管理器。请注意，你的任务数将被重置！临时目录2和目标目录的顺序也将被重置。
 
-The installation of this library is straightforward. I have attached detailed instructions below that should help you get started. 
+- 请注意，如果你改变了任务的任何一个目录，它将扰乱现有的任务，管理器和视图将无法识别旧的任务。如果你在有活动绘图的情况下改变任务目录，请将当前任务的 `max_plots` 改为0，然后用新目录做一个单独的任务。我不建议在计划运行时改变目录。
 
-1. Download and Install Python 3.7 or higher: https://www.python.org/
-2. `git clone` this repo or download it.
-3. Open CommandPrompt / PowerShell / Terminal and `cd` into the main library folder.
-   * Example: `cd C:\Users\Swar\Documents\Swar-Chia-Plot-Manager`
-4. OPTIONAL: Create a virtual environment for Python. This is recommended if you use Python for other things.
-	1. Create a new python environment: `python -m venv venv`
-	   * The second `venv` can be renamed to whatever you want. I prefer `venv` because it's a standard.
-	2. Activate the virtual environment. This must be done *every single time* you open a new window.
-	   * Example Windows: `venv\Scripts\activate`
-	   * Example Linux: `. ./venv/bin/activate` or `source ./venv/bin/activate`
-	3. Confirm that it has activated by seeing the `(venv)` prefix. The prefix will change depending on what you named it.
-5. Install the required modules: `pip install -r requirements.txt`
-6. Copy `config.yaml.default` and name it as `config.yaml` in the same directory.
-7. Edit and set up the config.yaml to your own personal settings. There is more help on this below.
-	* You will need to add the `chia_location` as well! This should point to your chia executable.
-9. Run the Manager: `python manager.py start`
-   * This will start a process in the background that will manage plots based on your inputted settings.
-10. Run the View: `python manager.py view`
-   * This will loop through a view screen with details about active plots.
+**如果我停止管理器，是否会杀死我的任务？**
+- 不会，绘图是在后台启动的，它们不会杀死你现有的绘图。如果你想结束它们，你可以访问PIDs，并手动结束它们。请注意，你还必须删除.tmp文件。我不为你处理这个问题。
 
+**如果我有一个列表，如何选择临时2和目的地？**
 
-## Configuration
+- 它们是按顺序选择的。如果你有两个目录，第一个绘图会选择第一个，第二个会选择第二个，而第三个会选择第一个,这样循环 1 2 1 2 1 2 1...
 
-The configuration of this library is unique to every end-user. The `config.yaml` file is where the configuration will live. 
+**什么是 temporary2_destination_sync？**
 
-This plot manager works based on the idea of jobs. Each job will have its own settings that you can configure and customize. No two drives are unique so this will provide flexibility for your own constraints and requirements.
+一些用户喜欢选择总是拥有相同的临时2和目标目录。启用这个设置将总是让 `temporary2` 作为目的地的磁盘。如果你使用这个设置，你可以使用一个空的 `temporary2` ]
+
+**对我的设置来说，什么是最好的配置？**
+
+- 请把这个问题转发给 `Keybase` 或添加讨论标签。
+
+## 安装
+
+这个库的安装是很简单的。我在下面附上了详细的说明，应该可以帮助你开始安装。
+
+1、下载并安装Python 3.7或更高版本：[https://www.python.org/](https://www.python.org/)
+
+2、`git clone` 命令克隆库或者直接网页下载它。
+
+3、打开 CommandPrompt / PowerShell / Terminal，等任何工具，然后cd到主库文件夹。
+
+- 例如：cd C:\Users\Swar\Documents\Swar-Chia-Plot-Manager
+
+4、可选：为Python创建一个虚拟环境。如果你用Python做其他事情，建议这样做：
+
+- 创建一个新的Python环境： python -m venv venv
+
+- 第二个venv可以重命名为你想要的任何东西。我更喜欢用venv，因为它是一个规范。
+
+- 激活这个虚拟环境。每次打开新窗口时都必须这样做。
+    -  Windows：`venv\Scripts\activate`
+    -  Linux: `./venv/bin/activate` 或 `source ./venv/bin/activate`
+
+- 通过看到(venv)的前缀来确认它已经激活。前缀会根据你给它起的名字而改变。
+
+5、安装所需模块： `pip install -r requirements.txt`
+
+6、在同一目录下复制 `config.yaml.default` 并命名为 `config.yaml`
+
+7、按照你自己的个人设置编辑和设置`config.yaml` 下面有更多关于这方面的帮助
+
+- 你还需要添加 `chia_location!` 这应该指向你的chia可执行文件（注意这个不是环境变量，这个工具不需要你配置环境变量）
+
+8、运行管理器： python [manager.py](http://manager.py/) start
+
+- 这将在后台启动一个进程，根据你输入的设置来管理绘图。
+
+9、运行视图： python [manager.py](http://manager.py/) view
+
+- 这将循环查看检测屏幕上的正在活动地块的详细信息。
+
+## 配置
+
+这个库的配置对每个终端用户都是独一无二的 `config.yaml` 文件是配置的所在。
+
+这个绘图管理器是基于任务的概念来工作的。每个任务都有自己的设置，你可以对每个任务进行个性化设置，没有哪个是唯一的，所以这将为你提供灵活性。
 
 ### chia_location
+这是一个单一的变量，应该包含你的 `chia` 可执行文件的位置。这就是 chia 的可执行文件。
 
-This is a single variable that should contain the location of your chia executable file. This is the blockchain executable.
+- Windows的例子：`C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe`
 
-* Windows Example: `C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe`
-* Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
-* Another Linux Example: `/home/swar/chia-blockchain/venv/bin/chia`
+- Linux的例子: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
 
-### manager
+- 另一个Linux例子: `/home/swar/chia-blockchain/venv/bin/chia`
+### 管理
 
-These are the config settings that will only be used by the plot manager.
+这些是只由绘制管理器使用的配置设置。
 
-* `check_interval` - The number of seconds to wait before checking to see if a new job should start.
-* `log_level` - Keep this on ERROR to only record when there are errors. Change this to INFO in order to see more detailed logging. Warning: INFO will write a lot of information.
+- `check_interval` - 在检查是否有新任务开始之前的等待秒数。
 
-### log
+- `log_level` - 保持在 ` ERROR ` 上，只在有错误时记录。把它改为 `INFO`，以便看到更详细的日志记录。警告:`INFO` 会写下大量的信息。
 
-* `folder_path` - This is the folder where your log files for plots will be saved.
+### 日志
 
-### view
+- `folder_path` - 这是你的日志文件的文件夹，用于保存绘图。
 
-These are the settings that will be used by the view.
+### 视图
+这些是视图将使用的设置
 
-* `check_interval` - The number of seconds to wait before updating the view.
-* `datetime_format` - The datetime format that you want displayed in the view. See here for formatting: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
-* `include_seconds_for_phase` - This dictates whether seconds are included in the phase times.
-* `include_drive_info` - This dictates whether the drive information will be showed.
-* `include_cpu` - This dictates whether the CPU information will be showed.
-* `include_ram` - This dictates whether the RAM information will be showed.
-* `include_plot_stats` - This dictates whether the plot stats will be showed.
+- `check_interval` - 更新视图前的等待秒数。
+- `datetime_format` - 视图中希望显示的日期时间格式。格式化见这里：[https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)
+- `include_seconds_for_phase` - 这决定了时间转换格式是否包括秒。
+- `include_drive_info` - 这决定了是否会显示驱动器信息。
+- `include_cpu` - 这决定了是否会显示CPU的信息。
+- `include_ram` - 这决定了是否显示RAM的信息。
+- `include_plot_stats` - 这决定了是否会显示绘图统计信息。
+### 通知
+这些是不同的设置，以便在绘图管理器启动和绘图完成时发送通知。
 
-### notifications
+### 进展
+- `phase_line_end` - 这些设置将用于决定一个阶段在进度条中的结束时间。它应该反映出该阶段结束的线，这样进度计算就可以使用该信息与现有的日志文件来计算进度百分比。
+- `phase_weight` - 这些是在进度计算中分配给每个阶段的权重,通常情况下，第1和第3阶段是最长的阶段，所以它们将比其他阶段拥有更多的权重。
+### 全局
+- `max_concurrent` - 你的系统可以运行的最大绘图数量,管理器在一段时间内启动的地块总数不会超过这个数量。
+## 任务
+- 这些是每个任务将使用的设置。请注意，你可以有多个任务，每个任务都应该是YAML格式的，这样才能正确配置。这里几乎所有的值都将被传递到Chia可执行文件中。
 
-These are different settings in order to send notifications when the plot manager starts and when a plot has been completed.
+点击这里查看更多关于Chia CLI的细节：[https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference](https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference)
 
-### progress
-
-* `phase_line_end` - These are the settings that will be used to dictate when a phase ends in the progress bar. It is supposed to reflect the line at which the phase will end so the progress calculations can use that information with the existing log file to calculate a progress percent. 
-* `phase_weight` - These are the weight to assign to each phase in the progress calculations. Typically, Phase 1 and 3 are the longest phases so they will hold more weight than the others.
-
-### global
-* `max_concurrent` - The maximum number of plots that your system can run. The manager will not kick off more than this number of plots total over time.
-
-### job
-
-These are the settings that will be used by each job. Please note you can have multiple jobs and each job should be in YAML format in order for it to be interpreted correctly. Almost all the values here will be passed into the Chia executable file. 
-
-Check for more details on the Chia CLI here: https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference
-
-* `name` - This is the name that you want to give to the job.
-* `max_plots` - This is the maximum number of jobs to make in one run of the manager. Any restarts to manager will reset this variable. It is only here to help with short term plotting.
-* [OPTIONAL]`farmer_public_key` - Your farmer public key. If none is provided, it will not pass in this variable to the chia executable which results in your default keys being used. This is only needed if you have chia set up on a machine that does not have your credentials.
-* [OPTIONAL]`pool_public_key` - Your pool public key. Same information as the above. 
-* `temporary_directory` - Only a single directory should be passed into here. This is where the plotting will take place.
-* [OPTIONAL]`temporary2_directory` - Can be a single value or a list of values. This is an optional parameter to use in case you want to use the temporary2 directory functionality of Chia plotting.
-* `destination_directory` - Can be a single value or a list of values. This is the final directory where the plot will be transferred once it is completed. If you provide a list, it will cycle through each drive one by one.  
-* `size` - This refers to the k size of the plot. You would type in something like 32, 33, 34, 35... in here.
-* `bitfield` - This refers to whether you want to use bitfield or not in your plotting. Typically, you want to keep this as true.
-* `threads` - This is the number of threads that will be assigned to the plotter. Only phase 1 uses more than 1 thread.
-* `buckets` - The number of buckets to use. The default provided by Chia is 128.
-* `memory_buffer` - The amount of memory you want to allocate to the process.
-* `max_concurrent` - The maximum number of plots to have for this job at any given time.
-* `max_concurrent_with_start_early` - The maximum number of plots to have for this job at any given time including phases that started early.
-* `stagger_minutes` - The amount of minutes to wait before the next job can get kicked off. You can even set this to zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
-* `max_for_phase_1` - The maximum number of plots on phase 1 for this job.
-* `concurrency_start_early_phase` - The phase in which you want to start a plot early. It is recommended to use 4 for this field.
-* `concurrency_start_early_phase_delay` - The maximum number of minutes to wait before a new plot gets kicked off when the start early phase has been detected.
-* `temporary2_destination_sync` - This field will always submit the destination directory as the temporary2 directory. These two directories will be in sync so that they will always be submitted as the same value.
+- `name` - 这是你要给的名字。
+- `max_plots` - 这是在管理器的一次运行中，任务的最大数量。任何重新启动管理器的操作都会重置这个变量。它在这里只是为了帮助短期的绘图。
+- [OPTIONAL] `farmer_public_key` - 你的chia耕种公钥。如果没有提供，它将不会把这个变量传给chia执行程序，从而导致你的默认密钥被使用。只有当你在一台没有你的证书的机器上设置了chia时才需要这个。
+- [OPTIONAL] `pool_public_key` - 你的池公钥。与上述信息相同。
+- `temporary_directory` - 这里应该只传递一个目录。这是将进行绘图的地方。
+- [OPTIONAL]`temporary2_directory `- 可以是一个单一的值或一个值的列表。这是一个可选的参数，如果你想使用 Chia 绘图的 temporary2 目录功能，可以使用这个参数。
+- `destination_directory` - 可以是一个单一的值或一个值的列表。这是绘图完成后将被转移到的最终目录。如果你提供一个列表，它将逐一循环浏览每个驱动器。
+- `size` - 这指的是绘图的k大小。你可以在这里输入32、33、34、35......这样的内容。
+- `bitfield` - 这指的是你是否想在你的绘图中使用bitfield。通常情况下，推荐使用 `true`。
+- `threads` - 这是将分配给 plot 绘图的线程数。只有第1阶段使用1个以上的线程。（观众很多反馈：这个是每个 plot 的线程）
+- `buckets` - 要使用的桶的数量。Chia提供的默认值是128。
+- `memory_buffer` - 你想分配给进程的内存数量。
+- `max_concurrent` - 这个任务在任何时候都要有的最大数量的绘图。
+- `max_concurrent_with_start_early` - 这项工作在任何时候拥有的最大绘图数量，包括提前开始的阶段。
+- `stagger_minutes` - 每个任务并发之间的交错时间单位 分钟。如果你想让你的 plot 在并发限制允许的情况下立即被启动，你甚至可以把它设置为零。
+- `max_for_phase_1` - 这个任务在第1阶段的最大绘图数量。
+- `concurrency_start_early_phase` - 你想提前启动一个绘图的阶段。建议使用4。
+- `concurrency_start_early_phase_delay` - 当检测到提前开始阶段时，在新的绘图被启动之前的最大等待分钟数。 
+- `temporary2_destination_sync` - 这个字段将始终提交目标目录作为临时2目录。这两个目录将是同步的，因此它们将总是以相同的值提交。
