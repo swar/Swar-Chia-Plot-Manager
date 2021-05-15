@@ -33,11 +33,11 @@ elif args.action == 'restart':
 elif args.action == 'stop':
     stop_manager()
 elif args.action == 'view':
-    view(False)
+    view()
 elif args.action == 'json':
     json_output()
 elif args.action == 'status':
-    view(True)
+    view(loop=False)
 elif args.action == 'analyze_logs':
     analyze_logs()
 else:

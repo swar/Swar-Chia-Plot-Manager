@@ -77,7 +77,7 @@ def stop_manager():
 
 def json_output():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+        notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
@@ -129,7 +129,8 @@ def json_output():
 
     exit()
 
-def view(status=False):
+
+def view(loop=False):
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
         notification_settings, debug_level, view_settings, instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
@@ -169,7 +170,7 @@ def view(status=False):
                                instrumentation_settings=instrumentation_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=view_check_interval), view_settings=view_settings, viewstatus=status)
-            if status:
+            if not loop:
                 break
             time.sleep(view_check_interval)
             has_file = False
