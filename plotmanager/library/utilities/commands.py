@@ -74,7 +74,8 @@ def stop_manager():
         raise TerminationException("Failed to stop manager processes.")
     print("Successfully stopped manager processes.")
 
-def jsonout():
+
+def json_output():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
         notification_settings, debug_level, view_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
