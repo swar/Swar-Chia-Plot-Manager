@@ -67,11 +67,15 @@ def check_valid_destinations(job, drives_free_space):
         
 def load_jobs(config_jobs):
     jobs = []
+    checked_job_names = []
     for info in config_jobs:
         job = deepcopy(Job())
         job.total_running = 0
 
         job.name = info['name']
+        if job.name in checked_job_names:
+            raise InvalidConfigurationSetting('Found the same job name for multiple jobs. Job names should be unique.')
+        checked_job_names.append(info['name'])
         job.max_plots = info['max_plots']
 
         job.farmer_public_key = info.get('farmer_public_key', None)
