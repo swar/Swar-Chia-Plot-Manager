@@ -33,33 +33,34 @@
 * Paypal: https://www.paypal.com/biz/fund?id=XGVS7J69KYBTY
 
 
-## Support / Questions [Нужен перевод]
+## Техподдержка / Вопросы
 
-Please do not use GitHub issues for questions or support regarding your own personal setups. Issues should pertain to actual bugs in the code and ideas. It has been tested to work on Windows, Linux, and Mac OS by numerous people at this point. So any questions relating to tech support, configuration setup, or things pertaining to your own personal use cases should be posted at any of the links below.
+Пожалуйста, не используйте GitHub issues по вопросам, касающимся ваших персональных установок. Проблемы должны описывать либо фактические ошибки в коде, либо новые идеи. На данный момент утилита уже протестирована многими людьми для Windows, Linux и Mac OS. Поэтому любые вопросы, касающиеся технической поддержки, настройки конфигурации или вещей, относящихся к вашим индивидуальным случаям использования, должны быть размещены по любой из приведенных ниже ссылок.
 * Discord Server: https://discord.gg/XyvMzeQpu2
-    * This is the Official Discord Server - Swar's Chia Community 
-* Official Chia Keybase Team: https://keybase.io/team/chia_network.public
-    * The channel is #swar 
-* GitHub Discussion Board: https://github.com/swar/Swar-Chia-Plot-Manager/discussions
+    * Официальный Discord сервер - Swar's Chia Community (Английский)
+    * Также вы можете получить помощь на Discord сервере Русскоязычного Сообщества Chia (не имеет отношения к Swar). Ссылка в разделе [Перевод на Русский](#перевод-на-русский)
+* Официальная группа Chia Keybase: https://keybase.io/team/chia_network.public
+    * Канал #swar 
+* Дискуссионная доска GitHub: https://github.com/swar/Swar-Chia-Plot-Manager/discussions
 
 
-## Frequently Asked Questions [Нужен перевод]
+## Часто задаваемые вопросы
 
-##### Can I reload my config?
-* Yes, your config can be reloaded with the `python manager.py restart` command or separately you can stop and start manager again. Please note that your job counts will be reset and the temporary2 and destination directories order will be reset.
-* Please note that if you change any of the directories for a job, it will mess with existing jobs and `manager` and `view` will not be able to identify the old job. If you are changing job directories while having active plots, please change the `max_plots` for the current job to 0 and make a separate job with the new directories. I **do not recommend** changing directories while plots are running.
+##### Могу ли я перезагрузить свой конфиг?
+* Да, ваш конфиг может быть перезагружен с помощью команды `python manager.py restart` или вы можете остановить и запустить диспетчер снова. Обратите внимание, что будут сброшены количество ваших заданий, а также порядок каталогов temporary2 и destination.
+* Обратите внимание, что если вы измените какой-либо каталог для задания, он будет мешать существующим заданиям, а `manager` и режим `view` не смогут идентифицировать старое задание. Если вы меняете каталоги заданий при наличии активных засевов, пожалуйста, измените значение `max_plots` для текущего задания на 0 и создайте отдельное задание с новыми каталогами. Я **не рекомендую** менять каталоги во время выполнения засева.
 
-##### If I stop manager will it kill my plots?
-* No. Plots are kicked off in the background and they will not kill your existing plots. If you want to kill them, you have access to the PIDs which you can use to track them down in Task Manager (or the appropriate software for your OS) and kill them manually. Please note you will have to delete the .tmp files as well. I do not handle this for you.
+##### Если я остановлю manager, это остановит мои плоты?
+* Нет. Плоты выгружаются в фоновом режиме и это не уничтожит уже существующие плоты. Если вы хотите остановить засевы, получите доступ к их PID через диспетчер задач вашей ОС  и остановите их вручную. Помните, что вам также потребуется удалить .tmp файлы. Я не могу сделать это вместо вас.
 
-##### How are temporary2 and destination selected if I have a list?
-* They are chosen in order. If you have two directories the first plot will select the first one, the second the second one, and the third plot will select the first one.
+##### Как выбираются temporary2 и destination если я указываю список?
+* Они выбираются по порядку. Если у вас есть две директории, первый плот выберет первую из них, второй выберет вторую, третий выберет первую директорию.
 
-##### What is `temporary2_destination_sync`?
-* Some users like having the option to always have the same temporary2 and destination directory. Enabling this setting will always have temporary2 be the drive that is used as destination. You can use an empty temporary2 directory list if you are using this setting.
+##### Что такое `temporary2_destination_sync`?
+* Некоторым пользователям нравится указывать одининаковый каталог для temporary2 и destination. При включении этого параметра в качестве диска назнвчения всегда будет использоваться диск temporary2. Используя этот параметр, вы можете указать для temporary2 пустой список.
 
-##### What is the best config for my setup?
-* Please forward this question to Keybase or the Discussion tab.
+##### Какой конфиг лучше всего подходит для моего ПК?
+* Пожалуйста, перешлите этот вопрос в Keybase или на вкладку Discussion.
 
 
 ## Установка [Нужен перевод]
@@ -189,5 +190,6 @@ List of Metrics Gathered
 
 ### Перевод на Русский
 Оригинальный текст на Английском языке Вы можете найти по адресу [https://github.com/swar/Swar-Chia-Plot-Manager](https://github.com/swar/Swar-Chia-Plot-Manager)
-Переведено [Русскоязычным Сообществом Chia](http://chia.net.ru/).
-Об ошибках или неточностях перевода просьба сообщать администраторам Discord сервера [Chia.Net.Ru](http://discord.chia.net.ru/).
+Переведено [Anton Kokarev](https://github.com/akokarev).
+Об ошибках или неточностях перевода сообщайте админам Discord сервера Chia Russian Community [https://discord.gg/9vV7KRZ26Z](https://discord.gg/9vV7KRZ26Z).
+Вопросы задавайте на канале #need_help.
