@@ -64,6 +64,7 @@ def load_jobs(config_jobs):
         job.threads = info['threads']
         job.buckets = info['buckets']
         job.memory_buffer = info['memory_buffer']
+        job.exclude_final_directory = info['exclude_final_directory']
         jobs.append(job)
 
     return jobs
@@ -161,6 +162,7 @@ def start_work(job, chia_location, log_directory):
         threads=job.threads,
         buckets=job.buckets,
         bitfield=job.bitfield,
+        exclude_final_directory=job.exclude_final_directory
     )
     logging.info(f'Starting with plot command: {plot_command}')
 

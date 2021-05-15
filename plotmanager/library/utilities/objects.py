@@ -27,6 +27,7 @@ class Job:
     threads = None
     buckets = None
     memory_buffer = None
+    exclude_final_directory = None
 
 
 class Work:
