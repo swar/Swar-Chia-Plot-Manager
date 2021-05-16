@@ -118,7 +118,8 @@ jobs:
   #                               you have chia set up on a machine that does not have your credentials.
   # [OPTIONAL] pool_public_key: Your pool public key. Same information as the above.
   #
-  # temporary_directory: Only a single directory should be passed into here. This is where the plotting will take place.
+  # temporary_directory: Can be a single value or a list of values. This is where the plotting will take place. If you
+  #                      provide a list, it will cycle through each drive one by one.
   # [OPTIONAL] temporary2_directory: Can be a single value or a list of values. This is an optional parameter to use in
   #                                  case you want to use the temporary2 directory functionality of Chia plotting.
   # destination_directory: Can be a single value or a list of values. This is the final directory where the plot will be
@@ -196,7 +197,9 @@ jobs:
     max_plots: 999
     farmer_public_key:
     pool_public_key:
-    temporary_directory: Y:\Plotter
+    temporary_directory:
+      - Y:\Plotter1
+      - Y:\Plotter2
     temporary2_directory:
       - J:\Plots
       - K:\Plots
