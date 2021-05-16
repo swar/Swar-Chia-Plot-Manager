@@ -65,6 +65,17 @@ def _get_global_max_concurrent_config(config):
     return max_concurrent
 
 
+def _get_global_post_plot_script_config(config):
+    if 'global' not in config:
+        raise InvalidYAMLConfigException('Failed to find global parameter in the YAML.')
+    if 'post_plot_script' not in config['global']:
+        return None
+    post_plot_script = config['global']['post_plot_script']
+    if not isinstance(post_plot_script, str):
+        raise Exception('global -> post_plot_script should be a filesystem path.')
+    return post_plot_script
+
+
 def _get_notifications_settings(config):
     if 'notifications' not in config:
         raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
@@ -107,9 +118,10 @@ def get_config_info():
         os.makedirs(log_directory)
     jobs = _get_jobs(config=config)
     max_concurrent = _get_global_max_concurrent_config(config=config)
+    post_plot_script = _get_global_post_plot_script_config(config=config)
     progress_settings = _get_progress_settings(config=config)
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
 
     return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
-        progress_settings, notification_settings, log_level, view_settings
+        post_plot_script, progress_settings, notification_settings, log_level, view_settings

@@ -87,7 +87,7 @@ global:
   # max_concurrent: The maximum number of plots that your system can run. The manager will not kick off more than this
   #                 number of plots total over time.
   max_concurrent: 10
-
+  post_plot_script:
 
 jobs:
   # These are the settings that will be used by each job. Please note you can have multiple jobs and each job should be
