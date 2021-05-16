@@ -24,6 +24,18 @@ def _contains_in_list(string, lst, case_insensitive=False):
     return False
 
 
+def _get_split_cmdline(process):
+    raw_commands = process.cmdline()
+    commands = []
+    for item in raw_commands:
+        if not item.startswith('-') or len(item) == 2:
+            commands.append(item)
+        else:
+            commands.append(item[:2])
+            commands.append(item[2:])
+    return commands
+
+
 def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
@@ -99,8 +111,8 @@ def get_chia_drives():
                 continue
         except (psutil.ZombieProcess, psutil.NoSuchProcess):
             continue
-        commands = process.cmdline()
-        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
+
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=_get_split_cmdline(process))
         if not temporary_drive and not destination_drive:
             continue
 
@@ -221,6 +233,7 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
         assumed_job = None
         logging.info(f'Finding associated job')
 
+        commands = _get_split_cmdline(process)
         temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=commands)
         for job in jobs:
             if isinstance(job.temporary_directory, list) and temporary_directory not in job.temporary_directory:
