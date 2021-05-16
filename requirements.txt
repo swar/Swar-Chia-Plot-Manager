@@ -4,3 +4,4 @@ playsound==1.2.2
 psutil==5.8.0
 python_pushover==0.4
 PyYAML==5.4.1
+requests~=2.25.1

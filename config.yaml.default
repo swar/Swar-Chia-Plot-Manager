@@ -64,6 +64,10 @@ notifications:
   twilio_from_phone: +1234657890
   twilio_to_phone: +1234657890
 
+  # IFTTT, ref https://ifttt.com/maker_webhooks, and this function will send title as value1 and message as value2.
+  ifttt_webhook: false
+  ifttt_webhook_url: https://maker.ifttt.com/trigger/{event}/with/key/{api_key}
+
 
 progress:
   # phase_line_end: These are the settings that will be used to dictate when a phase ends in the progress bar. It is
