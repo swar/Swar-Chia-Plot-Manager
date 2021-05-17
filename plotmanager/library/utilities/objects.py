@@ -6,12 +6,14 @@ class Job:
     pool_public_key = None
 
     total_running = 0
+    total_kicked_off = 0
     total_completed = 0
     max_concurrent = 0
     max_concurrent_with_start_early = 0
     max_plots = 0
     temporary2_destination_sync = None
 
+    initial_delay_minutes = None
     stagger_minutes = None
     max_for_phase_1 = None
     concurrency_start_early_phase = None
@@ -22,11 +24,19 @@ class Job:
     temporary_directory = None
     temporary2_directory = None
     destination_directory = []
+    exclude_final_directory = None
+    skip_full_destinations = None
     size = None
     bitfield = None
     threads = None
     buckets = None
     memory_buffer = None
+
+    unix_process_priority = 10
+    windows_process_priority = 32
+
+    enable_cpu_affinity = False
+    cpu_affinity = []
 
 
 class Work:
