@@ -20,9 +20,10 @@ The version log history will be kept in this file.
 
 #### Changes
 - Switching notification imports to a separate requirements file and turning them into lazy imports. ([#159](https://github.com/swar/Swar-Chia-Plot-Manager/pull/159), [196](https://github.com/swar/Swar-Chia-Plot-Manager/pull/196))
-- Reworked the Drives Table in the view to include associated jobs. This includes minor tweaks to the display to remove ambiguity such as renaming plots to "#". ([#191](https://github.com/swar/Swar-Chia-Plot-Manager/pull/191), [#368](https://github.com/swar/Swar-Chia-Plot-Manager/pull/368))
+- Reworked the Drives Table in the view to include associated jobs. This includes minor tweaks to the display to remove ambiguity such as renaming plots to "#". ([#191](https://github.com/swar/Swar-Chia-Plot-Manager/pull/191), [#368](https://github.com/swar/Swar-Chia-Plot-Manager/pull/368), [#406](https://github.com/swar/Swar-Chia-Plot-Manager/pull/406))
 - Adding basic checks that will break and have more detailed error messaging to assist in end-user interaction. Also, I was tired of getting the same repeat questions over and over again.
 - Adding more psutil error handling.
+
 
 #### Bug Fixes
 - Fixed a bug where `max_plots` was not working properly. It was counting running plots when you restarted manager. Now it will only count new plots kicked off.
