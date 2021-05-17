@@ -156,9 +156,6 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
     print(f'Manager Status: {"Running" if manager_processes else "Stopped"}')
     print()
 
-    print(get_job_history(analysis, view_settings))
-    print()
-
     if view_settings.get('include_drive_info'):
         print(drive_data)
     if view_settings.get('include_cpu'):

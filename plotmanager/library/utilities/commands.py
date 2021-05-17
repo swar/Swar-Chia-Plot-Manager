@@ -12,7 +12,7 @@ from plotmanager.library.utilities.exceptions import ManagerError, TerminationEx
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
 from plotmanager.library.utilities.notifications import send_notifications
-from plotmanager.library.utilities.print import print_view
+from plotmanager.library.utilities.print import print_view, get_job_history
 from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, start_process
 
 
@@ -124,6 +124,14 @@ def view():
         except KeyboardInterrupt:
             print("Stopped view.")
             exit()
+
+
+def view_history():
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
+        notification_settings, debug_level, view_settings = get_config_info()
+    analysis = {'files': {}}
+    analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
+    print(get_job_history(analysis, view_settings))
 
 
 def analyze_logs():
