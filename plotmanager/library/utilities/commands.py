@@ -31,7 +31,7 @@ def start_manager():
     python_file_path = sys.executable
 
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
+        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
 
     load_jobs(config_jobs)
@@ -79,7 +79,7 @@ def stop_manager():
 
 def json_output():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
+        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
 
     system_drives = get_system_drives()
@@ -131,7 +131,7 @@ def json_output():
 
 def view(loop=True):
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
+        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
     system_drives = get_system_drives()
@@ -190,6 +190,6 @@ def view(loop=True):
 
 def analyze_logs():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
+        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
     analyze_log_times(log_directory)
