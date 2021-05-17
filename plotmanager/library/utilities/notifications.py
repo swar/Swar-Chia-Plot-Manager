@@ -18,6 +18,9 @@ def _send_notifications(title, body, settings):
         notifier = telegram_notifier.TelegramNotifier(settings.get('telegram_token'), parse_mode="HTML")
         notifier.send(body)
 
+    if settings.get('ifttt_webhook') is True:
+        import requests
+        requests.post(settings.get('ifttt_webhook_url'), data={'value1': title, 'value2': body})
 
 def send_notifications(title, body, settings):
     try:
