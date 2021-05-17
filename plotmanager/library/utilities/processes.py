@@ -92,12 +92,12 @@ def get_chia_drives():
         try:
             if chia_executable_name not in process.name() and 'python' not in process.name().lower():
                 continue
-        except psutil.AccessDenied:
+        except (psutil.AccessDenied, psutil.NoSuchProcess):
             continue
         try:
             if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
                 continue
-        except psutil.ZombieProcess:
+        except (psutil.ZombieProcess, psutil.NoSuchProcess):
             continue
         commands = process.cmdline()
         temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
@@ -178,12 +178,12 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
         try:
             if chia_executable_name not in process.name() and 'python' not in process.name().lower():
                 continue
-        except psutil.AccessDenied:
+        except (psutil.AccessDenied, psutil.NoSuchProcess):
             continue
         try:
             if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
                 continue
-        except psutil.ZombieProcess:
+        except (psutil.ZombieProcess, psutil.NoSuchProcess):
             continue
         if process.parent():
             try:
@@ -200,7 +200,9 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
     for datetime_start, process in chia_processes:
         logging.info(f'Finding log file for process: {process.pid}')
         log_file_path = None
+        commands = []
         try:
+            commands = process.cmdline()
             for file in process.open_files():
                 if '.mui' == file.path[-4:]:
                     continue
@@ -211,13 +213,15 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
                 log_file_path = file.path
                 logging.info(f'Found log file: {log_file_path}')
                 break
-        except (psutil.AccessDenied, RuntimeError, psutil.NoSuchProcess):
+        except (psutil.AccessDenied, RuntimeError):
             logging.info(f'Failed to find log file: {process.pid}')
+        except psutil.NoSuchProcess:
+            continue
 
         assumed_job = None
         logging.info(f'Finding associated job')
 
-        temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=process.cmdline())
+        temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=commands)
         for job in jobs:
             if isinstance(job.temporary_directory, list) and temporary_directory not in job.temporary_directory:
                 continue
@@ -244,8 +248,8 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
         temp_file_size = get_temp_size(plot_id=plot_id, temporary_directory=temporary_directory,
                                        temporary2_directory=temporary2_directory)
 
-        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=process.cmdline())
-        k_size = get_plot_k_size(commands=process.cmdline())
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
+        k_size = get_plot_k_size(commands=commands)
         work = deepcopy(Work())
         work.job = assumed_job
         work.log_file = log_file_path
