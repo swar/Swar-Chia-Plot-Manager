@@ -1,8 +1,10 @@
 import os
 import psutil
+import json
+import requests
 
 from datetime import datetime, timedelta
-
+from requests.exceptions import HTTPError
 from plotmanager.library.utilities.processes import get_manager_processes, get_chia_drives
 
 
@@ -57,18 +59,21 @@ def pretty_print_table(rows):
                 continue
             max_characters[i] = length
 
-    headers = "   ".join([cell.center(max_characters[i]) for i, cell in enumerate(rows[0])])
+    headers = "   ".join([cell.center(max_characters[i])
+                         for i, cell in enumerate(rows[0])])
     separator = '=' * (sum(max_characters) + 3 * len(max_characters))
     console = [separator, headers, separator]
     for row in rows[1:]:
-        console.append("   ".join([cell.ljust(max_characters[i]) for i, cell in enumerate(row)]))
+        console.append("   ".join(
+            [cell.ljust(max_characters[i]) for i, cell in enumerate(row)]))
     console.append(separator)
     return "\n".join(console)
 
 
-def get_job_data(jobs, running_work, view_settings):
+def get_job_data(jobs, running_work, view_settings, completed_plots_today, completed_plots_yesterday):
     rows = []
-    headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
+    headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time',
+               'phase', 'phase_times', 'progress', 'temp_size']
     added_pids = []
     for job in jobs:
         for pid in job.running_work:
@@ -84,8 +89,11 @@ def get_job_data(jobs, running_work, view_settings):
     rows.sort(key=lambda x: (x[4]), reverse=True)
     for i in range(len(rows)):
         rows[i] = [str(i+1)] + rows[i]
+    if view_settings.get('update_dashboard'):
+        dashboard_response = chia_dashboard(plots=rows, completed_plots_today=completed_plots_today,
+                                            completed_plots_yesterday=completed_plots_yesterday, view_settings=view_settings)
     rows = [headers] + rows
-    return pretty_print_table(rows)
+    return pretty_print_table(rows), dashboard_response
 
 
 def get_drive_data(drives):
@@ -104,9 +112,56 @@ def get_drive_data(drives):
     return pretty_print_table(rows)
 
 
+def chia_dashboard(plots, completed_plots_today, completed_plots_yesterday, view_settings):
+    data = {
+        "plotter": {
+            "completedPlotsToday": completed_plots_today,
+            "completedPlotsYesterday": completed_plots_yesterday,
+            "jobs": chia_dashboard_data(plots)
+        }
+    }
+    data = json.dumps(data)
+    url = "https://chia-dashboard-api.foxypool.io/api/satellite"
+    headers = {
+        'Authorization': "Bearer " + view_settings.get('dashboard_api_key'),
+        'Content-Type': 'application/json'
+    }
+    try:
+        response = requests.patch(url, headers=headers, data=data)
+        if response.status_code == 204 or response.status_code == 429:
+            dashboard_status = "Connected"
+        else:
+            response.raise_for_status()
+    except HTTPError as e:
+        if e.response.status_code == 401:
+            dashboard_status = "Unauthorized. Possibly invalid API key?"
+        else:
+            dashboard_status = "Disconnected"
+    return dashboard_status
+
+
+def chia_dashboard_data(plots):
+    data = []
+    for plot in plots:
+        arr = {
+            "id": plot[3],
+            "startedAt": plot[4],
+            "state": "RUNNING",
+            "kSize": plot[2],
+            "phase": plot[6],
+            "progress": float(plot[8].strip('%'))/100
+        }
+        data.append(arr)
+    return data
+
+
 def print_view(jobs, running_work, analysis, drives, next_log_check, view_settings):
     # Job Table
-    job_data = get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings)
+    completed_plots_yesterday = analysis["summary"].get(
+        datetime.now().date() - timedelta(days=1), 0)
+    completed_plots_today = analysis["summary"].get(datetime.now().date(), 0)
+    job_data = get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings,
+                            completed_plots_yesterday=completed_plots_yesterday, completed_plots_today=completed_plots_today)
 
     # Drive Table
     drive_data = ''
@@ -119,7 +174,7 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
         os.system('cls')
     else:
         os.system('clear')
-    print(job_data)
+    print(job_data[0])
     print(f'Manager Status: {"Running" if manager_processes else "Stopped"}')
     print()
 
@@ -133,8 +188,12 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
               f'({ram_usage.percent}%)')
     print()
     if view_settings.get('include_plot_stats'):
-        print(f'Plots Completed Yesterday: {analysis["summary"].get(datetime.now().date() - timedelta(days=1), 0)}')
-        print(f'Plots Completed Today: {analysis["summary"].get(datetime.now().date(), 0)}')
+        print(f'Plots Completed Yesterday: {str(completed_plots_yesterday)}')
+        print(f'Plots Completed Today: {str(completed_plots_today)}')
         print()
+    if view_settings.get('update_dashboard'):
+        print(
+            f'Chia Dashboard: {job_data[1]} (https://dashboard.chia.foxypool.io/)')
+    print()
     print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     print()

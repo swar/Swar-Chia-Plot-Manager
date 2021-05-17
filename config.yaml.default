@@ -40,6 +40,10 @@ view:
   include_ram: true
   include_plot_stats: true
 
+  # This setting is for updating the plotter satellite at https://dashboard.chia.foxypool.io/
+  # It will send updates to the dashboard using the'check_interval' delay set above.
+  update_dashboard: false
+  dashboard_api_key: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXX
 
 notifications:
   # These are different settings in order to notified when the plot manager starts and when a plot has been completed.
