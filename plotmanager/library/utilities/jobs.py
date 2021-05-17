@@ -149,7 +149,7 @@ def determine_job_size(k_size):
 
 
 def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, next_job_work, chia_location,
-                          log_directory, next_log_check, system_drives):
+                          log_directory, next_log_check, minutes_between_jobs, system_drives):
     drives_free_space = {}
     for job in jobs:
         directories = [job.destination_directory]
@@ -184,6 +184,14 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
         total_phase_1_count += 1
 
     for i, job in enumerate(jobs):
+        if minutes_between_jobs > 0:
+            global_stagger_deadline = datetime.now() - timedelta(minutes=minutes_between_jobs)
+            for j, jobi in enumerate(jobs):
+                for pid in jobi.running_work:
+                    if running_work[pid].datetime_start > global_stagger_deadline:
+                        block_minutes = (running_work[pid].datetime_start - global_stagger_deadline).total_seconds() // 60.0
+                        logging.info(f'Global minimum minutes_between_jobs is blocking new jobs for {block_minutes} minutes')
+                        return jobs, running_work, next_job_work, next_log_check
         logging.info(f'Checking to queue work for job: {job.name}')
         if len(running_work.values()) >= max_concurrent:
             logging.info(f'Global concurrent limit met, skipping. Running plots: {len(running_work.values())}, '

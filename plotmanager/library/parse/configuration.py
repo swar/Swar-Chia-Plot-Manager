@@ -58,15 +58,18 @@ def _get_global_config(config):
     if 'global' not in config:
         raise InvalidYAMLConfigException('Failed to find global parameter in the YAML.')
     global_config = config['global']
-    expected_parameters = ['max_concurrent', 'max_for_phase_1']
+    expected_parameters = ['max_concurrent', 'max_for_phase_1', 'minutes_between_jobs']
     _check_parameters(parameter=global_config, expected_parameters=expected_parameters, parameter_type='global')
     max_concurrent = global_config['max_concurrent']
     max_for_phase_1 = global_config['max_for_phase_1']
+    minutes_between_jobs = global_config['minutes_between_jobs']
     if not isinstance(max_concurrent, int):
         raise Exception('global -> max_concurrent should be a integer value.')
     if not isinstance(max_for_phase_1, int):
         raise Exception('global -> max_for_phase_1 should be a integer value.')
-    return max_concurrent, max_for_phase_1
+    if not isinstance(minutes_between_jobs, int):
+        raise Exception('global -> max_concurrent should be a integer value.')
+    return max_concurrent, max_for_phase_1, minutes_between_jobs
 
 
 def _get_notifications_settings(config):
@@ -117,11 +120,12 @@ def get_config_info():
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
     jobs = _get_jobs(config=config)
-    max_concurrent, max_for_phase_1 = _get_global_config(config=config)
+    max_concurrent, max_for_phase_1, minutes_between_jobs = _get_global_config(config=config)
     progress_settings = _get_progress_settings(config=config)
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
     instrumentation_settings = _get_instrumentation_settings(config=config)
 
     return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        progress_settings, notification_settings, log_level, view_settings, instrumentation_settings
+        minutes_between_jobs, progress_settings, notification_settings, log_level, view_settings, \
+        instrumentation_settings
