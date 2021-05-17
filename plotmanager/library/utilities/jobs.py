@@ -149,7 +149,7 @@ def determine_job_size(k_size):
 
 
 def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, next_job_work, chia_location,
-                          log_directory, next_log_check, system_drives):
+                          log_directory, next_log_check, minimum_minutes_between_jobs, system_drives):
     drives_free_space = {}
     for job in jobs:
         directories = [job.destination_directory]
@@ -191,7 +191,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
             continue
         if total_phase_1_count >= max_for_phase_1:
             logging.info(f'Global max for phase 1 limit has been met, skipping. Count: {total_phase_1_count}, '
-                         f'Setting Max: f{max_for_phase_1}')
+                         f'Setting Max: {max_for_phase_1}')
             continue
         phase_1_count = 0
         for pid in job.running_work:
@@ -233,6 +233,17 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
             logging.info(f'Calculating new job stagger time. Next stagger kickoff: {next_job_work[job.name]}')
+        if minimum_minutes_between_jobs:
+            logging.info(f'Setting a minimum stagger for all jobs. {minimum_minutes_between_jobs}')
+            minimum_stagger = datetime.now() + timedelta(minutes=minimum_minutes_between_jobs)
+            for j in jobs:
+                if next_job_work[j.name] > minimum_stagger:
+                    logging.info(f'Skipping stagger for {j.name}. Stagger is larger than minimum_minutes_between_jobs. '
+                                 f'Min: {minimum_stagger}, Current: {next_job_work[j.name]}')
+                    continue
+                logging.info(f'Setting a new stagger for {j.name}. minimum_minutes_between_jobs is larger than assigned '
+                             f'stagger. Min: {minimum_stagger}, Current: {next_job_work[j.name]}')
+                next_job_work[j.name] = minimum_stagger
 
         job, work = start_work(
             job=job,

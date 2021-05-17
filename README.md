@@ -150,6 +150,7 @@ List of Metrics Gathered
 ### global
 * `max_concurrent` - The maximum number of plots that your system can run. The manager will not kick off more than this number of plots total over time.
 * `max_for_phase_1` - The maximum number of plots that your system can run in phase 1.
+* `minimum_minutes_between_jobs` - The minimum number of minutes before starting a new plotting job, this prevents multiple jobs from starting at the exact same time. This will alleviate congestion on destination drive. Set to 0 to disable.
 
 ### job
 

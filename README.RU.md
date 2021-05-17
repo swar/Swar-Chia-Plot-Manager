@@ -150,6 +150,7 @@ List of Metrics Gathered
 ### global [Нужен перевод]
 * `max_concurrent` - Максимальное количество полей, которые может засеять ваша система. Менеджер не будет паралелльно запускать больше, чем это количество участков на протяжении всего времени.
 * `max_for_phase_1` - The maximum number of plots that your system can run in phase 1.
+* `minimum_minutes_between_jobs` - The minimum number of minutes before starting a new plotting job, this prevents multiple jobs from starting at the exact same time. This will alleviate congestion on destination drive. Set to 0 to disable.
 
 ### job [Нужен перевод]
 
