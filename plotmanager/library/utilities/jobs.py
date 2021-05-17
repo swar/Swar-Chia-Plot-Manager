@@ -347,6 +347,8 @@ def start_work(running_work, job, chia_location, log_directory, drives_free_spac
         )
         logging.info(f'Starting with plot command: {plot_command}')
 
+        log_file_path = get_log_file_name(log_directory, job, now)
+
         log_file = open(log_file_path, 'a')
         logging.info(f'Starting process')
         process = start_process(args=plot_command, log_file=log_file)
@@ -360,8 +362,6 @@ def start_work(running_work, job, chia_location, log_directory, drives_free_spac
             logging.info(f'Setting process cpu affinity: {job.cpu_affinity}')
             psutil.Process(pid).cpu_affinity(job.cpu_affinity)
             logging.info(f'Set process cpu affinity')
-
-        log_file_path = get_log_file_name(log_directory, job, now)
 
     logging.info(f'Job log file path: {log_file_path}')
     work.log_file = log_file_path
