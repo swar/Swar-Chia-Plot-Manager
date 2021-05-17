@@ -88,6 +88,38 @@ def get_job_data(jobs, running_work, view_settings):
     return pretty_print_table(rows)
 
 
+def _get_history_row_info(analysis_data, view_settings):
+    phase_times = [
+        pretty_print_time(analysis_data['phase1']['total_seconds']),
+        pretty_print_time(analysis_data['phase2']['total_seconds']),
+        pretty_print_time(analysis_data['phase3']['total_seconds']),
+        pretty_print_time(analysis_data['phase4']['total_seconds']),
+    ]
+
+    row = [
+        32,
+        analysis_data['phase1']['start'].strftime(view_settings['datetime_format']),
+        analysis_data['end_date'].strftime(view_settings['datetime_format']),
+        analysis_data['total_seconds'],
+        ' / '.join(phase_times),
+        f'{int(analysis_data["buffer_size"])} MiB',
+        analysis_data['threads'],
+        f'{int(analysis_data["working_space"])} GiB',
+        analysis_data['temp_dirs'][0]
+    ]
+    return [str(cell) for cell in row]
+
+
+def get_job_history(analysis, view_settings):
+    rows = []
+    headers = ['k', 'start', 'end', 'total_time', 'phase_times', 'buffer', 'threads', 'working_space', 'temp_dir']
+    for file_name, data in analysis['files'].items():
+        rows.append(_get_history_row_info(data['data'], view_settings))
+    rows.sort(key=lambda x: (x[1]))
+    rows = [headers] + rows
+    return pretty_print_table(rows)
+
+
 def get_drive_data(drives):
     chia_drives = get_chia_drives()
     headers = ['type', 'drive', 'used', 'total', 'percent', 'plots']
@@ -119,8 +151,12 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
         os.system('cls')
     else:
         os.system('clear')
+
     print(job_data)
     print(f'Manager Status: {"Running" if manager_processes else "Stopped"}')
+    print()
+
+    print(get_job_history(analysis, view_settings))
     print()
 
     if view_settings.get('include_drive_info'):
