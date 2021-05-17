@@ -38,6 +38,9 @@ def _get_row_info(pid, running_work, view_settings):
     elapsed_time = (datetime.now() - work.datetime_start)
     elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
     phase_time_log = []
+    plot_id_prefix = ''
+    if work.plot_id:
+        plot_id_prefix = work.plot_id[0:7]
     for i in range(1, 5):
         if phase_times.get(i):
             phase_time_log.append(phase_times.get(i))
@@ -45,6 +48,7 @@ def _get_row_info(pid, running_work, view_settings):
     row = [
         work.job.name if work.job else '?',
         work.k_size,
+        plot_id_prefix,
         pid,
         work.datetime_start.strftime(view_settings['datetime_format']),
         elapsed_time,
@@ -135,7 +139,7 @@ def get_job_data(jobs, running_work, view_settings):
 
 
 def pretty_print_job_data(job_data):
-    headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
+    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
     rows = [headers] + job_data
     return pretty_print_table(rows)
 
@@ -146,7 +150,7 @@ def get_drive_data(drives, running_work, job_data):
 
     pid_to_num = {}
     for job in job_data:
-        pid_to_num[job[3]] = job[0]
+        pid_to_num[job[4]] = job[0]
 
     drive_types = {}
     has_temp2 = False
