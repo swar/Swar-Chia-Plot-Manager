@@ -24,10 +24,9 @@ The version log history will be kept in this file.
 - Adding basic checks that will break and have more detailed error messaging to assist in end-user interaction. Also, I was tired of getting the same repeat questions over and over again.
 - Adding more psutil error handling.
 
-
 #### Bug Fixes
 - Fixed a bug where `max_plots` was not working properly. It was counting running plots when you restarted manager. Now it will only count new plots kicked off.
-- Fixed a bug in elpased_time column where elapsed days greater than 24 hours were resulting in calculations being off by a day. ([#190](https://github.com/swar/Swar-Chia-Plot-Manager/pull/190))  
+- Fixed a bug in elapsed_time column where elapsed days greater than 24 hours were resulting in calculations being off by a day. ([#190](https://github.com/swar/Swar-Chia-Plot-Manager/pull/190))  
 - Skipping processes that result in an `AccessDenied` error when finding manager processes. ([#147](https://github.com/swar/Swar-Chia-Plot-Manager/pull/147)) 
 - Fixed a bug where psutil going stale on Linux users was not allowing the script to restart on its own. ([#197](https://github.com/swar/Swar-Chia-Plot-Manager/pull/197))
 - Fixed a bug where NFS drives weren't being identified. ([#284](https://github.com/swar/Swar-Chia-Plot-Manager/pull/284))
