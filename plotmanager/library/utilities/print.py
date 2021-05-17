@@ -71,6 +71,7 @@ def pretty_print_table(rows):
 
 
 def get_job_data(jobs, running_work, view_settings, completed_plots_today, completed_plots_yesterday):
+    dashboard_response = ""
     rows = []
     headers = ['num', 'job', 'k', 'pid', 'start', 'elapsed_time',
                'phase', 'phase_times', 'progress', 'temp_size']
