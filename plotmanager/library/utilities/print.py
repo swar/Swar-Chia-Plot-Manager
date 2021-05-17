@@ -87,7 +87,7 @@ def get_job_data(jobs, running_work, view_settings, as_json=False):
             continue
         rows.append(_get_row_info(pid, running_work, view_settings, as_json))
         added_pids.append(pid)
-    rows.sort(key=lambda x: (x[4]), reverse=True)
+    rows.sort(key=lambda x: (x[5]), reverse=True)
     for i in range(len(rows)):
         rows[i] = [str(i+1)] + rows[i]
     if as_json:
