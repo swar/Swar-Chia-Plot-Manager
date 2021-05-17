@@ -87,9 +87,8 @@ def json_output():
     drives = {'temp': [], 'temp2': [], 'dest': []}
     jobs = load_jobs(config_jobs)
     for job in jobs:
-        drive = job.temporary_directory.split('\\')[0]
-        drives['temp'].append(drive)
         directories = {
+            'temp': job.temporary_directory,
             'dest': job.destination_directory,
             'temp2': job.temporary2_directory,
         }
