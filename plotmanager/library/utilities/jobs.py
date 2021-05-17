@@ -161,6 +161,7 @@ def start_work(job, chia_location, log_directory):
         threads=job.threads,
         buckets=job.buckets,
         bitfield=job.bitfield,
+        exclude_final_directory=job.exclude_final_directory,
     )
     logging.info(f'Starting with plot command: {plot_command}')
 

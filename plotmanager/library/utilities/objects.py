@@ -11,6 +11,7 @@ class Job:
     max_concurrent_with_start_early = 0
     max_plots = 0
     temporary2_destination_sync = None
+    exclude_final_directory = None
 
     stagger_minutes = None
     max_for_phase_1 = None
