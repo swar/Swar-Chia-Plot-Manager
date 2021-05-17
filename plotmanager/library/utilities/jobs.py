@@ -116,7 +116,7 @@ def load_jobs(config_jobs):
 
         job.unix_process_priority = info.get('unix_process_priority', 10)
         if not -20 <= job.unix_process_priority <= 20:
-            raise InvalidConfigurationSetting('UNIX Process Priority must be between -20 and 20.')
+            raise InvalidConfigurationSetting('UNIX Process Priority must be between -20 and 19.')
         job.windows_process_priority = info.get('windows_process_priority', 32)
         if job.windows_process_priority not in [64, 16384, 32, 32768, 128, 256]:
             raise InvalidConfigurationSetting('Windows Process Priority must any of the following: [64, 16384, 32, '

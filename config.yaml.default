@@ -153,7 +153,7 @@ jobs:
   #                         it will skip the destination and move onto the next one. Once all are full, it will
   #                         disable the job.
   # unix_process_priority: UNIX Only. This is the priority that plots will be given when they are spawned. UNIX values
-  #                        must be between -20 and 20. The higher the value, the lower the priority of the process.
+  #                        must be between -20 and 19. The higher the value, the lower the priority of the process.
   # windows_process_priority: Windows Only. This is the priority that plots will be given when they are spawned.
   #                           Windows values vary and should be set to one of the following values:
   #                             - 16384 (BELOW_NORMAL_PRIORITY_CLASS)
