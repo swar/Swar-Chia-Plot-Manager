@@ -97,7 +97,7 @@ def _get_history_row_info(analysis_data, view_settings):
     ]
 
     row = [
-        32,
+        analysis_data['plot_size'],
         analysis_data['phase1']['start'].strftime(view_settings['datetime_format']),
         analysis_data['end_date'].strftime(view_settings['datetime_format']),
         analysis_data['total_seconds'],

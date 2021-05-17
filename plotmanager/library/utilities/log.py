@@ -14,14 +14,26 @@ def get_log_file_name(log_directory, job, datetime):
 
 
 def _analyze_log_file(contents):
+    # ID
+    match = re.search(r'ID: (\w+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    id_val = match.groups()[0]
+
+    # Plot size
+    match = re.search(r'Plot size is: (\d+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    plot_size = int(match.groups()[0])
+
     # Buffer size
-    match = re.search(r'Buffer size is: (\d+)MiB', contents, flags=re.I)
+    match = re.search(r'Buffer size is: (\d+)MiB\n', contents, flags=re.I)
     if not match:
         return False
     buffer_size = int(match.groups()[0])
 
     # Threads
-    match = re.search(r'Using (\d+) threads of stripe size', contents, flags=re.I)
+    match = re.search(r'Using (\d+) threads of stripe size \d+\n', contents, flags=re.I)
     if not match:
         return False
     threads = int(match.groups()[0])
@@ -89,6 +101,8 @@ def _analyze_log_file(contents):
     end_date = dateparser.parse(match.groups()[1])
 
     return dict(
+        id=id_val,
+        plot_size=plot_size,
         buffer_size=buffer_size,
         threads=threads,
         working_space=working_space,
