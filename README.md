@@ -3,7 +3,7 @@
 #### A plot manager for Chia plotting: https://www.chia.net/
 [English](README.md) / [Русский](README.RU.md)
 
-![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
+![The view of the manager](https://i.imgur.com/hIhjXt0.png "View")
 
 ##### Development Version: v0.0.1
 
@@ -76,8 +76,10 @@ The installation of this library is straightforward. I have attached detailed in
 	2. Activate the virtual environment. This must be done *every single time* you open a new window.
 	   * Example Windows: `venv\Scripts\activate`
 	   * Example Linux: `. ./venv/bin/activate` or `source ./venv/bin/activate`
+	   * Example Mac OS: `/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia`
 	3. Confirm that it has activated by seeing the `(venv)` prefix. The prefix will change depending on what you named it.
 5. Install the required modules: `pip install -r requirements.txt`
+	* If you plan on using Notifications or Prometheus then run the following to install the required modules: `pip install -r requirements-notification.txt`
 6. Copy `config.yaml.default` and name it as `config.yaml` in the same directory.
 7. Edit and set up the config.yaml to your own personal settings. There is more help on this below.
 	* You will need to add the `chia_location` as well! This should point to your chia executable.
@@ -128,6 +130,18 @@ These are the settings that will be used by the view.
 
 These are different settings in order to send notifications when the plot manager starts and when a plot has been completed.
 
+### instrumentation
+
+Settings for enabling Prometheus to gather metrics.
+
+* `prometheus_enabled` - If enabled, metrics will be gathered and an HTTP server will start up to expose the metrics for Prometheus.
+* `prometheus_port` - HTTP server port.
+
+List of Metrics Gathered
+
+- **chia_running_plots**: A [Gauge](https://prometheus.io/docs/concepts/metric_types/#gauge) to see how many plots are currently being created.
+- **chia_completed_plots**: A [Counter](https://prometheus.io/docs/concepts/metric_types/#counter) for completed plots.
+
 ### progress
 
 * `phase_line_end` - These are the settings that will be used to dictate when a phase ends in the progress bar. It is supposed to reflect the line at which the phase will end so the progress calculations can use that information with the existing log file to calculate a progress percent. 
@@ -135,6 +149,7 @@ These are different settings in order to send notifications when the plot manage
 
 ### global
 * `max_concurrent` - The maximum number of plots that your system can run. The manager will not kick off more than this number of plots total over time.
+* `max_for_phase_1` - The maximum number of plots that your system can run in phase 1.
 
 ### job
 
@@ -146,7 +161,7 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `max_plots` - This is the maximum number of jobs to make in one run of the manager. Any restarts to manager will reset this variable. It is only here to help with short term plotting.
 * [OPTIONAL]`farmer_public_key` - Your farmer public key. If none is provided, it will not pass in this variable to the chia executable which results in your default keys being used. This is only needed if you have chia set up on a machine that does not have your credentials.
 * [OPTIONAL]`pool_public_key` - Your pool public key. Same information as the above. 
-* `temporary_directory` - Only a single directory should be passed into here. This is where the plotting will take place.
+* `temporary_directory` - Can be a single value or a list of values. This is where the plotting will take place. If you provide a list, it will cycle through each drive one by one.
 * [OPTIONAL]`temporary2_directory` - Can be a single value or a list of values. This is an optional parameter to use in case you want to use the temporary2 directory functionality of Chia plotting.
 * `destination_directory` - Can be a single value or a list of values. This is the final directory where the plot will be transferred once it is completed. If you provide a list, it will cycle through each drive one by one.  
 * `size` - This refers to the k size of the plot. You would type in something like 32, 33, 34, 35... in here.
@@ -156,8 +171,20 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `memory_buffer` - The amount of memory you want to allocate to the process.
 * `max_concurrent` - The maximum number of plots to have for this job at any given time.
 * `max_concurrent_with_start_early` - The maximum number of plots to have for this job at any given time including phases that started early.
+* `initial_delay_minutes` - This is the initial delay that is used when initiate the first job. It is only ever considered once. If you restart manager, it will still adhere to this value.
 * `stagger_minutes` - The amount of minutes to wait before the next job can get kicked off. You can even set this to zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
 * `max_for_phase_1` - The maximum number of plots on phase 1 for this job.
 * `concurrency_start_early_phase` - The phase in which you want to start a plot early. It is recommended to use 4 for this field.
 * `concurrency_start_early_phase_delay` - The maximum number of minutes to wait before a new plot gets kicked off when the start early phase has been detected.
 * `temporary2_destination_sync` - This field will always submit the destination directory as the temporary2 directory. These two directories will be in sync so that they will always be submitted as the same value.
+* `exclude_final_directory` - Whether to skip adding `destination_directory` to harvester for farming. This is a Chia feature.
+* `skip_full_destinations` - When this is enabled it will calculate the sizes of all running plots and the future plot to determine if there is enough space left on the drive to start a job. If there is not, it will skip the destination and move onto the next one. Once all are full, it will disable the job.
+* `unix_process_priority` - UNIX Only. This is the priority that plots will be given when they are spawned. UNIX values must be between -20 and 19. The higher the value, the lower the priority of the process.
+* `windows_process_priority` - Windows Only. This is the priority that plots will be given when they are spawned. Windows values vary and should be set to one of the following values:
+	* 16384 `BELOW_NORMAL_PRIORITY_CLASS`
+	* 32    `NORMAL_PRIORITY_CLASS`
+	* 32768 `ABOVE_NORMAL_PRIORITY_CLASS`
+	* 128   `HIGH_PRIORITY_CLASS`
+	* 256   `REALTIME_PRIORITY_CLASS`
+* `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
+* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
