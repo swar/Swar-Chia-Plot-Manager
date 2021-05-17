@@ -16,7 +16,7 @@ The version log history will be kept in this file.
 - Added an option to delay a job by a set number of minutes. If you started manager and there is a stagger for the job, it will use the initial delay only if it is longer than the stagger. ([#283](https://github.com/swar/Swar-Chia-Plot-Manager/pull/283)) 
 - Added an option in `manager.py` to spit out a single instance of the view using the `status` argument as well as `json` format of the jobs. ([#300](https://github.com/swar/Swar-Chia-Plot-Manager/pull/300), [#374](https://github.com/swar/Swar-Chia-Plot-Manager/pull/374))
 - Added support for Telegram notifications. ([#316](https://github.com/swar/Swar-Chia-Plot-Manager/pull/316), [#364](https://github.com/swar/Swar-Chia-Plot-Manager/pull/364))
-- Added support for IFTTT webhooks. ([#425](https://github.com/swar/Swar-Chia-Plot-Manager/pull/425))
+- Added support for IFTTT webhooks. ([#425](https://github.com/swar/Swar-Chia-Plot-Manager/pull/425), [#471](https://github.com/swar/Swar-Chia-Plot-Manager/pull/471))
 - Added support for instrumentation using Prometheus ([#87](https://github.com/swar/Swar-Chia-Plot-Manager/pull/87), [#196](https://github.com/swar/Swar-Chia-Plot-Manager/pull/196))
 
 #### Changes
