@@ -42,6 +42,7 @@ view:
 
   # These settings are for updating the plotter satellite at https://dashboard.chia.foxypool.io/
   # It will send updates to the dashboard using the'check_interval' delay set above.
+  #
   update_dashboard: false
   dashboard_api_key: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXX
 

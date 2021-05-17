@@ -128,7 +128,7 @@ These are the settings that will be used by the view.
 
 These settings are for updating the plotter satellite at https://dashboard.chia.foxypool.io/
 
-- `dashboard_api_key` - This the the unique key given to you when creating a satellite in the dashboard.
+- `dashboard_api_key` - This the the unique api key given when creating a satellite in the dashboard.
 
 ### notifications
 
