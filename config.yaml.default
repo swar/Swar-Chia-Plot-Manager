@@ -49,6 +49,10 @@ notifications:
   notify_discord: false
   discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+  # IFTTT, ref https://ifttt.com/maker_webhooks, and this function will send title as value1 and message as value2.
+  notify_ifttt: false
+  ifttt_webhook_url: https://maker.ifttt.com/trigger/{event}/with/key/{api_key}
+
   # PLAY AUDIO SOUND
   notify_sound: false
   song: audio.mp3
@@ -68,10 +72,6 @@ notifications:
   twilio_auth_token: xxxxx
   twilio_from_phone: +1234657890
   twilio_to_phone: +1234657890
-
-  # IFTTT, ref https://ifttt.com/maker_webhooks, and this function will send title as value1 and message as value2.
-  ifttt_webhook: false
-  ifttt_webhook_url: https://maker.ifttt.com/trigger/{event}/with/key/{api_key}
 
 
 instrumentation:

@@ -16,6 +16,7 @@ The version log history will be kept in this file.
 - Added an option to delay a job by a set number of minutes. If you started manager and there is a stagger for the job, it will use the initial delay only if it is longer than the stagger. ([#283](https://github.com/swar/Swar-Chia-Plot-Manager/pull/283)) 
 - Added an option in `manager.py` to spit out a single instance of the view using the `status` argument as well as `json` format of the jobs. ([#300](https://github.com/swar/Swar-Chia-Plot-Manager/pull/300), [#374](https://github.com/swar/Swar-Chia-Plot-Manager/pull/374))
 - Added support for Telegram notifications. ([#316](https://github.com/swar/Swar-Chia-Plot-Manager/pull/316), [#364](https://github.com/swar/Swar-Chia-Plot-Manager/pull/364))
+- Added support for IFTTT webhooks. ([#425](https://github.com/swar/Swar-Chia-Plot-Manager/pull/425))
 - Added support for instrumentation using Prometheus ([#87](https://github.com/swar/Swar-Chia-Plot-Manager/pull/87), [#196](https://github.com/swar/Swar-Chia-Plot-Manager/pull/196))
 
 #### Changes
@@ -32,6 +33,7 @@ The version log history will be kept in this file.
 - Fixed a bug where NFS drives weren't being identified. ([#284](https://github.com/swar/Swar-Chia-Plot-Manager/pull/284))
 - Removed the hardcoded next log check date in the view.
 - Fixed a bug where NoSuchProcess error pops up when viewing opened files.
+
 
 ### v0.0.1
 This is the initial public release of the plot manager with additional bug fixes to account for edge cases on various operating systems.
