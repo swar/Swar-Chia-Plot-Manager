@@ -77,7 +77,8 @@ def _get_notifications_settings(config):
         raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
     notifications = config['notifications']
     expected_parameters = ['notify_discord', 'discord_webhook_url', 'notify_sound', 'song', 'notify_pushover',
-                           'pushover_user_key', 'pushover_api_key', 'notify_telegram', 'telegram_token']
+                           'pushover_user_key', 'pushover_api_key', 'notify_telegram', 'telegram_token',
+                           'notify_ifttt', 'ifttt_webhook_url']
     _check_parameters(parameter=notifications, expected_parameters=expected_parameters, parameter_type='notification')
     return notifications
 

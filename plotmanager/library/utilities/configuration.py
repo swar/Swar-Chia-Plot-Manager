@@ -35,6 +35,13 @@ def test_configuration(chia_location, notification_settings, instrumentation_set
             raise MissingImportError('Failed to find import "telegram_notifier". Be sure to run "pip install -r '
                                      'requirements-notification.txt".')
 
+    if instrumentation_settings.get('notify_ifttt'):
+        try:
+            import requests
+        except ImportError:
+            raise MissingImportError('Failed to find import "requests". Be sure to run "pip install -r '
+                                     'requirements-notification.txt".')
+
     if instrumentation_settings.get('prometheus_enabled'):
         try:
             import prometheus_client
