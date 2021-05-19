@@ -7,10 +7,11 @@ from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
 from plotmanager.library.utilities.log import check_log_progress
 from plotmanager.library.utilities.processes import get_running_plots
+from plotmanager.library.utilities.dashboard import dashboard_thread
 
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-    notification_settings, debug_level, view_settings = get_config_info()
+    notification_settings, debug_level, view_settings, dashboard_settings = get_config_info()
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
@@ -23,6 +24,7 @@ logging.info(f'Max Concurrent: {max_concurrent}')
 logging.info(f'Progress Settings: {progress_settings}')
 logging.info(f'Notification Settings: {notification_settings}')
 logging.info(f'View Settings: {view_settings}')
+logging.info(f'Dashboard Settings: {dashboard_settings}')
 
 logging.info(f'Loading jobs into objects.')
 jobs = load_jobs(config_jobs)
@@ -44,6 +46,9 @@ for job in jobs:
         continue
     next_job_work[job.name] = max_date + timedelta(minutes=job.stagger_minutes)
     logging.info(f'{job.name} Found. Setting next stagger date to {next_job_work[job.name]}')
+
+if dashboard_settings.get('update_dashboard'):
+    dashboard_thread()
 
 logging.info(f'Starting loop.')
 while has_active_jobs_and_work(jobs):

@@ -85,6 +85,15 @@ def _get_view_settings(config):
     return view
 
 
+def _get_dashboard_settings(config):
+    if 'dashboard' not in config:
+        raise InvalidYAMLConfigException('Failed to find dashboard parameter in the YAML.')
+    dashboard = config['dashboard']
+    expected_parameters = ['update_dashboard', 'dashboard_update_url', 'dashboard_api_key']
+    _check_parameters(parameter=dashboard, expected_parameters=expected_parameters, parameter_type='dashboard')
+    return dashboard
+
+
 def _check_parameters(parameter, expected_parameters, parameter_type):
     failed_checks = []
     checks = expected_parameters
