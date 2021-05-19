@@ -130,7 +130,7 @@ These are different settings in order to send notifications when the plot manage
 
 ### dashboard
 
-These are the settings to have the plot manager report jobs to http://eu.chiadashboard.com
+These are the settings to have the plot manager report jobs to https://eu.chiadashboard.com
 
 * `dashboard_update_url` - The url you want the dashboard to report to. (Currently only https://eu.chiadashboard.com/api/satellite is supported)
 * `dashboard_api_key`  - This is the api supplied when you created the satellite.
