@@ -110,14 +110,17 @@ def dashboard_request(plots, analysis):
     logging.basicConfig(filename='dashboard.log', format='%(asctime)s:%(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.WARNING, force=True)
     try:
         response = requests.patch(url, headers=headers, data=data)
-        if response.status_code == 204 or response.status_code == 429:
+        if response.status_code == 204:
             dashboard_status = "Connected"
+        elif  response.status_code == 429:
+            dashboard_status = "Too many Requests. Slow down."
+            logging.warning(dashboard_status + str(response))
         else:
             response.raise_for_status()
     except HTTPError:
         if response.status_code == 401:
             dashboard_status = "Unauthorized. Possibly invalid API key?"
-            logging.warning(str(response) + "Unauthorized. Possibly invalid API key?")
+            logging.warning(dashboard_status + str(response))
         else:
             dashboard_status = "Unable to connect."
             logging.warning(dashboard_status + str(response))
