@@ -156,46 +156,51 @@ def get_progress(line_count, progress_settings):
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings):
     for pid, work in list(running_work.items()):
-        logging.info(f'Checking log progress for PID: {pid}')
+        pid_exists = psutil.pid_exists(pid)
+
+        logging.info(f'Checking log progress for PID: {pid} log={work.log_file} exists={pid_exists}')
+
         if not work.log_file:
-            continue
-        f = open(work.log_file, 'r')
-        data = f.read()
-        f.close()
+            logging.info(f'No log for {pid} so cannot check progress')
+        else:
+            f = open(work.log_file, 'r')
+            data = f.read()
+            f.close()
 
-        line_count = (data.count('\n') + 1)
+            line_count = (data.count('\n') + 1)
 
-        progress = get_progress(line_count=line_count, progress_settings=progress_settings)
+            progress = get_progress(line_count=line_count, progress_settings=progress_settings)
 
-        phase_times, phase_dates = get_phase_info(data, view_settings)
-        current_phase = 1
-        if phase_times:
-            current_phase = max(phase_times.keys()) + 1
-        work.phase_times = phase_times
-        work.phase_dates = phase_dates
-        work.current_phase = current_phase
-        work.progress = f'{progress:.2f}%'
+            phase_times, phase_dates = get_phase_info(data, view_settings)
+            current_phase = 1
+            if phase_times:
+                current_phase = max(phase_times.keys()) + 1
+            work.phase_times = phase_times
+            work.phase_dates = phase_dates
+            work.current_phase = current_phase
+            work.progress = f'{progress:.2f}%'
 
-        if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
-            logging.info(f'PID still alive: {pid}')
-            continue
-
-        logging.info(f'PID no longer alive: {pid}')
-        for job in jobs:
-            if not job or not work or not work.job:
+            if pid_exists and 'renamed final file from ' not in data.lower():
+                logging.info(f'PID still alive: {pid} progress={work.progress} phase={work.current_phase}')
                 continue
-            if job.name != work.job.name:
-                continue
-            logging.info(f'Removing PID {pid} from job: {job.name}')
-            if pid in job.running_work:
-                job.running_work.remove(pid)
-            job.total_running -= 1
-            job.total_completed += 1
 
-            send_notifications(
-                title='Plot Completed',
-                body=f'You completed a plot on {socket.gethostname()}!',
-                settings=notification_settings,
-            )
-            break
-        del running_work[pid]
+        if not pid_exists:
+            logging.info(f'PID no longer alive: {pid}')
+            for job in jobs:
+                if not job or not work or not work.job:
+                    continue
+                if job.name != work.job.name:
+                    continue
+                logging.info(f'Removing PID {pid} from job: {job.name}')
+                if pid in job.running_work:
+                    job.running_work.remove(pid)
+                job.total_running -= 1
+                job.total_completed += 1
+
+                send_notifications(
+                    title='Plot Completed',
+                    body=f'You completed a plot on {socket.gethostname()}!',
+                    settings=notification_settings,
+                )
+                break
+            del running_work[pid]
