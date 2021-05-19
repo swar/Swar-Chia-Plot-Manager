@@ -112,7 +112,6 @@ def dashboard_request(plots, analysis):
         response = requests.patch(url, headers=headers, data=data)
         if response.status_code == 204 or response.status_code == 429:
             dashboard_status = "Connected"
-            logging.warning(response)
         else:
             response.raise_for_status()
     except HTTPError:

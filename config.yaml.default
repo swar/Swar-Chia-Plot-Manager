@@ -41,7 +41,7 @@ view:
   include_plot_stats: true
 
 dashboard:
-  # These are the settings to have the plot manager report jobs to http://chiadashboard.com
+  # These are the settings to have the plot manager report jobs to https://eu.chiadashboard.com
   #
   update_dashboard: true
   dashboard_update_url: https://eu.chiadashboard.com/api/satellite
