@@ -1,7 +1,7 @@
-import pathlib
 import os
-import yaml
+import pathlib
 
+import yaml
 
 from plotmanager.library.utilities.exceptions import InvalidYAMLConfigException
 
@@ -79,8 +79,8 @@ def _get_view_settings(config):
     if 'view' not in config:
         raise InvalidYAMLConfigException('Failed to find view parameter in the YAML.')
     view = config['view']
-    expected_parameters = ['datetime_format', 'include_seconds_for_phase', 'include_drive_info', 'include_cpu', 'include_ram',
-                           'include_plot_stats', 'check_interval']
+    expected_parameters = ['datetime_format', 'include_seconds_for_phase', 'include_drive_info', 'include_cpu',
+                           'include_ram', 'include_plot_stats', 'check_interval']
     _check_parameters(parameter=view, expected_parameters=expected_parameters, parameter_type='view')
     return view
 
@@ -111,5 +111,5 @@ def get_config_info():
     notification_settings = _get_notifications_settings(config=config)
     view_settings = _get_view_settings(config=config)
 
-    return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, \
-        progress_settings, notification_settings, log_level, view_settings
+    return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
+        notification_settings, log_level, view_settings

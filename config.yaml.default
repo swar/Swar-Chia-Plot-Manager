@@ -131,6 +131,7 @@ jobs:
   # temporary2_destination_sync: This field will always submit the destination directory as the temporary2 directory.
   #                              These two directories will be in sync so that they will always be submitted as the
   #                              same value.
+  # exclude_final_dir: Skips adding [final dir] to harvester for farming.
   - name: micron
     max_plots: 999
     farmer_public_key:
@@ -174,3 +175,4 @@ jobs:
     concurrency_start_early_phase: 4
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
+    exclude_final_dir: false

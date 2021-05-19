@@ -1,11 +1,11 @@
 import os
 import pathlib
-import psutil
 import socket
 import sys
 import time
-
 from datetime import datetime, timedelta
+
+import psutil
 
 from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.exceptions import ManagerError, TerminationException
@@ -44,7 +44,9 @@ def start_manager():
     start_process(args=args, log_file=manager_log_file)
     time.sleep(3)
     if not get_manager_processes():
-        raise ManagerError('Failed to start Manager. Please look at manager.log for more details on the error. It is in the same folder as manager.py.')
+        raise ManagerError(
+            'Failed to start Manager. Please look at manager.log for more details on the error. '
+            'It is in the same folder as manager.py.')
 
     send_notifications(
         title='Plot manager started',
@@ -128,5 +130,5 @@ def view():
 
 def analyze_logs():
     chia_location, log_directory, jobs, manager_check_interval, max_concurrent, progress_settings, \
-       notification_settings, debug_level, view_settings = get_config_info()
+        notification_settings, debug_level, view_settings = get_config_info()
     analyze_log_times(log_directory)
