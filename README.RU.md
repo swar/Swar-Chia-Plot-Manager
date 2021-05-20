@@ -3,7 +3,7 @@
 #### Plot Manager для засева Chia: https://www.chia.net/
 [English](README.md) / [Русский](README.RU.md)
 
-![The view of the manager](https://i.imgur.com/SmMDD0Q.png "View")
+![The view of the manager](https://i.imgur.com/hIhjXt0.png "View")
 
 ##### Development Version: v0.0.1
 
@@ -63,7 +63,51 @@
 * Пожалуйста, перешлите этот вопрос в Keybase или на вкладку Discussion.
 
 
-## Установка
+## All Commands [Нужен перевод]
+
+##### Example Usage of Commands
+```text
+> python3 manager.py start
+
+> python3 manager.py restart
+
+> python3 manager.py stop
+
+> python3 manager.py view
+
+> python3 manager.py status
+
+> python3 manager.py analyze_logs
+```
+
+### start
+
+This command will start the manager in the background. Once you start it, it will always be running unless all jobs have had their `max_plots` completed or there is an error. Errors will be logged in a file created `debug.log`
+
+### stop
+
+This command will terminate the manager in the background. It does not stop running plots, it will only stop new plots from getting created.
+
+### restart
+
+This command will run start and stop sequentially.
+
+### view
+
+This command will show the view that you can use to keep track of your running plots. This will get updated every X seconds defined by your `config.yaml`.
+
+### status
+
+This command will a single snapshot of the view. It will not loop.
+
+### analyze_logs
+
+This command will analyze all completed plot logs in your log folder and calculate the proper weights and line ends for your computer's configuration. Just populate the returned values under the `progress` section in your `config.yaml`. This only impacts the progress bar.
+
+
+## Установка [Нужен перевод]
+
+#### NOTE: If `python` does not work, please try `python3`.
 
 Установка этой библиотеки проста. Ниже я приложил подробные инструкции, которые помогут вам начать работу.
 
@@ -77,8 +121,10 @@
 	2. Активация виртуальной среды. Это обязательно делать *каждый раз* открывая новое окно.
 	   * Пример Windows: `venv\Scripts\activate`
 	   * Пример Linux: `. ./venv/bin/activate` или `source ./venv/bin/activate`
+	   * Пример Mac OS: `/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia`
 	3. Убедитесь что появился префикс `(venv)` в подтверждение активации среды. Префикс будет меняться в зависимости от того, как вы её назвали.
 5. Установите необходимые модули: `pip install -r requirements.txt`
+	* If you plan on using Notifications or Prometheus then run the following to install the required modules: `pip install -r requirements-notification.txt`
 6. Скопируйте `config.yaml.default` и переименуйте в `config.yaml` в той же директории.
 7. Отредактируйте и настройте config.yaml на ваши персональные установки. Ниже приведена дополнительная информация по этому вопросу.
 	* Вам также нужно будет добавить параметр `chia_location`! Который должен указывать на ваш исполняемый файл chia.
@@ -128,15 +174,31 @@ Plot manager работает на основе идеи заданий. Каж�
 
 Различные настройки уведомлений при запуске Plot Manager'а и когда новое поле готово.
 
+### instrumentation [Нужен перевод]
+
+Settings for enabling Prometheus to gather metrics.
+
+* `prometheus_enabled` - If enabled, metrics will be gathered and an HTTP server will start up to expose the metrics for Prometheus.
+* `prometheus_port` - HTTP server port.
+
+List of Metrics Gathered
+
+- **chia_running_plots**: A [Gauge](https://prometheus.io/docs/concepts/metric_types/#gauge) to see how many plots are currently being created.
+- **chia_completed_plots**: A [Counter](https://prometheus.io/docs/concepts/metric_types/#counter) for completed plots.
+
 ### progress
 
 * `phase_line_end` - параметр, который будет использоваться для определения того, когда заканчивается фаза. Предполагается, что этот параметр указывает на порядковый номер строки, на которой завершится фаза. Параметр используется механизмом вычисления прогресса вместе с существующим файлом журнала для вычисления процента прогресса.
 * `phase_weight` - вес, который следует присвоить каждой фазе в расчетах хода выполнения. Как правило, фазы 1 и 3 являются самыми длинными фазами, поэтому они будут иметь больший вес, чем другие.
 
-### global
+### global [Нужен перевод]
 * `max_concurrent` - Максимальное количество полей, которые может засеять ваша система. Менеджер не будет паралелльно запускать больше, чем это количество участков на протяжении всего времени.
+* `max_for_phase_1` - The maximum number of plots that your system can run in phase 1.
+* `minimum_minutes_between_jobs` - The minimum number of minutes before starting a new plotting job, this prevents multiple jobs from starting at the exact same time. This will alleviate congestion on destination drive. Set to 0 to disable.
 
-### job
+### job [Нужен перевод]
+
+Each job must have unique temporary directories.
 
 Настройки, которые будут использоваться каждым заданием. Обратите внимание, что у вас может быть несколько заданий, и каждое задание должно быть в формате YAML, чтобы оно было правильно интерпретировано. Почти все значения здесь будут переданы в исполняемый файл Chia.
 
@@ -146,7 +208,7 @@ Plot manager работает на основе идеи заданий. Каж�
 * `max_plots` - Максимальное количество заданий, выполняемых за один запуск менеджера. При любом перезапуске диспетчера эта переменная будет сброшена. Он здесь только для того, чтобы помочь в краткосрочном планировании засева.
 * [ОПЦИЯ]`farmer_public_key` - Ваш публичный ключ фермера. Если не указан, менеджер не будет передавать эту переменную исполняемому файлу chia, что приведет к использованию ваших ключей по умолчанию. Этот параметр необходим только в том случае, если на компьютере нет ваших учетных данных chia.
 * [ОПЦИЯ]`pool_public_key` - Ваш публичный ключ пула. Аналогично как и выше. 
-* `temporary_directory` - Временное место для засева. Можно указать только одну папку. Обычно размещается на SSD диске.
+* `temporary_directory` - Временное место для засева. Может иметь одно или несколько значений. Обычно размещается на SSD диске. These directories must be unique from one another.
 * [ОПЦИЯ]`temporary2_directory` - Может иметь одно или несколько значений. Это необязательный параметр для использования второго временного каталога засева полей Chia.
 * `destination_directory` - Может иметь одно или несколько значений. Указывает на финальную директорию куда будет помещено готовое поле. Если вы укажете несколько, готовые поля будут размещаться по одному на каждый следующий диск поочереди.
 * `size` - соответствует размеру поля (сложности k). Здесь вам следует указывать например 32, 33, 34, 35 и т.д.
@@ -156,11 +218,24 @@ Plot manager работает на основе идеи заданий. Каж�
 * `memory_buffer` - Объем памяти, который вы хотите выделить задаче.
 * `max_concurrent` - Максимальное количество участков для этой задачи на всё время.
 * `max_concurrent_with_start_early` - Максимальное количество участков для этой задачи в любой момент времени, включая фазы, которые начались раньше.
+* `initial_delay_minutes` - This is the initial delay that is used when initiate the first job. It is only ever considered once. If you restart manager, it will still adhere to this value.
 * `stagger_minutes` - Количество минут ожидания перед запуском следующего задания. Вы можете установить это значение равным нулю, если хотите, чтобы ваши засевы запускались немедленно, когда это позволяют одновременные ограничения
 * `max_for_phase_1` - Максимальное число засевов в фазе 1 для этой задачи.
 * `concurrency_start_early_phase` - Фаза, в которой вы хотите начать засеивание заранее. Рекомендуется использовать 4.
 * `concurrency_start_early_phase_delay` - Максимальное количество минут ожидания до запуска нового участка при обнаружении ранней фазы запуска.
 * `temporary2_destination_sync` - Представлять каталог назначения как каталог второй временный каталог. Эти два каталога будут синхронизированы, так что они всегда будут представлены как одно и то же значение.
+* `exclude_final_directory` - Whether to skip adding `destination_directory` to harvester for farming. This is a Chia feature.
+* `skip_full_destinations` - When this is enabled it will calculate the sizes of all running plots and the future plot to determine if there is enough space left on the drive to start a job. If there is not, it will skip the destination and move onto the next one. Once all are full, it will disable the job.
+* `unix_process_priority` - UNIX Only. This is the priority that plots will be given when they are spawned. UNIX values must be between -20 and 19. The higher the value, the lower the priority of the process.
+* `windows_process_priority` - Windows Only. This is the priority that plots will be given when they are spawned. Windows values vary and should be set to one of the following values:
+	* 16384 `BELOW_NORMAL_PRIORITY_CLASS`
+	* 32    `NORMAL_PRIORITY_CLASS`
+	* 32768 `ABOVE_NORMAL_PRIORITY_CLASS`
+	* 128   `HIGH_PRIORITY_CLASS`
+	* 256   `REALTIME_PRIORITY_CLASS`
+* `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
+* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
+
 
 ### Перевод на Русский
 Оригинальный текст на Английском языке Вы можете найти по адресу [https://github.com/swar/Swar-Chia-Plot-Manager](https://github.com/swar/Swar-Chia-Plot-Manager)
