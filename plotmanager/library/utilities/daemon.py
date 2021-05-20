@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from typing import Any, Dict
+from websockets.exceptions import ConnectionClosedError
 
 from chia.daemon.client import DaemonProxy, connect_to_daemon_and_validate
 from chia.util.default_root import DEFAULT_ROOT_PATH
@@ -20,11 +21,14 @@ class DaemonPlotterProxy(DaemonProxy):
 async def connect_to_daemon_async():
     logging.info(f'Waiting for daemon to be reachable')
 
-    client = None
-    while client is None:
-        client = await connect_to_daemon_and_validate(DEFAULT_ROOT_PATH)
-        if client is None:
-            await asyncio.sleep(3)
+	client = None
+	while client is None:
+		try:
+			client = await connect_to_daemon_and_validate(DEFAULT_ROOT_PATH)
+		except ConnectionClosedError as e:
+			logging.error(f'Connection closed ({e.code}): {e.reason}')
+		if client is None:
+			await asyncio.sleep(3)
 
     client.__class__ = DaemonPlotterProxy
     return client

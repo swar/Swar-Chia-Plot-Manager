@@ -1,4 +1,5 @@
+chia-blockchain==1.1.5
 dateparser==1.0.0
 psutil==5.8.0
 PyYAML==5.4.1
-chia-blockchain==1.1.5
+websockets==8.1
