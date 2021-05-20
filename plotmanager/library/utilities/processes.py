@@ -227,16 +227,6 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
                 continue
             if not isinstance(job.temporary_directory, list) and temporary_directory != job.temporary_directory:
                 continue
-            if destination_directory not in job.destination_directory:
-                continue
-            if temporary2_directory:
-                job_temporary2_directory = job.temporary2_directory
-                if not isinstance(job.temporary2_directory, list):
-                    job_temporary2_directory = [job.temporary2_directory]
-                if job.temporary2_destination_sync and temporary2_directory != destination_directory:
-                    continue
-                if not job.temporary2_destination_sync and temporary2_directory not in job_temporary2_directory:
-                    continue
             logging.info(f'Found job: {job.name}')
             assumed_job = job
             break
