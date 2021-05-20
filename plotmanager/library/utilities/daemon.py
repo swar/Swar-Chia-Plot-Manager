@@ -30,18 +30,19 @@ async def connect_to_daemon_async():
     return client
 
 
-async def start_plotting_async(daemon, size, memory_buffer, temporary_directory, temporary2_directory,
-                                    destination_directory, threads, buckets, bitfield) -> WsRpcMessage:
-    return await daemon.start_plotting({
-        "k": size,
-        "t": temporary_directory,
-        "t2": temporary2_directory,
-        "d": destination_directory,
-        "b": memory_buffer,
-        "u": buckets,
-        "r": threads,
-        "e": not bitfield,
-        "x": False,
-        "overrideK": False,
-        "parallel": True
-    })
+async def start_plotting_async(daemon, queue, size, memory_buffer, temporary_directory, temporary2_directory,
+									destination_directory, threads, buckets, bitfield) -> WsRpcMessage:
+	return await daemon.start_plotting({
+		"queue": queue,
+		"k": size,
+		"t": temporary_directory,
+		"t2": temporary2_directory,
+		"d": destination_directory,
+		"b": memory_buffer,
+		"u": buckets,
+		"r": threads,
+		"e": not bitfield,
+		"x": False,
+		"overrideK": False,
+		"parallel": True
+	})
