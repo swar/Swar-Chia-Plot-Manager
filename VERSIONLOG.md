@@ -1,8 +1,8 @@
 # Version Log
 The version log history will be kept in this file.
 
-### v.0.1.0b
-**THIS BRANCH IS CURRENTLY IN DEVELOPMENT!** The first feature packed improvement of the plot manager.
+### v.0.1.0
+The first feature packed improvement of the plot manager.
 
 #### New Features
 - Adding `exclude_final_directory` as an option in the `config.yaml`. ([#35](https://github.com/swar/Swar-Chia-Plot-Manager/pull/35))
