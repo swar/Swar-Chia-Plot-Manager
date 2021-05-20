@@ -304,9 +304,7 @@ def start_work(running_work, job, chia_location, log_directory, drives_free_spac
     logging.info(f'Job temporary2 directory: {temporary2_directory}')
 
     if use_daemon:
-        daemon = asyncio.get_event_loop().run_until_complete(connect_to_daemon_async())
         asyncio.get_event_loop().run_until_complete(start_plotting_async(
-            daemon=daemon,
             queue=job.name,
             size=job.size,
             memory_buffer=job.memory_buffer,

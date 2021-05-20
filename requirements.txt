@@ -3,3 +3,4 @@ dateparser==1.0.0
 psutil==5.8.0
 PyYAML==5.4.1
 websockets==8.1
+python_pushover==0.4

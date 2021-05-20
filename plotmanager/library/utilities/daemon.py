@@ -2,7 +2,6 @@ import asyncio
 import logging
 
 from typing import Any, Dict
-from websockets.exceptions import ConnectionClosedError
 
 from chia.daemon.client import DaemonProxy, connect_to_daemon_and_validate
 from chia.util.default_root import DEFAULT_ROOT_PATH
@@ -18,25 +17,22 @@ class DaemonPlotterProxy(DaemonProxy):
         return response
 
 
-async def connect_to_daemon_async():
-    logging.info(f'Waiting for daemon to be reachable')
+async def start_plotting_async(queue, size, memory_buffer, temporary_directory, temporary2_directory,
+									destination_directory, threads, buckets, bitfield) -> WsRpcMessage:
+	logging.info(f'Waiting for daemon to be reachable')
 
 	client = None
 	while client is None:
 		try:
 			client = await connect_to_daemon_and_validate(DEFAULT_ROOT_PATH)
-		except ConnectionClosedError as e:
-			logging.error(f'Connection closed ({e.code}): {e.reason}')
+		except ConnectionAbortedError as e:
+			logging.error(f'Connection aborted when connecting to daemon')
 		if client is None:
 			await asyncio.sleep(3)
 
-    client.__class__ = DaemonPlotterProxy
-    return client
+	client.__class__ = DaemonPlotterProxy
 
-
-async def start_plotting_async(daemon, queue, size, memory_buffer, temporary_directory, temporary2_directory,
-									destination_directory, threads, buckets, bitfield) -> WsRpcMessage:
-	return await daemon.start_plotting({
+	result = await client.start_plotting({
 		"queue": queue,
 		"k": size,
 		"t": temporary_directory,
@@ -50,3 +46,7 @@ async def start_plotting_async(daemon, queue, size, memory_buffer, temporary_dir
 		"overrideK": False,
 		"parallel": True
 	})
+
+	await client.close()
+
+	return result
