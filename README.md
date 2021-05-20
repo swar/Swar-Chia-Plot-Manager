@@ -173,7 +173,7 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `max_concurrent` - The maximum number of plots to have for this job at any given time.
 * `max_concurrent_with_start_early` - The maximum number of plots to have for this job at any given time including phases that started early.
 * `initial_delay_minutes` - This is the initial delay that is used when initiate the first job. It is only ever considered once. If you restart manager, it will still adhere to this value.
-* `stagger_minutes` - The amount of minutes to wait before the next job can get kicked off. You can even set this to zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
+* `stagger_minutes` - The amount of minutes to wait before the next plot for this job can get kicked off. You can even set this to zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
 * `max_for_phase_1` - The maximum number of plots on phase 1 for this job.
 * `concurrency_start_early_phase` - The phase in which you want to start a plot early. It is recommended to use 4 for this field.
 * `concurrency_start_early_phase_delay` - The maximum number of minutes to wait before a new plot gets kicked off when the start early phase has been detected.
