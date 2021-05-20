@@ -1,14 +1,17 @@
+import asyncio
 import logging
 import psutil
+import time
 
 from copy import deepcopy
 from datetime import datetime, timedelta
 
 from plotmanager.library.commands import plots
+from plotmanager.library.utilities.daemon import connect_to_daemon_async, start_plotting_async
 from plotmanager.library.utilities.exceptions import InvalidConfigurationSetting
-from plotmanager.library.utilities.processes import identify_drive, is_windows, start_process
-from plotmanager.library.utilities.objects import Job, Work
 from plotmanager.library.utilities.log import get_log_file_name
+from plotmanager.library.utilities.objects import Job, Work
+from plotmanager.library.utilities.processes import is_windows, identify_drive, start_process, get_chia_plot_processes, get_log_path_for_plot
 
 
 def has_active_jobs_and_work(jobs):
@@ -159,7 +162,7 @@ def determine_job_size(k_size):
 
 
 def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, next_job_work, chia_location,
-                          log_directory, next_log_check, minimum_minutes_between_jobs, system_drives):
+                          log_directory, next_log_check, minimum_minutes_between_jobs, system_drives, use_daemon):
     drives_free_space = {}
     for job in jobs:
         directories = [job.destination_directory]
@@ -256,10 +259,12 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
                 next_job_work[j.name] = minimum_stagger
 
         job, work = start_work(
+            running_work=running_work,
             job=job,
             chia_location=chia_location,
             log_directory=log_directory,
             drives_free_space=drives_free_space,
+            use_daemon=use_daemon
         )
         jobs[i] = deepcopy(job)
         if work is None:
@@ -271,15 +276,13 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
     return jobs, running_work, next_job_work, next_log_check
 
 
-def start_work(job, chia_location, log_directory, drives_free_space):
+def start_work(running_work, job, chia_location, log_directory, drives_free_space, use_daemon):
     logging.info(f'Starting new plot for job: {job.name}')
     nice_val = job.unix_process_priority
     if is_windows():
         nice_val = job.windows_process_priority
 
     now = datetime.now()
-    log_file_path = get_log_file_name(log_directory, job, now)
-    logging.info(f'Job log file path: {log_file_path}')
     destination_directory, temporary_directory, temporary2_directory, job = \
         get_target_directories(job, drives_free_space=drives_free_space)
     if not destination_directory:
@@ -290,7 +293,6 @@ def start_work(job, chia_location, log_directory, drives_free_space):
 
     work = deepcopy(Work())
     work.job = job
-    work.log_file = log_file_path
     work.datetime_start = now
     work.work_id = job.current_work_id
 
@@ -301,36 +303,67 @@ def start_work(job, chia_location, log_directory, drives_free_space):
         temporary2_directory = destination_directory
     logging.info(f'Job temporary2 directory: {temporary2_directory}')
 
-    plot_command = plots.create(
-        chia_location=chia_location,
-        farmer_public_key=job.farmer_public_key,
-        pool_public_key=job.pool_public_key,
-        size=job.size,
-        memory_buffer=job.memory_buffer,
-        temporary_directory=temporary_directory,
-        temporary2_directory=temporary2_directory,
-        destination_directory=destination_directory,
-        threads=job.threads,
-        buckets=job.buckets,
-        bitfield=job.bitfield,
-        exclude_final_directory=job.exclude_final_directory,
-    )
-    logging.info(f'Starting with plot command: {plot_command}')
+    if use_daemon:
+        daemon = asyncio.get_event_loop().run_until_complete(connect_to_daemon_async())
+        asyncio.get_event_loop().run_until_complete(start_plotting_async(
+            daemon=daemon,
+            size=job.size,
+            memory_buffer=job.memory_buffer,
+            temporary_directory=job.temporary_directory,
+            temporary2_directory=temporary2_directory,
+            destination_directory=destination_directory,
+            threads=job.threads,
+            buckets=job.buckets,
+            bitfield=job.bitfield
+        ))
+        logging.info(f'Waiting for new plotting process to be started by daemon')
+        while True:
+            chia_processes = [p[1] for p in get_chia_plot_processes()]
+            work_process_ids = running_work.keys()
+            pids = [p.pid for p in chia_processes if p.pid not in work_process_ids]
+            if len(pids) == 1:
+                pid = pids[0]
+                break
+            time.sleep(5)
 
-    log_file = open(log_file_path, 'a')
-    logging.info(f'Starting process')
-    process = start_process(args=plot_command, log_file=log_file)
-    pid = process.pid
-    logging.info(f'Started process: {pid}')
+        process = psutil.Process(pid)
+        log_file_path = get_log_path_for_plot(process)
 
-    logging.info(f'Setting priority level: {nice_val}')
-    psutil.Process(pid).nice(nice_val)
-    logging.info(f'Set priority level')
-    if job.enable_cpu_affinity:
-        logging.info(f'Setting process cpu affinity: {job.cpu_affinity}')
-        psutil.Process(pid).cpu_affinity(job.cpu_affinity)
-        logging.info(f'Set process cpu affinity')
+    else:
+        plot_command = plots.create(
+            chia_location=chia_location,
+            farmer_public_key=job.farmer_public_key,
+            pool_public_key=job.pool_public_key,
+            size=job.size,
+            memory_buffer=job.memory_buffer,
+            temporary_directory=temporary_directory,
+            temporary2_directory=temporary2_directory,
+            destination_directory=destination_directory,
+            threads=job.threads,
+            buckets=job.buckets,
+            bitfield=job.bitfield,
+            exclude_final_directory=job.exclude_final_directory,
+        )
+        logging.info(f'Starting with plot command: {plot_command}')
 
+        log_file = open(log_file_path, 'a')
+        logging.info(f'Starting process')
+        process = start_process(args=plot_command, log_file=log_file)
+        pid = process.pid
+        logging.info(f'Started process: {pid}')
+
+        logging.info(f'Setting priority level: {nice_val}')
+        psutil.Process(pid).nice(nice_val)
+        logging.info(f'Set priority level')
+        if job.enable_cpu_affinity:
+            logging.info(f'Setting process cpu affinity: {job.cpu_affinity}')
+            psutil.Process(pid).cpu_affinity(job.cpu_affinity)
+            logging.info(f'Set process cpu affinity')
+
+        log_file_path = get_log_file_name(log_directory, job, now)
+
+    logging.info(f'Job log file path: {log_file_path}')
+    work.log_file = log_file_path
     work.pid = pid
     job.total_running += 1
     job.total_kicked_off += 1

@@ -13,8 +13,12 @@ manager:
   # check_interval: The number of seconds to wait before checking to see if a new job should start.
   #      log_level: Keep this on ERROR to only record when there are errors. Change this to INFO in order to see more
   #                 detailed logging. Warning: INFO will write a lot of information.
+  #     use_daemon: Start plotting by calling the chia daemon plotter API instead of starting the chia process directly.
+  #                 This allows plot progress to be shown in the GUI or Chia-Dashboard but farmer, pool key
+  #                 and log path for the plot will be ignored
   check_interval: 60
   log_level: ERROR
+  use_daemon: false
 
 
 log:
