@@ -73,13 +73,34 @@ def _get_global_config(config):
 
 
 def _get_notifications_settings(config):
-    if 'notifications' not in config:
-        raise InvalidYAMLConfigException('Failed to find notifications parameter in the YAML.')
-    notifications = config['notifications']
-    expected_parameters = ['notify_discord', 'discord_webhook_url', 'notify_sound', 'song', 'notify_pushover',
-                           'pushover_user_key', 'pushover_api_key', 'notify_telegram', 'telegram_token',
-                           'notify_ifttt', 'ifttt_webhook_url']
-    _check_parameters(parameter=notifications, expected_parameters=expected_parameters, parameter_type='notification')
+    notifications = config.get('notifications', None)
+    if not notifications:
+        notifications = {}
+
+    if 'notify_discord' in notifications and notifications['notify_discord']:
+        _check_parameters(parameter=notifications, expected_parameters=['discord_webhook_url'],
+                          parameter_type='notification')
+
+    if 'notify_ifttt' in notifications and notifications['notify_ifttt']:
+        _check_parameters(parameter=notifications, expected_parameters=['ifttt_webhook_url'],
+                          parameter_type='notification')
+
+    if 'notify_sound' in notifications and notifications['notify_sound']:
+        _check_parameters(parameter=notifications, expected_parameters=['song'],
+                          parameter_type='notification')
+
+    if 'notify_pushover' in notifications and notifications['notify_pushover']:
+        _check_parameters(parameter=notifications, expected_parameters=['pushover_user_key', 'pushover_api_key'],
+                          parameter_type='notification')
+
+    if 'notify_telegram' in notifications and notifications['notify_telegram']:
+        _check_parameters(parameter=notifications, expected_parameters=['telegram_token'],
+                          parameter_type='notification')
+
+    if 'notify_twilio' in notifications and notifications['notify_twilio']:
+        _check_parameters(parameter=notifications, expected_parameters=['discord_webhook_url'],
+                          parameter_type='notification')
+
     return notifications
 
 
