@@ -62,9 +62,53 @@ Please do not use GitHub issues for questions or support regarding your own pers
 * Please forward this question to Keybase or the Discussion tab.
 
 
+## All Commands
+
+##### Example Usage of Commands
+```text
+> python3 manager.py start
+
+> python3 manager.py restart
+
+> python3 manager.py stop
+
+> python3 manager.py view
+
+> python3 manager.py status
+
+> python3 manager.py analyze_logs
+```
+
+### start
+
+This command will start the manager in the background. Once you start it, it will always be running unless all jobs have had their `max_plots` completed or there is an error. Errors will be logged in a file created `debug.log`
+
+### stop
+
+This command will terminate the manager in the background. It does not stop running plots, it will only stop new plots from getting created.
+
+### restart
+
+This command will run start and stop sequentially.
+
+### view
+
+This command will show the view that you can use to keep track of your running plots. This will get updated every X seconds defined by your `config.yaml`.
+
+### status
+
+This command will a single snapshot of the view. It will not loop.
+
+### analyze_logs
+
+This command will analyze all completed plot logs in your log folder and calculate the proper weights and line ends for your computer's configuration. Just populate the returned values under the `progress` section in your `config.yaml`. This only impacts the progress bar.
+
+
 ## Installation
 
 The installation of this library is straightforward. I have attached detailed instructions below that should help you get started. 
+
+#### NOTE: If `python` does not work, please try `python3`.
 
 1. Download and Install Python 3.7 or higher: https://www.python.org/
 2. `git clone` this repo or download it.
