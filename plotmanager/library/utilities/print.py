@@ -147,7 +147,7 @@ def get_drive_data(drives, running_work, job_data):
 
             try:
                 usage = psutil.disk_usage(drive)
-            except FileNotFoundError:
+            except (FileNotFoundError, TypeError):
                 continue
 
             counts = ['-', '-', '-']
