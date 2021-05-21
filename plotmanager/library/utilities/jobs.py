@@ -7,7 +7,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 
 from plotmanager.library.commands import plots
-from plotmanager.library.utilities.daemon import connect_to_daemon_async, start_plotting_async
+from plotmanager.library.utilities.daemon import start_plotting_async
 from plotmanager.library.utilities.exceptions import InvalidConfigurationSetting
 from plotmanager.library.utilities.log import get_log_file_name
 from plotmanager.library.utilities.objects import Job, Work
