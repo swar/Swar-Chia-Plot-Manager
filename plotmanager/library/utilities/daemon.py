@@ -18,35 +18,35 @@ class DaemonPlotterProxy(DaemonProxy):
 
 
 async def start_plotting_async(queue, size, memory_buffer, temporary_directory, temporary2_directory,
-									destination_directory, threads, buckets, bitfield) -> WsRpcMessage:
-	logging.info(f'Waiting for daemon to be reachable')
+                                    destination_directory, threads, buckets, bitfield) -> WsRpcMessage:
+    logging.info(f'Waiting for daemon to be reachable')
 
-	client = None
-	while client is None:
-		try:
-			client = await connect_to_daemon_and_validate(DEFAULT_ROOT_PATH)
-		except ConnectionAbortedError as e:
-			logging.error(f'Connection aborted when connecting to daemon')
-		if client is None:
-			await asyncio.sleep(3)
+    client = None
+    while client is None:
+        try:
+            client = await connect_to_daemon_and_validate(DEFAULT_ROOT_PATH)
+        except ConnectionAbortedError as e:
+            logging.error(f'Connection aborted when connecting to daemon')
+        if client is None:
+            await asyncio.sleep(3)
 
-	client.__class__ = DaemonPlotterProxy
+    client.__class__ = DaemonPlotterProxy
 
-	result = await client.start_plotting({
-		"queue": queue,
-		"k": size,
-		"t": temporary_directory,
-		"t2": temporary2_directory,
-		"d": destination_directory,
-		"b": memory_buffer,
-		"u": buckets,
-		"r": threads,
-		"e": not bitfield,
-		"x": False,
-		"overrideK": False,
-		"parallel": True
-	})
+    result = await client.start_plotting({
+        "queue": queue,
+        "k": size,
+        "t": temporary_directory,
+        "t2": temporary2_directory,
+        "d": destination_directory,
+        "b": memory_buffer,
+        "u": buckets,
+        "r": threads,
+        "e": not bitfield,
+        "x": False,
+        "overrideK": False,
+        "parallel": True
+    })
 
-	await client.close()
+    await client.close()
 
-	return result
+    return result
