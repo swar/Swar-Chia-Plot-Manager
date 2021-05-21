@@ -16,6 +16,7 @@ from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import print_view, print_json
 from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, \
     start_process, identify_drive, get_system_drives
+from plotmanager.library.utilities.globals import IS_MANAGER
 
 
 def start_manager():

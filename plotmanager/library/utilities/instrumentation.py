@@ -1,6 +1,8 @@
 import socket
 import logging
 
+from plotmanager.library.utilities.globals import IS_MANAGER
+
 PROCESSED = False
 GAUGE_PLOTS_RUNNING = None
 COUNTER_PLOTS_COMPLETED = None
