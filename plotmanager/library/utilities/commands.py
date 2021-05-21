@@ -19,6 +19,8 @@ from plotmanager.library.utilities.processes import is_windows, get_manager_proc
 
 
 def start_manager():
+    global IS_MANAGER
+    IS_MABAGER = True
     if get_manager_processes():
         raise ManagerError('Manager is already running.')
 
