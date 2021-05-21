@@ -313,7 +313,8 @@ def start_work(running_work, job, chia_location, log_directory, drives_free_spac
             destination_directory=destination_directory,
             threads=job.threads,
             buckets=job.buckets,
-            bitfield=job.bitfield
+            bitfield=job.bitfield,
+            exclude_final_directory=job.exclude_final_directory,
         ))
         logging.info(f'Waiting for new plotting process to be started by daemon')
         while True:

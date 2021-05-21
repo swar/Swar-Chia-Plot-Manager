@@ -18,7 +18,7 @@ class DaemonPlotterProxy(DaemonProxy):
 
 
 async def start_plotting_async(queue, size, memory_buffer, temporary_directory, temporary2_directory,
-                                    destination_directory, threads, buckets, bitfield) -> WsRpcMessage:
+                            destination_directory, threads, buckets, bitfield, exclude_final_directory) -> WsRpcMessage:
     logging.info(f'Waiting for daemon to be reachable')
 
     client = None
@@ -42,7 +42,7 @@ async def start_plotting_async(queue, size, memory_buffer, temporary_directory, 
         "u": buckets,
         "r": threads,
         "e": not bitfield,
-        "x": False,
+        "x": exclude_final_directory,
         "overrideK": False,
         "parallel": True
     })
