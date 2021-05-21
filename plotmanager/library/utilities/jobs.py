@@ -308,7 +308,7 @@ def start_work(running_work, job, chia_location, log_directory, drives_free_spac
             queue=job.name,
             size=job.size,
             memory_buffer=job.memory_buffer,
-            temporary_directory=job.temporary_directory,
+            temporary_directory=temporary_directory,
             temporary2_directory=temporary2_directory,
             destination_directory=destination_directory,
             threads=job.threads,
