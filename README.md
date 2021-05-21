@@ -174,6 +174,15 @@ These are the settings that will be used by the view.
 
 These are different settings in order to send notifications when the plot manager starts and when a plot has been completed.
 
+#### Telegram
+
+In order to setup Telegram notifications:
+
+1. Create a bot by texting the [BotFather](https://t.me/botfather) on Telegram and following its instructions.
+2. Send the first message to your newly created bot by searching for it by its name, then say "hi" to it. (failing to do this will result in a runtime error about being unable to find the `chat_id`!)
+3. Use the *token* the *BotFahter* gave you to configure the `telegram_token` setting
+4. Restart the manager `python3 manager.py restart`
+
 ### instrumentation
 
 Settings for enabling Prometheus to gather metrics.
