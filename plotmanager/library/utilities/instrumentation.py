@@ -8,7 +8,8 @@ COUNTER_PLOTS_COMPLETED = None
 
 def _get_metrics(instrumentation_settings):
     global PROCESSED
-    if instrumentation_settings.get('prometheus_enabled', False) and not PROCESSED:
+    global IS_MANAGER
+    if instrumentation_settings.get('prometheus_enabled', False) and not PROCESSED and IS_MANAGER:
         from prometheus_client import Counter, Gauge, start_http_server
         global GAUGE_PLOTS_RUNNING
         global COUNTER_PLOTS_COMPLETED
