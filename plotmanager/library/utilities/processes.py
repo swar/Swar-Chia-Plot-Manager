@@ -170,7 +170,7 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     return temp_size
 
 
-def get_running_plots(jobs, running_work, instrumentation_settings):
+def get_running_plots(jobs, running_work, instrumentation_settings, log_directory):
     chia_processes = []
     logging.info(f'Getting running plots')
     chia_executable_name = get_chia_executable_name()
@@ -213,6 +213,19 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
                 break
         except (psutil.AccessDenied, RuntimeError, psutil.NoSuchProcess):
             logging.info(f'Failed to find log file: {process.pid}')
+
+        if not log_file_path:
+            try:
+                commands = process.cmdline()
+                for file in os.listdir(log_directory):
+                    if "#" + str(process.pid) in file:
+                        log_file_path = file[:file.find("#")]
+                        log_file_path = os.path.join(log_directory, log_file_path)
+                        break
+            except (psutil.AccessDenied, RuntimeError):
+                logging.info(f'Failed to find log file: {process.pid}')
+            except psutil.NoSuchProcess:
+                continue
 
         assumed_job = None
         logging.info(f'Finding associated job')

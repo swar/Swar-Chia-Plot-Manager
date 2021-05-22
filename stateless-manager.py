@@ -39,7 +39,8 @@ logging.info(f"Found System Drives: {system_drives}")
 
 logging.info(f'Grabbing running plots.')
 jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
-                                       instrumentation_settings=instrumentation_settings)
+                                       instrumentation_settings=instrumentation_settings,
+                                       log_directory=log_directory)
 for job in jobs:
     max_date = None
     for pid in job.running_work:
