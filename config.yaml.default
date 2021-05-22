@@ -65,6 +65,8 @@ notifications:
   # TELEGRAM
   notify_telegram: false
   telegram_token: xxxxx
+  # [optional] Can be used to specify a different chat to which the notifications are supposed to be sent. Useful for group chats.
+  # chat_id: xxxx
 
   # TWILIO
   notify_twilio: false
