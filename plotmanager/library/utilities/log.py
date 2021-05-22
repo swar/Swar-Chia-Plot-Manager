@@ -14,6 +14,19 @@ def get_log_file_name(log_directory, job, datetime):
     return os.path.join(log_directory, f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
 
 
+def _analyze_log_end_date(contents):
+    match = re.search(r'total time = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    total_seconds, date_raw = match.groups()
+    total_seconds = pretty_print_time(int(float(total_seconds)))
+    parsed_date = dateparser.parse(date_raw)
+    return dict(
+        total_seconds=total_seconds,
+        date=parsed_date,
+    )
+
+
 def _analyze_log_file(contents):
     # ID
     match = re.search(r'ID: (\w+)\n', contents, flags=re.I)
@@ -174,6 +187,17 @@ def get_completed_log_files(log_directory, skip=None):
 
 
 def analyze_log_dates(log_directory, analysis):
+    files = get_completed_log_files(log_directory, skip=list(analysis['files'].keys()))
+    for file_path, contents in files.items():
+        data = _analyze_log_end_date(contents)
+        if data is None:
+            continue
+        analysis['files'][file_path] = {'data': data, 'checked': False}
+    analysis = _get_date_summary(analysis)
+    return analysis
+
+
+def analyze_log_date_history(log_directory, analysis):
     files = get_completed_log_files(log_directory, skip=list(analysis['files'].keys()))
     for file_path, contents in files.items():
         data = _analyze_log_file(contents)
