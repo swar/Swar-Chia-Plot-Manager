@@ -261,7 +261,8 @@ def create_link_file(log_directory, pid, log_file_path):
         except Exception as e:
             continue
     link_file = log_file_path+'#'+str(pid)
-    os.mknod(link_file)
+    fp = open(link_file, "a+")
+    fp.close()
     logging.info(f'Process log link file {link_file} created')
 
 def start_work(job, chia_location, log_directory, drives_free_space):
