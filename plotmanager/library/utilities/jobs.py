@@ -1,4 +1,5 @@
 import logging
+import os
 import psutil
 
 from copy import deepcopy
@@ -270,6 +271,20 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
 
     return jobs, running_work, next_job_work, next_log_check
 
+def create_link_file(log_directory, pid, log_file_path):
+    files_to_remove = []
+    for file in os.listdir(log_directory):
+        if "#" + str(pid) in file:
+            files_to_remove.append(os.path.join(log_directory, file))
+    for file_to_remove in files_to_remove:
+        try:
+            os.remove(file_to_remove)
+        except Exception as e:
+            continue
+    link_file = log_file_path+'#'+str(pid)
+    fp = open(link_file, "a+")
+    fp.close()
+    logging.info(f'Process log link file {link_file} created')
 
 def start_work(job, chia_location, log_directory, drives_free_space):
     logging.info(f'Starting new plot for job: {job.name}')
@@ -322,7 +337,7 @@ def start_work(job, chia_location, log_directory, drives_free_space):
     process = start_process(args=plot_command, log_file=log_file)
     pid = process.pid
     logging.info(f'Started process: {pid}')
-
+    create_link_file(log_directory, pid, log_file_path)
     logging.info(f'Setting priority level: {nice_val}')
     psutil.Process(pid).nice(nice_val)
     logging.info(f'Set priority level')
