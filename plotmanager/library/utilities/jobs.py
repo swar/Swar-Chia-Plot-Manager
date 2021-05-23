@@ -228,6 +228,8 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
                 except (KeyError, AttributeError):
                     start_early_date = work.datetime_start
 
+                if start_early_date is None:
+                    continue
                 if work.current_phase < job.concurrency_start_early_phase:
                     continue
                 if datetime.now() <= (start_early_date + timedelta(minutes=job.concurrency_start_early_phase_delay)):
