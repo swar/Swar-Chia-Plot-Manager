@@ -181,6 +181,7 @@ jobs:
     temporary_directory: Z:\Plotter
     temporary2_directory:
     destination_directory: J:\Plots
+    disable_destination_directory:
     size: 32
     bitfield: true
     threads: 8
@@ -213,6 +214,8 @@ jobs:
       - K:\Plots
     destination_directory:
       - J:\Plots
+      - K:\Plots
+    disable_destination_directory:
       - K:\Plots
     size: 32
     bitfield: true
