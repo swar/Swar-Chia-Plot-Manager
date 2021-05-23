@@ -24,6 +24,7 @@ class Job:
     temporary_directory = None
     temporary2_directory = None
     destination_directory = []
+    disable_destination_directory = []
     exclude_final_directory = None
     skip_full_destinations = None
     size = None

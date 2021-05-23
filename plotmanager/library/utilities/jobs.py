@@ -32,7 +32,12 @@ def get_target_directories(job, drives_free_space):
         return None, None, None, job
 
     if isinstance(job.destination_directory, list):
-        destination_directory = job.destination_directory[job_offset % len(job.destination_directory)]
+        destination_directory_active = job.destination_directory
+        for _directory in destination_directory_active:
+            # remove disabled directory.
+            if _directory in job.disable_destination_directory:
+                destination_directory_active.remove(_directory)
+        destination_directory = destination_directory_active[job_offset % len(destination_directory_active)]
     if isinstance(job.temporary_directory, list):
         temporary_directory = job.temporary_directory[job_offset % len(job.temporary_directory)]
     if isinstance(job.temporary2_directory, list):
@@ -112,6 +117,12 @@ def load_jobs(config_jobs):
                                               f'{directory}')
         job.temporary_directory = temporary_directory
         job.destination_directory = info['destination_directory']
+
+        disable_destination_directory = info.get('disable_destination_directory', None)
+        if isinstance(disable_destination_directory, str):
+            job.disable_destination_directory = [disable_destination_directory]
+        elif isinstance(disable_destination_directory, list):
+            job.disable_destination_directory = disable_destination_directory
 
         temporary2_directory = info.get('temporary2_directory', None)
         if not temporary2_directory:
