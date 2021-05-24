@@ -19,7 +19,15 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
         est_overall_time_h = str('0'+str(est_overall_time_h))
     if est_overall_time_m <10 :
         est_overall_time_m = str('0'+str(est_overall_time_m))
-    est_overall_time_str = str(str(est_overall_time_h)+':'+str(est_overall_time_m))
+    est_overall_time_str = str(str(est_overall_time_h)+':'+str(est_overall_time_m)+'h')
+    est_remain = est_overall_time - elapsed_time.seconds
+    est_remain_h = int(est_remain/3600)
+    est_remain_m = int((est_remain - est_remain_h*3600)/60)
+    if est_remain_h <10 :
+        est_remain_h = str('0'+str(est_remain_h))
+    if est_remain_m <10 :
+        est_remain_m = str('0'+str(est_remain_m))
+    est_remain_str = str(str(est_remain_h)+':'+str(est_remain_m)+'h')
     elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
     phase_time_log = []
     plot_id_prefix = ''
@@ -40,7 +48,8 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
         ' / '.join(phase_time_log),
         work.progress+'%',
         pretty_print_bytes(work.temp_file_size, 'gb', 0, " GiB"),
-        est_overall_time_str,    ]
+        est_overall_time_str, 
+        est_remain_str,   ]
     if not as_raw_values:
         return [str(cell) for cell in row]
     return row
@@ -107,7 +116,7 @@ def get_job_data(jobs, running_work, view_settings, as_json=False):
 
 
 def pretty_print_job_data(job_data):
-    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size', 'overall_time']
+    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size', 'overall_time', 'remaining']
     rows = [headers] + job_data
     return pretty_print_table(rows)
 
