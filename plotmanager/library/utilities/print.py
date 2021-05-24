@@ -104,7 +104,7 @@ def pretty_print_job_data(job_data):
 
 
 def get_drive_data(drives, running_work, job_data):
-    headers = ['type', 'drive', 'used', 'total', '%', '#', 'temp', 'dest']
+    headers = ['type', 'drive', 'free', 'total', '% used', '#', 'temp', 'dest']
     rows = []
 
     pid_to_num = {}
@@ -165,7 +165,7 @@ def get_drive_data(drives, running_work, job_data):
             row = [
                 drive_type,
                 drive,
-                f'{pretty_print_bytes(usage.used, "tb", 2, "TiB")}',
+                f'{pretty_print_bytes(usage.free, "tb", 2, "TiB")}',
                 f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}',
                 f'{usage.percent}%',
                 '/'.join(counts),
