@@ -16,6 +16,7 @@ def _send_notifications(title, body, settings):
     if settings.get('notify_telegram') is True:
         import telegram_notifier
         notifier = telegram_notifier.TelegramNotifier(settings.get('telegram_token'), parse_mode="HTML")
+        notifier._chat_id=settings.get('telegram_chat_id')
         notifier.send(body)
 
     if settings.get('notify_ifttt') is True:

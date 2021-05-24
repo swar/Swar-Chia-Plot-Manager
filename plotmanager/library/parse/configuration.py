@@ -94,7 +94,7 @@ def _get_notifications_settings(config):
                           parameter_type='notification')
 
     if 'notify_telegram' in notifications and notifications['notify_telegram']:
-        _check_parameters(parameter=notifications, expected_parameters=['telegram_token'],
+        _check_parameters(parameter=notifications, expected_parameters=['telegram_token','telegram_chat_id'],
                           parameter_type='notification')
 
     if 'notify_twilio' in notifications and notifications['notify_twilio']:
