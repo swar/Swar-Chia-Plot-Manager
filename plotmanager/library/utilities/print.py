@@ -162,11 +162,21 @@ def get_drive_data(drives, running_work, job_data):
                 del drive_types[drive][1]
             drive_type = '/'.join(drive_types[drive])
 
+            if usage.free >= 1099511627776:
+                display_free=f'{pretty_print_bytes(usage.free, "tb", 2, "TiB")}'
+            else:
+                display_free=f'{pretty_print_bytes(usage.free, "gb", 0, "GiB")}'
+
+            if usage.total >= 1099511627776:
+                display_total=f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}'
+            else:
+                display_total=f'{pretty_print_bytes(usage.total, "gb", 0, "GiB")}'
+
             row = [
                 drive_type,
                 drive,
-                f'{pretty_print_bytes(usage.free, "tb", 2, "TiB")}',
-                f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}',
+                display_free,
+                display_total,
                 f'{usage.percent}%',
                 '/'.join(counts),
                 '/'.join(temp),
