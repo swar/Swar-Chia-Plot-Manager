@@ -22,6 +22,14 @@ def _send_notifications(title, body, settings):
         import requests
         requests.post(settings.get('ifttt_webhook_url'), data={'value1': title, 'value2': body})
 
+    if settings.get('notify_slack') is True:
+        import requests
+        data = {
+            'text': title +': ' + body
+        }
+        
+        requests.post(settings.get('slack_webhook_url'), json=data)
+
 
 def send_notifications(title, body, settings):
     try:
