@@ -43,6 +43,15 @@ def is_windows():
     return platform.system() == 'Windows'
 
 
+def get_chia_windows_path():
+    appDataPath = os.getenv('LOCALAPPDATA')
+    chiaDirectory = f'{appDataPath}\\chia-blockchain'
+    dirs = os.listdir(chiaDirectory)
+    appVersion = [dir for dir in dirs in dir.startswith('app-')][0]
+
+    return f'{appDataPath}\\chia-blockchain\\{appVersion}\\resources\\app.asar.unpacked\\daemon\\chia.exe'
+
+
 def get_chia_executable_name():
     return f'chia{".exe" if is_windows() else ""}'
 

@@ -6,12 +6,15 @@ from datetime import datetime, timedelta
 from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.jobs import has_active_jobs_and_work, load_jobs, monitor_jobs_to_start
 from plotmanager.library.utilities.log import check_log_progress
-from plotmanager.library.utilities.processes import get_running_plots, get_system_drives
-
+from plotmanager.library.utilities.processes import get_running_plots, get_system_drives, get_chia_windows_path, is_windows
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
     minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
     instrumentation_settings = get_config_info()
+
+# Getting the new chia_location for windows.
+if is_windows():
+    chia_location = get_chia_windows_path()
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
