@@ -9,7 +9,7 @@ from plotmanager.library.utilities.log import check_log_progress
 from plotmanager.library.utilities.processes import get_running_plots, get_system_drives, get_chia_windows_path, is_windows
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-    minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
+    dest_directory, minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
     instrumentation_settings = get_config_info()
 
 # Getting the new chia_location for windows.
@@ -32,7 +32,7 @@ logging.info(f'View Settings: {view_settings}')
 logging.info(f'Instrumentation Settings: {instrumentation_settings}')
 
 logging.info(f'Loading jobs into objects.')
-jobs = load_jobs(config_jobs)
+jobs = load_jobs(config_jobs, dest_directory)
 
 next_log_check = datetime.now()
 next_job_work = {}

@@ -31,10 +31,10 @@ def start_manager():
     python_file_path = sys.executable
 
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        dest_directory, minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, \
+        view_settings, instrumentation_settings = get_config_info()
 
-    load_jobs(config_jobs)
+    load_jobs(config_jobs, dest_directory)
 
     test_configuration(chia_location=chia_location, notification_settings=notification_settings,
                        instrumentation_settings=instrumentation_settings)
@@ -79,19 +79,24 @@ def stop_manager():
 
 def json_output():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        dest_directory, minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, \
+        view_settings, instrumentation_settings = get_config_info()
 
     system_drives = get_system_drives()
 
     drives = {'temp': [], 'temp2': [], 'dest': []}
-    jobs = load_jobs(config_jobs)
+
+    # add the dest directory setting for global
+    drives['dest'] = [directory.split('\\')[0] for directory in dest_directory]
+
+    jobs = load_jobs(config_jobs, dest_directory)
     for job in jobs:
+        # not setting the dest directory
         directories = {
             'temp': job.temporary_directory,
-            'dest': job.destination_directory,
             'temp2': job.temporary2_directory,
         }
+
         for key, directory_list in directories.items():
             if directory_list is None:
                 continue
@@ -105,7 +110,7 @@ def json_output():
 
     running_work = {}
 
-    jobs = load_jobs(config_jobs)
+    jobs = load_jobs(config_jobs, dest_directory)
     jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
                                            instrumentation_settings=instrumentation_settings)
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
@@ -130,19 +135,24 @@ def json_output():
 
 def view(loop=True):
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        dest_directory, minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, \
+        view_settings, instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
     system_drives = get_system_drives()
     analysis = {'files': {}}
     drives = {'temp': [], 'temp2': [], 'dest': []}
-    jobs = load_jobs(config_jobs)
+
+    # add the dest directory setting for global
+    drives['dest'] = [directory.split('\\')[0] for directory in dest_directory]
+
+    jobs = load_jobs(config_jobs, dest_directory)
     for job in jobs:
+        # not setting the dest directory
         directories = {
-            'dest': job.destination_directory,
             'temp': job.temporary_directory,
             'temp2': job.temporary2_directory,
         }
+
         for key, directory_list in directories.items():
             if directory_list is None:
                 continue
@@ -158,7 +168,7 @@ def view(loop=True):
         running_work = {}
         try:
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
-            jobs = load_jobs(config_jobs)
+            jobs = load_jobs(config_jobs, dest_directory)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
                                                    instrumentation_settings=instrumentation_settings)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
@@ -189,6 +199,6 @@ def view(loop=True):
 
 def analyze_logs():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        dest_directory, minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, \
+        view_settings, instrumentation_settings = get_config_info()
     analyze_log_times(log_directory)

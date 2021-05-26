@@ -65,7 +65,7 @@ def check_valid_destinations(job, drives_free_space):
     return job
 
         
-def load_jobs(config_jobs):
+def load_jobs(config_jobs, dest_directory):
     jobs = []
     checked_job_names = []
     checked_temporary_directories = []
@@ -111,7 +111,7 @@ def load_jobs(config_jobs):
             raise InvalidConfigurationSetting(f'You cannot use the same temporary directory for more than one job: '
                                               f'{directory}')
         job.temporary_directory = temporary_directory
-        job.destination_directory = info['destination_directory']
+        job.destination_directory = dest_directory
 
         temporary2_directory = info.get('temporary2_directory', None)
         if not temporary2_directory:
