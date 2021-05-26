@@ -268,6 +268,10 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
         next_log_check = datetime.now()
         running_work[work.pid] = work
 
+        current_drive = work.destination_drive
+        work_size = determine_job_size(work.k_size)
+        drives_free_space[current_drive] -= work_size
+
     return jobs, running_work, next_job_work, next_log_check
 
 
