@@ -114,7 +114,7 @@ def _get_history_row_info(analysis_data, view_settings):
     row = [
         analysis_data['plot_size'],
         analysis_data['phase1']['start'].strftime(view_settings['datetime_format']),
-        analysis_data['end_date'].strftime(view_settings['datetime_format']),
+        analysis_data['date'].strftime(view_settings['datetime_format']),
         analysis_data['total_seconds'],
         ' / '.join(phase_times),
         f'{int(analysis_data["buffer_size"])} MiB',

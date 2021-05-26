@@ -188,8 +188,9 @@ def view(loop=True):
 
 
 def view_history():
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, progress_settings, \
-        notification_settings, debug_level, view_settings = get_config_info()
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
+        instrumentation_settings = get_config_info()
     analysis = {'files': {}}
     analysis = analyze_log_date_history(log_directory=log_directory, analysis=analysis)
     print(get_job_history(analysis, view_settings))

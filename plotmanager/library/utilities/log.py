@@ -142,7 +142,7 @@ def _analyze_log_file(contents):
             end_date=phase_4_end_date
         ),
         total_seconds=total_seconds,
-        end_date=end_date
+        date=end_date
     )
 
 
