@@ -15,8 +15,9 @@ def has_active_jobs_and_work(jobs):
     for job in jobs:
         if job.total_kicked_off < job.max_plots:
             return True
-    return False
+    return False            
 
+    
 
 def get_target_directories(job, drives_free_space):
     job_offset = job.total_completed + job.total_running
