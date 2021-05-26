@@ -12,22 +12,9 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
     elapsed_time = (datetime.now() - work.datetime_start)
     elapsed_seconds = elapsed_time.seconds
     est_overall_time = 10000/float(work.progress)*elapsed_seconds/100
-    est_overall_time_h = int(est_overall_time/3600)
-    est_overall_time_m = int((est_overall_time - est_overall_time_h*3600)/60)
-    if est_overall_time_h <10 :
-        est_overall_time_h = str('0'+str(est_overall_time_h))
-    if est_overall_time_m <10 :
-        est_overall_time_m = str('0'+str(est_overall_time_m))
-    est_overall_time_str = str(str(est_overall_time_h)+':'+str(est_overall_time_m))
-    est_remain = est_overall_time - elapsed_time.seconds
-    est_remain_h = int(est_remain/3600)
-    est_remain_m = int((est_remain - est_remain_h*3600)/60)
-    if est_remain_h <10 :
-        est_remain_h = str('0'+str(est_remain_h))
-    if est_remain_m <10 :
-        est_remain_m = str('0'+str(est_remain_m))
-    est_remain_str = str(str(est_remain_h)+':'+str(est_remain_m))
-    elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
+    est_overall_time_str = pretty_print_time(int(est_overall_time), False)
+    est_remain_str = pretty_print_time(int(est_overall_time - elapsed_time.seconds), False)
+    elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400, False)
     phase_time_log = []
     plot_id_prefix = ''
     if work.plot_id:
@@ -180,12 +167,12 @@ def get_drive_data(drives, running_work, job_data):
                 del drive_types[drive][1]
             drive_type = '/'.join(drive_types[drive])
             if usage.percent>90:
-                color = "\u001b[31;1m "
+                color = "\u001b[38;5;196m "
             else: 
                 if usage.percent>75:
-                    color = "\u001b[0m\u001b[33;1m "
+                    color = "\u001b[38;5;221m "
                 else:
-                    color = "\u001b[m\u001b[0m "
+                    color = "\u001b[38;5;150m "
             row = [
                 f'{color}{drive_type}',
                 drive,
