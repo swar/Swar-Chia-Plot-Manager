@@ -24,6 +24,18 @@ def _contains_in_list(string, lst, case_insensitive=False):
     return False
 
 
+def _get_split_cmdline(process):
+    raw_commands = process.cmdline()
+    commands = []
+    for item in raw_commands:
+        if not item.startswith('-') or len(item) == 2:
+            commands.append(item)
+        else:
+            commands.append(item[:2])
+            commands.append(item[2:])
+    return commands
+
+
 def get_manager_processes():
     processes = []
     for process in psutil.process_iter():
@@ -99,8 +111,8 @@ def get_chia_drives():
                 continue
         except (psutil.ZombieProcess, psutil.NoSuchProcess):
             continue
-        commands = process.cmdline()
-        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
+
+        temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=_get_split_cmdline(process))
         if not temporary_drive and not destination_drive:
             continue
 
@@ -170,7 +182,7 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     return temp_size
 
 
-def get_running_plots(jobs, running_work, instrumentation_settings):
+def get_chia_plot_processes():
     chia_processes = []
     logging.info(f'Getting running plots')
     chia_executable_name = get_chia_executable_name()
@@ -196,31 +208,39 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
         datetime_start = datetime.fromtimestamp(process.create_time())
         chia_processes.append([datetime_start, process])
     chia_processes.sort(key=lambda x: (x[0]))
+    return chia_processes
+
+
+def get_log_path_for_plot(process):
+    logging.info(f'Finding log file for process: {process.pid}')
+    log_file_path = None
+    try:
+        for file in process.open_files():
+            if '.mui' == file.path[-4:]:
+                continue
+            if file.path[-4:] not in ['.log', '.txt']:
+                continue
+            if file.path[-9:] == 'debug.log':
+                continue
+            log_file_path = file.path
+            logging.info(f'Found log file: {log_file_path}')
+            break
+    except (psutil.AccessDenied, RuntimeError, psutil.NoSuchProcess):
+        logging.info(f'Failed to find log file: {process.pid}')
+
+    return log_file_path
+
+
+def get_running_plots(jobs, running_work, instrumentation_settings):
+    chia_processes = get_chia_plot_processes()
 
     for datetime_start, process in chia_processes:
-        logging.info(f'Finding log file for process: {process.pid}')
-        log_file_path = None
-        commands = []
-        try:
-            commands = process.cmdline()
-            for file in process.open_files():
-                if '.mui' == file.path[-4:]:
-                    continue
-                if file.path[-4:] not in ['.log', '.txt']:
-                    continue
-                if file.path[-9:] == 'debug.log':
-                    continue
-                log_file_path = file.path
-                logging.info(f'Found log file: {log_file_path}')
-                break
-        except (psutil.AccessDenied, RuntimeError):
-            logging.info(f'Failed to find log file: {process.pid}')
-        except psutil.NoSuchProcess:
-            continue
+        log_file_path = get_log_path_for_plot(process)
 
         assumed_job = None
         logging.info(f'Finding associated job')
 
+        commands = _get_split_cmdline(process)
         temporary_directory, temporary2_directory, destination_directory = get_plot_directories(commands=commands)
         for job in jobs:
             if isinstance(job.temporary_directory, list) and temporary_directory not in job.temporary_directory:

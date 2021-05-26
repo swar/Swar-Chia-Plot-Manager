@@ -30,7 +30,7 @@ def start_manager():
     debug_log_file = open(debug_log_file_path, 'a')
     python_file_path = sys.executable
 
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+    chia_location, log_directory, use_daemon, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
 
@@ -78,7 +78,7 @@ def stop_manager():
 
 
 def json_output():
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+    chia_location, log_directory, use_daemon, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
 
@@ -129,7 +129,7 @@ def json_output():
 
 
 def view(loop=True):
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+    chia_location, log_directory, use_daemon, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
     view_check_interval = view_settings['check_interval']
@@ -188,7 +188,7 @@ def view(loop=True):
 
 
 def analyze_logs():
-    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+    chia_location, log_directory, use_daemon, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings = get_config_info()
     analyze_log_times(log_directory)
