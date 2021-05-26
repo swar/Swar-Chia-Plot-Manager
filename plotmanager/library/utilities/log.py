@@ -27,6 +27,125 @@ def _analyze_log_end_date(contents):
     )
 
 
+def _analyze_log_file(contents):
+    # ID
+    match = re.search(r'ID: (\w+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    id_val = match.groups()[0]
+
+    # Plot size
+    match = re.search(r'Plot size is: (\d+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    plot_size = int(match.groups()[0])
+
+    # Buffer size
+    match = re.search(r'Buffer size is: (\d+)MiB\n', contents, flags=re.I)
+    if not match:
+        return False
+    buffer_size = int(match.groups()[0])
+
+    # Threads
+    match = re.search(r'Using (\d+) threads of stripe size \d+\n', contents, flags=re.I)
+    if not match:
+        return False
+    threads = int(match.groups()[0])
+
+    # Temp dirs
+    match = re.search(r'Starting plotting progress into temporary dirs: (.*) and (.*)\n', contents, flags=re.I)
+    if not match:
+        return False
+    temp_dir_1 = match.groups()[0]
+    temp_dir_2 = match.groups()[1]
+
+    # Used working space
+    match = re.search(r'Approximate working space used \(without final file\): ([\d\.]+) GiB\n', contents, flags=re.I)
+    if not match:
+        return False
+    working_space = float(match.groups()[0])
+
+    # Phase 1
+    match = re.search(r'Starting phase 1/4: Forward Propagation into tmp files... [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    phase_1_start = dateparser.parse(match.groups()[0])
+
+    match = re.search(r'Time for phase 1 = ([\d\.]+) seconds. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    phase_1_seconds = int(float(match.groups()[0]))
+    phase_1_end_date = dateparser.parse(match.groups()[1])
+
+    # Phase 2
+    match = re.search(r'Starting phase 2/4: Backpropagation into tmp files... [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    phase_2_start = dateparser.parse(match.groups()[0])
+
+    match = re.search(r'Time for phase 2 = ([\d\.]+) seconds. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    phase_2_seconds = int(float(match.groups()[0]))
+    phase_2_end_date = dateparser.parse(match.groups()[1])
+
+    # Phase 3
+    phase_3_start = phase_2_end_date
+
+    match = re.search(r'Time for phase 3 = ([\d\.]+) seconds. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    phase_3_seconds = int(float(match.groups()[0]))
+    phase_3_end_date = dateparser.parse(match.groups()[1])
+
+    # Phase 4
+    phase_4_start = phase_3_end_date
+
+    match = re.search(r'Time for phase 4 = ([\d\.]+) seconds. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    phase_4_seconds = int(float(match.groups()[0]))
+    phase_4_end_date = dateparser.parse(match.groups()[1])
+
+    # Total time
+    match = re.search(r'Total time = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+    if not match:
+        return False
+    total_seconds = pretty_print_time(int(float(match.groups()[0])))
+    end_date = dateparser.parse(match.groups()[1])
+
+    return dict(
+        id=id_val,
+        plot_size=plot_size,
+        buffer_size=buffer_size,
+        threads=threads,
+        working_space=working_space,
+        temp_dirs = [temp_dir_1, temp_dir_2],
+        phase1 = dict(
+            start=phase_1_start,
+            total_seconds=phase_1_seconds,
+            end_date=phase_1_end_date
+        ),
+        phase2 = dict(
+            start=phase_2_start,
+            total_seconds=phase_2_seconds,
+            end_date=phase_2_end_date
+        ),
+        phase3 = dict(
+            start=phase_3_start,
+            total_seconds=phase_3_seconds,
+            end_date=phase_3_end_date
+        ),
+        phase4 = dict(
+            start=phase_4_start,
+            total_seconds=phase_4_seconds,
+            end_date=phase_4_end_date
+        ),
+        total_seconds=total_seconds,
+        date=end_date
+    )
+
+
 def _get_date_summary(analysis):
     summary = analysis.get('summary', {})
     for file_path in analysis['files'].keys():
@@ -71,6 +190,17 @@ def analyze_log_dates(log_directory, analysis):
     files = get_completed_log_files(log_directory, skip=list(analysis['files'].keys()))
     for file_path, contents in files.items():
         data = _analyze_log_end_date(contents)
+        if data is None:
+            continue
+        analysis['files'][file_path] = {'data': data, 'checked': False}
+    analysis = _get_date_summary(analysis)
+    return analysis
+
+
+def analyze_log_date_history(log_directory, analysis):
+    files = get_completed_log_files(log_directory, skip=list(analysis['files'].keys()))
+    for file_path, contents in files.items():
+        data = _analyze_log_file(contents)
         if data is None:
             continue
         analysis['files'][file_path] = {'data': data, 'checked': False}

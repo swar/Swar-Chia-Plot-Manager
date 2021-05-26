@@ -11,9 +11,9 @@ from plotmanager.library.parse.configuration import get_config_info
 from plotmanager.library.utilities.configuration import test_configuration
 from plotmanager.library.utilities.exceptions import ManagerError, TerminationException
 from plotmanager.library.utilities.jobs import load_jobs
-from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
+from plotmanager.library.utilities.log import analyze_log_dates, analyze_log_date_history, check_log_progress, analyze_log_times
 from plotmanager.library.utilities.notifications import send_notifications
-from plotmanager.library.utilities.print import print_view, print_json
+from plotmanager.library.utilities.print import print_view, print_json, get_job_history
 from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, \
     start_process, identify_drive, get_system_drives
 
@@ -185,6 +185,15 @@ def view(loop=True):
         except KeyboardInterrupt:
             print("Stopped view.")
             exit()
+
+
+def view_history():
+    chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
+        instrumentation_settings = get_config_info()
+    analysis = {'files': {}}
+    analysis = analyze_log_date_history(log_directory=log_directory, analysis=analysis)
+    print(get_job_history(analysis, view_settings))
 
 
 def analyze_logs():
