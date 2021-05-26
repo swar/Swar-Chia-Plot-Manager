@@ -156,7 +156,7 @@ def get_progress(line_count, progress_settings):
 
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings,
-                       instrumentation_settings):
+                       instrumentation_settings, manager_name):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
         if not work.log_file:
@@ -195,10 +195,12 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
             job.total_completed += 1
             increment_plots_completed(increment=1, job_name=job.name, instrumentation_settings=instrumentation_settings)
 
+            """
             send_notifications(
                 title='Plot Completed',
-                body=f'You completed a plot on {socket.gethostname()}!',
+                body=f'You completed a plot on {manager_name}!',
                 settings=notification_settings,
             )
+            """
             break
         del running_work[pid]

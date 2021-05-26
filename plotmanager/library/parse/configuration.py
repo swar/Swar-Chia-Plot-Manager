@@ -34,9 +34,9 @@ def _get_manager_settings(config):
     if 'manager' not in config:
         raise InvalidYAMLConfigException('Failed to find the log parameter in the YAML.')
     manager = config['manager']
-    expected_parameters = ['check_interval', 'log_level']
+    expected_parameters = ['manager_name', 'check_interval', 'log_level']
     _check_parameters(parameter=manager, expected_parameters=expected_parameters, parameter_type='manager')
-    return manager['check_interval'], manager['log_level']
+    return manager['manager_name'], manager['check_interval'], manager['log_level']
 
 
 def _get_log_settings(config):
@@ -140,7 +140,7 @@ def _check_parameters(parameter, expected_parameters, parameter_type):
 def get_config_info():
     config = _get_config()
     chia_location = _get_chia_location(config=config)
-    manager_check_interval, log_level = _get_manager_settings(config=config)
+    manager_name, manager_check_interval, log_level = _get_manager_settings(config=config)
     log_directory = _get_log_settings(config=config)
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
@@ -151,6 +151,6 @@ def get_config_info():
     view_settings = _get_view_settings(config=config)
     instrumentation_settings = _get_instrumentation_settings(config=config)
 
-    return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
+    return chia_location, log_directory, jobs, manager_name, manager_check_interval, max_concurrent, max_for_phase_1, \
         destination_directory, minimum_minutes_between_jobs, progress_settings, notification_settings, log_level, \
         view_settings, instrumentation_settings
