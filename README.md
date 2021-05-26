@@ -5,7 +5,7 @@
 
 ![The view of the manager](https://i.imgur.com/hIhjXt0.png "View")
 
-##### Development Version: v0.0.1
+##### Development Version: v0.1.0
 
 This is a cross-platform Chia Plot Manager that will work on the major operating systems. This is not a plotter. The purpose of this library is to manage your plotting and kick off new plots with the settings that you configure. Everyone's system is unique so customization is an important feature that was engraved into this library.
 
@@ -62,9 +62,53 @@ Please do not use GitHub issues for questions or support regarding your own pers
 * Please forward this question to Keybase or the Discussion tab.
 
 
+## All Commands
+
+##### Example Usage of Commands
+```text
+> python3 manager.py start
+
+> python3 manager.py restart
+
+> python3 manager.py stop
+
+> python3 manager.py view
+
+> python3 manager.py status
+
+> python3 manager.py analyze_logs
+```
+
+### start
+
+This command will start the manager in the background. Once you start it, it will always be running unless all jobs have had their `max_plots` completed or there is an error. Errors will be logged in a file created `debug.log`
+
+### stop
+
+This command will terminate the manager in the background. It does not stop running plots, it will only stop new plots from getting created.
+
+### restart
+
+This command will run start and stop sequentially.
+
+### view
+
+This command will show the view that you can use to keep track of your running plots. This will get updated every X seconds defined by your `config.yaml`.
+
+### status
+
+This command will a single snapshot of the view. It will not loop.
+
+### analyze_logs
+
+This command will analyze all completed plot logs in your log folder and calculate the proper weights and line ends for your computer's configuration. Just populate the returned values under the `progress` section in your `config.yaml`. This only impacts the progress bar.
+
+
 ## Installation
 
 The installation of this library is straightforward. I have attached detailed instructions below that should help you get started. 
+
+#### NOTE: If `python` does not work, please try `python3`.
 
 1. Download and Install Python 3.7 or higher: https://www.python.org/
 2. `git clone` this repo or download it.
@@ -154,6 +198,8 @@ List of Metrics Gathered
 
 ### job
 
+Each job must have unique temporary directories.
+
 These are the settings that will be used by each job. Please note you can have multiple jobs and each job should be in YAML format in order for it to be interpreted correctly. Almost all the values here will be passed into the Chia executable file. 
 
 Check for more details on the Chia CLI here: https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference
@@ -162,7 +208,7 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `max_plots` - This is the maximum number of jobs to make in one run of the manager. Any restarts to manager will reset this variable. It is only here to help with short term plotting.
 * [OPTIONAL]`farmer_public_key` - Your farmer public key. If none is provided, it will not pass in this variable to the chia executable which results in your default keys being used. This is only needed if you have chia set up on a machine that does not have your credentials.
 * [OPTIONAL]`pool_public_key` - Your pool public key. Same information as the above. 
-* `temporary_directory` - Can be a single value or a list of values. This is where the plotting will take place. If you provide a list, it will cycle through each drive one by one.
+* `temporary_directory` - Can be a single value or a list of values. This is where the plotting will take place. If you provide a list, it will cycle through each drive one by one. These directories must be unique from one another.
 * [OPTIONAL]`temporary2_directory` - Can be a single value or a list of values. This is an optional parameter to use in case you want to use the temporary2 directory functionality of Chia plotting.
 * `destination_directory` - Can be a single value or a list of values. This is the final directory where the plot will be transferred once it is completed. If you provide a list, it will cycle through each drive one by one.  
 * `size` - This refers to the k size of the plot. You would type in something like 32, 33, 34, 35... in here.
@@ -173,7 +219,7 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `max_concurrent` - The maximum number of plots to have for this job at any given time.
 * `max_concurrent_with_start_early` - The maximum number of plots to have for this job at any given time including phases that started early.
 * `initial_delay_minutes` - This is the initial delay that is used when initiate the first job. It is only ever considered once. If you restart manager, it will still adhere to this value.
-* `stagger_minutes` - The amount of minutes to wait before the next job can get kicked off. You can even set this to zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
+* `stagger_minutes` - The amount of minutes to wait before the next plot for this job can get kicked off. You can even set this to zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
 * `max_for_phase_1` - The maximum number of plots on phase 1 for this job.
 * `concurrency_start_early_phase` - The phase in which you want to start a plot early. It is recommended to use 4 for this field.
 * `concurrency_start_early_phase_delay` - The maximum number of minutes to wait before a new plot gets kicked off when the start early phase has been detected.

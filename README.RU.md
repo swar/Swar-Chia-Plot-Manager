@@ -63,7 +63,51 @@
 * Пожалуйста, перешлите этот вопрос в Keybase или на вкладку Discussion.
 
 
+## All Commands [Нужен перевод]
+
+##### Example Usage of Commands
+```text
+> python3 manager.py start
+
+> python3 manager.py restart
+
+> python3 manager.py stop
+
+> python3 manager.py view
+
+> python3 manager.py status
+
+> python3 manager.py analyze_logs
+```
+
+### start
+
+This command will start the manager in the background. Once you start it, it will always be running unless all jobs have had their `max_plots` completed or there is an error. Errors will be logged in a file created `debug.log`
+
+### stop
+
+This command will terminate the manager in the background. It does not stop running plots, it will only stop new plots from getting created.
+
+### restart
+
+This command will run start and stop sequentially.
+
+### view
+
+This command will show the view that you can use to keep track of your running plots. This will get updated every X seconds defined by your `config.yaml`.
+
+### status
+
+This command will a single snapshot of the view. It will not loop.
+
+### analyze_logs
+
+This command will analyze all completed plot logs in your log folder and calculate the proper weights and line ends for your computer's configuration. Just populate the returned values under the `progress` section in your `config.yaml`. This only impacts the progress bar.
+
+
 ## Установка [Нужен перевод]
+
+#### NOTE: If `python` does not work, please try `python3`.
 
 Установка этой библиотеки проста. Ниже я приложил подробные инструкции, которые помогут вам начать работу.
 
@@ -154,6 +198,8 @@ List of Metrics Gathered
 
 ### job [Нужен перевод]
 
+Each job must have unique temporary directories.
+
 Настройки, которые будут использоваться каждым заданием. Обратите внимание, что у вас может быть несколько заданий, и каждое задание должно быть в формате YAML, чтобы оно было правильно интерпретировано. Почти все значения здесь будут переданы в исполняемый файл Chia.
 
 Проверьте более подробную информацию о CLI Chia здесь: https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference
@@ -162,7 +208,7 @@ List of Metrics Gathered
 * `max_plots` - Максимальное количество заданий, выполняемых за один запуск менеджера. При любом перезапуске диспетчера эта переменная будет сброшена. Он здесь только для того, чтобы помочь в краткосрочном планировании засева.
 * [ОПЦИЯ]`farmer_public_key` - Ваш публичный ключ фермера. Если не указан, менеджер не будет передавать эту переменную исполняемому файлу chia, что приведет к использованию ваших ключей по умолчанию. Этот параметр необходим только в том случае, если на компьютере нет ваших учетных данных chia.
 * [ОПЦИЯ]`pool_public_key` - Ваш публичный ключ пула. Аналогично как и выше. 
-* `temporary_directory` - Временное место для засева. Может иметь одно или несколько значений. Обычно размещается на SSD диске.
+* `temporary_directory` - Временное место для засева. Может иметь одно или несколько значений. Обычно размещается на SSD диске. These directories must be unique from one another.
 * [ОПЦИЯ]`temporary2_directory` - Может иметь одно или несколько значений. Это необязательный параметр для использования второго временного каталога засева полей Chia.
 * `destination_directory` - Может иметь одно или несколько значений. Указывает на финальную директорию куда будет помещено готовое поле. Если вы укажете несколько, готовые поля будут размещаться по одному на каждый следующий диск поочереди.
 * `size` - соответствует размеру поля (сложности k). Здесь вам следует указывать например 32, 33, 34, 35 и т.д.

@@ -68,6 +68,7 @@ def check_valid_destinations(job, drives_free_space):
 def load_jobs(config_jobs):
     jobs = []
     checked_job_names = []
+    checked_temporary_directories = []
     for info in config_jobs:
         job = deepcopy(Job())
         job.total_running = 0
@@ -100,7 +101,16 @@ def load_jobs(config_jobs):
         job.exclude_final_directory = info.get('exclude_final_directory', False)
         job.skip_full_destinations = info.get('skip_full_destinations', True)
 
-        job.temporary_directory = info['temporary_directory']
+        temporary_directory = info['temporary_directory']
+        if not isinstance(temporary_directory, list):
+            temporary_directory = [temporary_directory]
+        for directory in temporary_directory:
+            if directory not in checked_temporary_directories:
+                checked_temporary_directories.append(directory)
+                continue
+            raise InvalidConfigurationSetting(f'You cannot use the same temporary directory for more than one job: '
+                                              f'{directory}')
+        job.temporary_directory = temporary_directory
         job.destination_directory = info['destination_directory']
 
         temporary2_directory = info.get('temporary2_directory', None)

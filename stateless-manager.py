@@ -64,7 +64,7 @@ for job in jobs:
     next_job_work[job.name] = max_date
     logging.info(f'{job.name} Found. Setting next stagger date to {next_job_work[job.name]}')
 
-if minimum_minutes_between_jobs:
+if minimum_minutes_between_jobs and len(running_work.keys()) > 0:
     logging.info(f'Checking to see if stagger needs to be altered due to minimum_minutes_between_jobs. '
                  f'Value: {minimum_minutes_between_jobs}')
     maximum_start_date = max([work.datetime_start for work in running_work.values()])
