@@ -31,8 +31,8 @@ def start_manager():
     python_file_path = sys.executable
 
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        minimum_minutes_between_jobs, post_plot_script, progress_settings, notification_settings, debug_level, \
+        view_settings, instrumentation_settings = get_config_info()
 
     load_jobs(config_jobs)
 
@@ -77,10 +77,11 @@ def stop_manager():
     print("Successfully stopped manager processes.")
 
 
+
 def json_output():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-        minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        minimum_minutes_between_jobs, post_plot_script, progress_settings, notification_settings, debug_level, \
+        view_settings, instrumentation_settings = get_config_info()
 
     system_drives = get_system_drives()
 
@@ -163,6 +164,7 @@ def view(loop=True):
                                                    instrumentation_settings=instrumentation_settings)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                                notification_settings=notification_settings, view_settings=view_settings,
+                               post_plot_script=post_plot_script,
                                instrumentation_settings=instrumentation_settings)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=view_check_interval),

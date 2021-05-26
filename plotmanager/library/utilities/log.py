@@ -4,6 +4,7 @@ import os
 import psutil
 import re
 import socket
+import subprocess
 
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
@@ -155,7 +156,7 @@ def get_progress(line_count, progress_settings):
     return progress
 
 
-def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings,
+def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings, post_plot_script,
                        instrumentation_settings):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
@@ -194,6 +195,12 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
             job.total_running -= 1
             job.total_completed += 1
             increment_plots_completed(increment=1, job_name=job.name, instrumentation_settings=instrumentation_settings)
+
+            if post_plot_script is not None:
+                x = re.findall("\"(.+?)\"", data.lower())
+                plot_path = x[len(x)-1]
+                logging.info(f'execute script {post_plot_script} with param {plot_path}')
+                subprocess.Popen([str(post_plot_script), str(plot_path)])
 
             send_notifications(
                 title='Plot Completed',

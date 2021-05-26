@@ -10,8 +10,8 @@ from plotmanager.library.utilities.processes import get_running_plots, get_syste
 
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
-    minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-    instrumentation_settings = get_config_info()
+    minimum_minutes_between_jobs, post_plot_script, progress_settings, notification_settings, debug_level, \
+    view_settings, instrumentation_settings = get_config_info()
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
@@ -21,6 +21,7 @@ logging.info(f'Log Directory: {log_directory}')
 logging.info(f'Jobs: {config_jobs}')
 logging.info(f'Manager Check Interval: {manager_check_interval}')
 logging.info(f'Max Concurrent: {max_concurrent}')
+logging.info(f'Post Plot Script: {post_plot_script}')
 logging.info(f'Max for Phase 1: {max_for_phase_1}')
 logging.info(f'Minimum Minutes between Jobs: {minimum_minutes_between_jobs}')
 logging.info(f'Progress Settings: {progress_settings}')
@@ -86,7 +87,7 @@ while has_active_jobs_and_work(jobs):
     logging.info(f'Checking log progress..')
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                        notification_settings=notification_settings, view_settings=view_settings,
-                       instrumentation_settings=instrumentation_settings)
+                       post_plot_script=post_plot_script, instrumentation_settings=instrumentation_settings)
     next_log_check = datetime.now() + timedelta(seconds=manager_check_interval)
 
     # DETERMINE IF JOB NEEDS TO START

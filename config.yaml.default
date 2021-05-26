@@ -108,7 +108,7 @@ global:
   max_concurrent: 10
   max_for_phase_1: 3
   minimum_minutes_between_jobs: 5
-
+  post_plot_script:
 
 jobs:
   # These are the settings that will be used by each job. Please note you can have multiple jobs and each job should be
