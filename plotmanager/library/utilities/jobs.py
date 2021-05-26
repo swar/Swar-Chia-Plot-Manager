@@ -195,6 +195,8 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
 
     for i, job in enumerate(jobs):
         logging.info(f'Checking to queue work for job: {job.name}')
+        logging.info(f'Job total kicked off: {job.total_kicked_off}')
+        logging.info(f'Job max to kick off: {job.max_plots}')
         if len(running_work.values()) >= max_concurrent:
             logging.info(f'Global concurrent limit met, skipping. Running plots: {len(running_work.values())}, '
                          f'Max global concurrent limit: {max_concurrent}')
