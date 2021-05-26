@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 
 from plotmanager.library.utilities.processes import get_manager_processes
 
-
 def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
     work = running_work[pid]
     phase_times = work.phase_times
@@ -19,7 +18,7 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
         est_overall_time_h = str('0'+str(est_overall_time_h))
     if est_overall_time_m <10 :
         est_overall_time_m = str('0'+str(est_overall_time_m))
-    est_overall_time_str = str(str(est_overall_time_h)+':'+str(est_overall_time_m)+'h')
+    est_overall_time_str = str(str(est_overall_time_h)+':'+str(est_overall_time_m))
     est_remain = est_overall_time - elapsed_time.seconds
     est_remain_h = int(est_remain/3600)
     est_remain_m = int((est_remain - est_remain_h*3600)/60)
@@ -27,7 +26,7 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
         est_remain_h = str('0'+str(est_remain_h))
     if est_remain_m <10 :
         est_remain_m = str('0'+str(est_remain_m))
-    est_remain_str = str(str(est_remain_h)+':'+str(est_remain_m)+'h')
+    est_remain_str = str(str(est_remain_h)+':'+str(est_remain_m))
     elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
     phase_time_log = []
     plot_id_prefix = ''
@@ -42,19 +41,20 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
         work.k_size,
         plot_id_prefix,
         pid,
+        pretty_print_bytes(work.temp_file_size, 'gb', 0, " GiB"),
         work.datetime_start.strftime(view_settings['datetime_format']),
+        est_overall_time_str,
         elapsed_time,
+        est_remain_str,
         work.current_phase,
         ' / '.join(phase_time_log),
         work.progress+'%',
-        pretty_print_bytes(work.temp_file_size, 'gb', 0, " GiB"),
-        est_overall_time_str, 
-        est_remain_str,   ]
+           ]
     if not as_raw_values:
         return [str(cell) for cell in row]
     return row
 
-
+    
 def pretty_print_bytes(size, size_type, significant_digits=2, suffix=''):
     if size_type.lower() == 'gb':
         power = 3
@@ -116,7 +116,7 @@ def get_job_data(jobs, running_work, view_settings, as_json=False):
 
 
 def pretty_print_job_data(job_data):
-    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size', 'overall_time', 'remaining']
+    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'temp_size', 'start', 'overall', 'elapsed_time', 'remaining', 'phase', 'phase_times', 'progress']
     rows = [headers] + job_data
     return pretty_print_table(rows)
 
@@ -179,16 +179,22 @@ def get_drive_data(drives, running_work, job_data):
                 del counts[1]
                 del drive_types[drive][1]
             drive_type = '/'.join(drive_types[drive])
-
+            if usage.percent>90:
+                color = "\u001b[31;1m "
+            else: 
+                if usage.percent>75:
+                    color = "\u001b[0m\u001b[33;1m "
+                else:
+                    color = "\u001b[m\u001b[0m "
             row = [
-                drive_type,
+                f'{color}{drive_type}',
                 drive,
                 f'{pretty_print_bytes(usage.used, "tb", 2, "TiB")}',
                 f'{pretty_print_bytes(usage.total, "tb", 2, "TiB")}',
                 f'{usage.percent}%',
                 '/'.join(counts),
                 '/'.join(temp),
-                '/'.join(dest),
+                '/'.join(dest)+"\u001b[0m",
             ]
             if has_temp2:
                 row.insert(-1, '/'.join(temp2))
