@@ -11,6 +11,7 @@ class Job:
     max_concurrent = 0
     max_concurrent_with_start_early = 0
     max_plots = 0
+    resume_plots = None
     temporary2_destination_sync = None
 
     initial_delay_minutes = None

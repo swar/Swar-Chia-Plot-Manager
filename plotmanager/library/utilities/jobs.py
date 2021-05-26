@@ -13,10 +13,11 @@ from plotmanager.library.utilities.log import get_log_file_name
 
 def has_active_jobs_and_work(jobs):
     for job in jobs:
+        if not job.resume_plots is None:
+            job.max_plots = job.resume_plots 
         if job.total_kicked_off < job.max_plots:
             return True
-    return False            
-
+    return False           
     
 
 def get_target_directories(job, drives_free_space):
@@ -59,8 +60,9 @@ def check_valid_destinations(job, drives_free_space):
         logging.error(f'Drive "{drive}" does not have enough space. This directory will be skipped.')
 
     if not valid_destinations:
+        job.resume_plots = job.max_plots
         job.max_plots = 0
-        logging.error(f'Job "{job.name}" has no more destination directories with enough space for more work.')
+        logging.error(f'Job "{job.name}" has no more destination directories with enough space for more work, This job\'s Max Plots was reset to {job.max_plots}, when space becomes available, Job "{job.name}" will resume for {job.resume_plots} remaining plots.')
     job.destination_directory = valid_destinations
 
     return job
