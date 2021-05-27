@@ -212,7 +212,12 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
     else:
         os.system('clear')
     print(pretty_print_job_data(job_data))
-    print(f'Manager Status: {"Running" if manager_processes else "Stopped"}')
+    if manager_processes:
+        status_msg = "Manager Status: \u001b[42;1m Running \u001b[0m" 
+    else:
+        status_msg = "Manager Status: \u001b[41;1m Stopped \u001b[0m"
+    print (status_msg)
+    #print(f'Manager Status: {"\u001b[42;1m Running \u001b[0m" if manager_processes else "\u001b[41;1m Stopped \u001b[0m"}')
     print()
 
     if view_settings.get('include_drive_info'):
