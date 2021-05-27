@@ -133,7 +133,7 @@ def identify_drive(file_path, drives):
     if not file_path:
         return None
     for drive in drives:
-        if drive not in file_path:
+        if drive is None or drive not in file_path:
             continue
         return drive
     return None
