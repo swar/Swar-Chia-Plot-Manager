@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 from plotmanager.library.utilities.processes import get_manager_processes
 
+notification_text="\n| {} | {} | {} | {} | {} | {} |"
+
 
 def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
     work = running_work[pid]
@@ -220,3 +222,11 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
     if loop:
         print(f"Next log check at {next_log_check.strftime('%Y-%m-%d %H:%M:%S')}")
     print()
+def print_notification(jobs, running_work, view_settings):
+    rows =get_job_data(jobs, running_work, view_settings)
+    return_value= "|id|type|"
+    for row in rows:
+       return_value=return_value+notification_text.format(row[0],row[1],row[6],row[7],row[9],row[10])
+
+    return return_value
+
