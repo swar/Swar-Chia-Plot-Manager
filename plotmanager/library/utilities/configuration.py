@@ -4,6 +4,7 @@ from plotmanager.library.utilities.exceptions import InvalidChiaLocationExceptio
 
 
 def test_configuration(chia_location, notification_settings, instrumentation_settings):
+    print(chia_location)
     if not os.path.exists(chia_location):
         raise InvalidChiaLocationException('The chia_location in your config.yaml does not exist. Please confirm if '
                                            'you have the right version. Also confirm if you have a space after the '

@@ -5,6 +5,8 @@ import socket
 import sys
 import time
 
+import json
+
 from datetime import datetime, timedelta
 
 from plotmanager.library.parse.configuration import get_config_info
@@ -13,7 +15,7 @@ from plotmanager.library.utilities.exceptions import ManagerError, TerminationEx
 from plotmanager.library.utilities.jobs import load_jobs
 from plotmanager.library.utilities.log import analyze_log_dates, check_log_progress, analyze_log_times
 from plotmanager.library.utilities.notifications import send_notifications
-from plotmanager.library.utilities.print import print_view, print_json
+from plotmanager.library.utilities.print import print_view, print_json, get_job_data, print_notification
 from plotmanager.library.utilities.processes import is_windows, get_manager_processes, get_running_plots, \
     start_process, identify_drive, get_system_drives
 
@@ -153,9 +155,10 @@ def view(loop=True):
                 if drive in drives[key]:
                     continue
                 drives[key].append(drive)
-
+    iteration=59
     while True:
         running_work = {}
+        iteration=iteration+1
         try:
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             jobs = load_jobs(config_jobs)
@@ -167,6 +170,19 @@ def view(loop=True):
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=view_check_interval),
                        view_settings=view_settings, loop=loop)
+            if iteration > 120:
+                iteration = 0
+                # jobs2 = dict(jobs= get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings))
+                # send_notifications(
+                #     title='Plot manager started',
+                #     body=str(json.dumps(jobs2, separators=(',', ':'),indent=2)),
+                #     settings=notification_settings,
+                # )
+                send_notifications(
+                    title='Plot manager started',
+                    body=print_notification(jobs=jobs, running_work=running_work, view_settings=view_settings),
+                    settings=notification_settings,
+                )
             if not loop:
                 break
             time.sleep(view_check_interval)
