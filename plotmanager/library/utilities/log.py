@@ -188,10 +188,8 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         # work.progress[phase], 0 = overall progress; >0 = phase
         work.progress = [0,0,0,0,0]
         work.progress[0] = f'{progress[0]:.2f}'
-        for i in range(1 ,4 ):
-            #work.progress[i] = f'{progress[i]:.0f}'
-            work.progress[i] = int(progress[i])
-            
+        for i in range(1 ,5 ):
+            work.progress[i] = f'{progress[i]:.0f}'     
         if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
             logging.info(f'PID still alive: {pid}')
             continue
