@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 # Custom
-config.yaml
+#config.yaml
 *.bak
