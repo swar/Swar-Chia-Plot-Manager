@@ -132,26 +132,36 @@ def get_progress(line_count, progress_settings):
     phase2_weight = progress_settings['phase2_weight']
     phase3_weight = progress_settings['phase3_weight']
     phase4_weight = progress_settings['phase4_weight']
-    progress = 0
+    
+    progress = [0,0,0,0,0]
+
     if line_count > phase1_line_end:
-        progress += phase1_weight
+        progress[0] += phase1_weight
+        progress[1] = 100
     else:
-        progress += phase1_weight * (line_count / phase1_line_end)
+        progress[0] += phase1_weight * (line_count / phase1_line_end)
+        progress[1] = (line_count / phase1_line_end)*100
         return progress
     if line_count > phase2_line_end:
-        progress += phase2_weight
+        progress[0] += phase2_weight
+        progress[2] = 100
     else:
-        progress += phase2_weight * ((line_count - phase1_line_end) / (phase2_line_end - phase1_line_end))
+        progress[0] += phase2_weight * ((line_count - phase1_line_end) / (phase2_line_end - phase1_line_end))
+        progress[2] = (line_count - phase1_line_end) / (phase2_line_end - phase1_line_end)*100
         return progress
     if line_count > phase3_line_end:
-        progress += phase3_weight
+        progress[0] += phase3_weight
+        progress[3] = 100
     else:
-        progress += phase3_weight * ((line_count - phase2_line_end) / (phase3_line_end - phase2_line_end))
+        progress[0] += phase3_weight * ((line_count - phase2_line_end) / (phase3_line_end - phase2_line_end))
+        progress[3] = (line_count - phase2_line_end) / (phase3_line_end - phase2_line_end)*100
         return progress
     if line_count > phase4_line_end:
-        progress += phase4_weight
+        progress[0] += phase4_weight
+        progress[4] = 100
     else:
-        progress += phase4_weight * ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
+        progress[0] += phase4_weight * ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
+        progress[4] = (line_count - phase3_line_end) / (phase4_line_end - phase3_line_end)*100
     return progress
 
 
@@ -168,7 +178,6 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         line_count = (data.count('\n') + 1)
 
         progress = get_progress(line_count=line_count, progress_settings=progress_settings)
-
         phase_times, phase_dates = get_phase_info(data, view_settings)
         current_phase = 1
         if phase_times:
@@ -176,8 +185,13 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         work.phase_times = phase_times
         work.phase_dates = phase_dates
         work.current_phase = current_phase
-        work.progress = f'{progress:.2f}'
-
+        # work.progress[phase], 0 = overall progress; >0 = phase
+        work.progress = [0,0,0,0,0]
+        work.progress[0] = f'{progress[0]:.2f}'
+        for i in range(1 ,4 ):
+            #work.progress[i] = f'{progress[i]:.0f}'
+            work.progress[i] = int(progress[i])
+            
         if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
             logging.info(f'PID still alive: {pid}')
             continue
