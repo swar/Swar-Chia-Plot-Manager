@@ -11,7 +11,7 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
     phase_times = work.phase_times
     elapsed_time = (datetime.now() - work.datetime_start)
     elapsed_seconds = elapsed_time.seconds
-    est_overall_time = 10000/float(work.progress)*elapsed_seconds/100
+    est_overall_time = 10000/float(work.progress[0])*elapsed_seconds/100
     est_overall_time_str = pretty_print_time(int(est_overall_time), False)
     est_remain_str = pretty_print_time(int(est_overall_time - elapsed_time.seconds), False)
     elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400, False)
@@ -33,14 +33,36 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
         est_overall_time_str,
         elapsed_time,
         est_remain_str,
-        work.current_phase,
-        ' / '.join(phase_time_log),
-        work.progress+'%',
+        #work.current_phase,
+        #' / '.join(phase_time_log),
+        phase_table(work, phase_time_log, work.current_phase),
+        #f'{phase_percent}',
+        f'{work.progress[0]}%'
            ]
     if not as_raw_values:
         return [str(cell) for cell in row]
     return row
 
+def phase_table(work, phase_time, current_phase=1):
+    blank_string = "|     - "
+    percent_string = '' 
+    output = ''
+    #fill in times by iterating though phase_time
+    if len(phase_time) > 0:
+        for i in range(0, len(phase_time)):
+            output += f'| {phase_time[i]} '
+    
+    #alignment %
+    if current_phase != 5: #phase 5 doesnt need %
+        if len(str(work.progress[current_phase])) < 5: #add spaces to align percentages to times (right)
+            for i in range( 1, 5 - len(str(work.progress[current_phase]))):
+                percent_string += " "
+        percent_string += str(work.progress[current_phase]) #assemble string
+        output += f'| {percent_string}% ' #add string to output
+        for i in range(current_phase, 4): #add placeholder for untouched phases
+            output += blank_string
+    output += ' |  ' #add final seperator and were done
+    return output
     
 def pretty_print_bytes(size, size_type, significant_digits=2, suffix=''):
     if size_type.lower() == 'gb':
@@ -103,7 +125,7 @@ def get_job_data(jobs, running_work, view_settings, as_json=False):
 
 
 def pretty_print_job_data(job_data):
-    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'temp_size', 'start', 'overall', 'elapsed_time', 'remaining', 'phase', 'phase_times', 'progress']
+    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'temp_size', 'start', 'overall', 'elapsed', 'remaining', 'phase_progress', 'progress']
     rows = [headers] + job_data
     return pretty_print_table(rows)
 
