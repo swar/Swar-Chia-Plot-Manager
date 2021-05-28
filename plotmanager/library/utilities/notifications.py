@@ -12,10 +12,14 @@ def _send_notifications(title, body, settings):
         import pushover
         client = pushover.Client(settings.get('pushover_user_key'), api_token=settings.get('pushover_api_key'))
         client.send_message(body, title=title)
-    
+
     if settings.get('notify_telegram') is True:
         import telegram_notifier
-        notifier = telegram_notifier.TelegramNotifier(settings.get('telegram_token'), parse_mode="HTML")
+        notifier = telegram_notifier.TelegramNotifier(
+            token=settings.get('telegram_token'),
+            parse_mode="HTML",
+            chat_id=settings.get('telegram_chat_id')
+        )
         notifier.send(body)
 
     if settings.get('notify_ifttt') is True:
