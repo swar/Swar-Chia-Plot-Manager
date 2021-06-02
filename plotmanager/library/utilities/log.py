@@ -206,7 +206,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
             elapsed_time = (datetime.now() - work.datetime_start)
             elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
 
-            plotname = f'plot {work.k_size} {work.datetime_start} {work.plot_id}'
+            plotname = f'plot {work.k_size} {work.datetime_start} {work.name}'
 
             send_notifications(
                 title='Plot Completed',
