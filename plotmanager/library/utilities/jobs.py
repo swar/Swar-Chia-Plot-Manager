@@ -156,7 +156,6 @@ def determine_job_size(k_size):
     if k_size > base_k_size:
         # Why 2.06? Just some quick math from my current plots.
         size *= pow(2.06, k_size-base_k_size)
-        size *= pow(2.06, k_size-base_k_size)
     return size
 
 
