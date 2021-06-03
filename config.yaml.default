@@ -128,6 +128,9 @@ jobs:
   #
   # temporary_directory: Can be a single value or a list of values. This is where the plotting will take place. If you
   #                      provide a list, it will cycle through each drive one by one.
+  # [OPTIONAL] pool_contract_address: Address of where the pool reward will be sent to. Only used if pool public key are None.
+  #                                   ( Dynamic nft pools switching )
+  #
   # [OPTIONAL] temporary2_directory: Can be a single value or a list of values. This is an optional parameter to use in
   #                                  case you want to use the temporary2 directory functionality of Chia plotting.
   # destination_directory: Can be a single value or a list of values. This is the final directory where the plot will be
@@ -178,6 +181,7 @@ jobs:
     max_plots: 999
     farmer_public_key:
     pool_public_key:
+    pool_contract_address:
     temporary_directory: Z:\Plotter
     temporary2_directory:
     destination_directory: J:\Plots
@@ -208,6 +212,7 @@ jobs:
     temporary_directory:
       - Y:\Plotter1
       - Y:\Plotter2
+    pool_contract_address:
     temporary2_directory:
       - J:\Plots
       - K:\Plots
