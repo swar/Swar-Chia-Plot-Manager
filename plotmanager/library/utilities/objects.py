@@ -28,6 +28,7 @@ class Job:
     skip_full_destinations = None
     size = None
     bitfield = None
+    percent = None
     threads = None
     buckets = None
     memory_buffer = None
