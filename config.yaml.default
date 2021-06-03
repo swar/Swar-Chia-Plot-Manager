@@ -137,6 +137,9 @@ jobs:
   # size: This refers to the k size of the plot. You would type in something like 32, 33, 34, 35... in here.
   # bitfield: This refers to whether you want to use bitfield or not in your plotting. Typically, you want to keep
   #           this as true.
+  # [OPTIONAL] percent: Use progress percentage to control starting plots, this will aim to space plots 1/max_concurrent
+  #                     spacing apart dynamically. It's recommended to use a short stagger minutes with this as well as
+  #                     max_concurrent_with_start_early >= max_concurrent + 1
   # threads: This is the number of threads that will be assigned to the plotter. Only phase 1 uses more than 1 thread.
   # buckets: The number of buckets to use. The default provided by Chia is 128.
   # memory_buffer: The amount of memory you want to allocate to the process.
@@ -183,6 +186,7 @@ jobs:
     destination_directory: J:\Plots
     size: 32
     bitfield: true
+    percent: false
     threads: 8
     buckets: 128
     memory_buffer: 4000
@@ -216,6 +220,7 @@ jobs:
       - K:\Plots
     size: 32
     bitfield: true
+    percent: false
     threads: 8
     buckets: 128
     memory_buffer: 4000

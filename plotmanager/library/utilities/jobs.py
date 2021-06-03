@@ -120,6 +120,7 @@ def load_jobs(config_jobs):
 
         job.size = info['size']
         job.bitfield = info['bitfield']
+        job.percent = info['percent']
         job.threads = info['threads']
         job.buckets = info['buckets']
         job.memory_buffer = info['memory_buffer']
@@ -204,10 +205,18 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
                          f'Setting Max: {max_for_phase_1}')
             continue
         phase_1_count = 0
+        percent = 0
         for pid in job.running_work:
+            percent += float(running_work[pid].progress.strip("%"))
             if running_work[pid].current_phase > 1:
                 continue
             phase_1_count += 1
+        if job.total_running != 0:
+            percent = round(percent / job.total_running, 2)
+            minimum_percent = (job.total_running + 1) / 2 / job.max_concurrent * 100
+            if percent < minimum_percent and job.percent:
+                logging.info(f'Minimum percent not met, {percent} vs {minimum_percent}')
+                continue
         logging.info(f'Total jobs in phase 1: {phase_1_count}')
         if job.max_for_phase_1 and phase_1_count >= job.max_for_phase_1:
             logging.info(f'Job max for phase 1 met, skipping. Max: {job.max_for_phase_1}')
