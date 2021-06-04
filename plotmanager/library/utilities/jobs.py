@@ -332,6 +332,7 @@ def start_work(job, chia_location, log_directory, drives_free_space):
         logging.info(f'Set process cpu affinity')
 
     work.pid = pid
+    work.destination_drive = destination_directory
     job.total_running += 1
     job.total_kicked_off += 1
     job.running_work = job.running_work + [pid]
