@@ -293,6 +293,12 @@ def start_work(job, chia_location, log_directory, drives_free_space):
     work.log_file = log_file_path
     work.datetime_start = now
     work.work_id = job.current_work_id
+    work.k_size = job.size
+
+    drives = list(drives_free_space.keys())
+    work.temporary_drive = identify_drive(file_path=temporary_directory, drives=drives)
+    work.temporary2_drive = identify_drive(file_path=temporary2_directory, drives=drives)
+    work.destination_drive = identify_drive(file_path=destination_directory, drives=drives)
 
     job.current_work_id += 1
 
