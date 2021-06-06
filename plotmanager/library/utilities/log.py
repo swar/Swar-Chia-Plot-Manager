@@ -4,6 +4,7 @@ import os
 import psutil
 import re
 import socket
+import math
 
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
@@ -133,27 +134,48 @@ def get_progress(line_count, progress_settings):
     phase3_weight = progress_settings['phase3_weight']
     phase4_weight = progress_settings['phase4_weight']
     progress = 0
+    phase_progress = 0
     if line_count > phase1_line_end:
         progress += phase1_weight
     else:
-        progress += phase1_weight * (line_count / phase1_line_end)
-        return progress
+        phase_progress = (line_count / phase1_line_end)
+        progress += phase1_weight * phase_progress
+        return progress, phase_progress * 100.0
     if line_count > phase2_line_end:
         progress += phase2_weight
     else:
-        progress += phase2_weight * ((line_count - phase1_line_end) / (phase2_line_end - phase1_line_end))
-        return progress
+        phase_progress = ((line_count - phase1_line_end) / (phase2_line_end - phase1_line_end))
+        progress += phase2_weight * phase_progress
+        return progress, phase_progress * 100.0
     if line_count > phase3_line_end:
         progress += phase3_weight
     else:
-        progress += phase3_weight * ((line_count - phase2_line_end) / (phase3_line_end - phase2_line_end))
-        return progress
+        phase_progress = ((line_count - phase2_line_end) / (phase3_line_end - phase2_line_end))
+        progress += phase3_weight * phase_progress
+        return progress, phase_progress * 100.0
     if line_count > phase4_line_end:
         progress += phase4_weight
     else:
-        progress += phase4_weight * ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
-    return progress
+        phase_progress = ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
+        progress += phase4_weight * phase_progress
+    return progress, phase_progress * 100.0
 
+def progress_bar(progress):
+    if progress < 0.0: progress = 0.0
+    if progress > 100.0: progress = 100.0
+
+    prog_bars = progress / 10.0
+    bar = "▐"
+    segments = math.floor(prog_bars)
+    bar += "■" * segments
+    empty_segments = 10-segments
+    if prog_bars - segments >= 0.5:
+      bar += "□"
+      empty_segments -= 1
+
+    bar += " " * empty_segments
+    bar += "▌"
+    return bar
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings,
                        instrumentation_settings):
@@ -167,16 +189,19 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
 
         line_count = (data.count('\n') + 1)
 
-        progress = get_progress(line_count=line_count, progress_settings=progress_settings)
+        progress, phase_progress = get_progress(line_count=line_count, progress_settings=progress_settings)
 
         phase_times, phase_dates = get_phase_info(data, view_settings)
         current_phase = 1
         if phase_times:
             current_phase = max(phase_times.keys()) + 1
+
         work.phase_times = phase_times
         work.phase_dates = phase_dates
         work.current_phase = current_phase
         work.progress = f'{progress:.2f}%'
+        work.phase_progress = progress_bar(phase_progress)
+        #work.phase_progress = f'{phase_progress:.2f}%'
 
         if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
             logging.info(f'PID still alive: {pid}')
