@@ -163,7 +163,7 @@ def view(loop=True):
                                                    instrumentation_settings=instrumentation_settings, backend=backend)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                                notification_settings=notification_settings, view_settings=view_settings,
-                               instrumentation_settings=instrumentation_settings)
+                               instrumentation_settings=instrumentation_settings, backend=backend)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=view_check_interval),
                        view_settings=view_settings, loop=loop, backend=backend)
@@ -191,4 +191,4 @@ def analyze_logs():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
         instrumentation_settings, backend = get_config_info()
-    analyze_log_times(log_directory)
+    analyze_log_times(log_directory, backend)

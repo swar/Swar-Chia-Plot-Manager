@@ -78,14 +78,14 @@ def analyze_log_dates(log_directory, analysis):
     return analysis
 
 
-def analyze_log_times(log_directory):
+def analyze_log_times(log_directory, backend):
     total_times = {1: 0, 2: 0, 3: 0, 4: 0}
     line_numbers = {1: [], 2: [], 3: [], 4: []}
     count = 0
     files = get_completed_log_files(log_directory)
     for file_path, contents in files.items():
         count += 1
-        phase_times, phase_dates = get_phase_info(contents, pretty_print=False)
+        phase_times, phase_dates = get_phase_info(contents, pretty_print=False, backend=backend)
         for phase, seconds in phase_times.items():
             total_times[phase] += seconds
         splits = contents.split('Time for phase')
@@ -105,7 +105,16 @@ def analyze_log_times(log_directory):
         print(f'  phase{phase}_weight: {round(total_times[phase] / sum(total_times.values()) * 100, 2)}')
 
 
-def get_phase_info(contents, view_settings=None, pretty_print=True):
+def get_phase_info(*args, backend='chia', **kwargs):
+    phase_info_parsers = dict(
+        chia=_get_chia_backend_phase_info,
+        madmax=_get_madmax_backend_phase_info,
+    )
+
+    return phase_info_parsers.get(backend)(*args, **kwargs)
+
+
+def _get_chia_backend_phase_info(contents, view_settings=None, pretty_print=True):
     if not view_settings:
         view_settings = {}
     phase_times = {}
@@ -119,6 +128,22 @@ def get_phase_info(contents, view_settings=None, pretty_print=True):
             phase_times[phase] = pretty_print_time(int(seconds), view_settings['include_seconds_for_phase']) if pretty_print else seconds
             parsed_date = dateparser.parse(date_raw)
             phase_dates[phase] = parsed_date
+
+    return phase_times, phase_dates
+
+
+def _get_madmax_backend_phase_info(contents, view_settings=None, pretty_print=True):
+    if not view_settings:
+        view_settings = {}
+    phase_times = {}
+    phase_dates = {}
+
+    for phase in range(1, 5):
+        match = re.search(rf'Phase {phase} took ([\d\.]+)', contents, flags=re.I)
+        if match:
+            seconds = match.groups()
+            seconds = float(seconds[0])
+            phase_times[phase] = pretty_print_time(int(seconds), view_settings['include_seconds_for_phase']) if pretty_print else seconds
 
     return phase_times, phase_dates
 
@@ -156,7 +181,7 @@ def get_progress(line_count, progress_settings):
 
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings,
-                       instrumentation_settings):
+                       instrumentation_settings, backend):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
         if not work.log_file:
@@ -169,7 +194,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
 
         progress = get_progress(line_count=line_count, progress_settings=progress_settings)
 
-        phase_times, phase_dates = get_phase_info(data, view_settings)
+        phase_times, phase_dates = get_phase_info(data, view_settings, backend=backend)
         current_phase = 1
         if phase_times:
             current_phase = max(phase_times.keys()) + 1
