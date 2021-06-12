@@ -159,7 +159,7 @@ def determine_job_size(k_size):
 
 
 def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, next_job_work, chia_location,
-                          log_directory, next_log_check, minimum_minutes_between_jobs, system_drives):
+                          log_directory, next_log_check, minimum_minutes_between_jobs, system_drives, backend):
     drives_free_space = {}
     for job in jobs:
         directories = [job.destination_directory]
@@ -260,6 +260,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
             chia_location=chia_location,
             log_directory=log_directory,
             drives_free_space=drives_free_space,
+            backend=backend,
         )
         jobs[i] = deepcopy(job)
         if work is None:
@@ -271,7 +272,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
     return jobs, running_work, next_job_work, next_log_check
 
 
-def start_work(job, chia_location, log_directory, drives_free_space):
+def start_work(job, chia_location, log_directory, drives_free_space, backend):
     logging.info(f'Starting new plot for job: {job.name}')
     nice_val = job.unix_process_priority
     if is_windows():
@@ -314,6 +315,7 @@ def start_work(job, chia_location, log_directory, drives_free_space):
         buckets=job.buckets,
         bitfield=job.bitfield,
         exclude_final_directory=job.exclude_final_directory,
+        backend=backend,
     )
     logging.info(f'Starting with plot command: {plot_command}')
 

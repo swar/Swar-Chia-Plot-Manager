@@ -134,9 +134,14 @@ def _check_parameters(parameter, expected_parameters, parameter_type):
                                          f'{", ".join(failed_checks)}')
 
 
+def _get_backend_settings(config):
+    return config.get('backend')
+
+
 def get_config_info():
     config = _get_config()
     chia_location = _get_chia_location(config=config)
+    backend = _get_backend_settings(config=config)
     manager_check_interval, log_level = _get_manager_settings(config=config)
     log_directory = _get_log_settings(config=config)
     if not os.path.exists(log_directory):
@@ -150,4 +155,4 @@ def get_config_info():
 
     return chia_location, log_directory, jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, log_level, view_settings, \
-        instrumentation_settings
+        instrumentation_settings, backend
