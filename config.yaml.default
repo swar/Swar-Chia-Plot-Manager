@@ -93,10 +93,10 @@ progress:
   #                 are the longest phases so they will hold more weight than the others.
   #
   # If you're using "madmax" backend, you should use the following config instead:
-  # phase1_line_end: 16
-  # phase2_line_end: 31
-  # phase3_line_end: 45
-  # phase4_line_end: 50
+  # phase1_line_end: 20
+  # phase2_line_end: 34
+  # phase3_line_end: 48
+  # phase4_line_end: 53
   # phase1_weight: 33.4
   # phase2_weight: 20.43
   # phase3_weight: 42.29
