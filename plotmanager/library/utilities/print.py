@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from plotmanager.library.utilities.processes import get_manager_processes
 
 
-def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
+def _get_row_info(pid, running_work, view_settings, as_raw_values=False, backend='chia'):
     work = running_work[pid]
     phase_times = work.phase_times
     elapsed_time = (datetime.now() - work.datetime_start)
@@ -73,19 +73,19 @@ def pretty_print_table(rows):
     return "\n".join(console)
 
 
-def get_job_data(jobs, running_work, view_settings, as_json=False):
+def get_job_data(jobs, running_work, view_settings, as_json=False, backend='chia'):
     rows = []
     added_pids = []
     for job in jobs:
         for pid in job.running_work:
             if pid not in running_work:
                 continue
-            rows.append(_get_row_info(pid, running_work, view_settings, as_json))
+            rows.append(_get_row_info(pid, running_work, view_settings, as_json, backend))
             added_pids.append(pid)
     for pid in running_work.keys():
         if pid in added_pids:
             continue
-        rows.append(_get_row_info(pid, running_work, view_settings, as_json))
+        rows.append(_get_row_info(pid, running_work, view_settings, as_json, backend))
         added_pids.append(pid)
     rows.sort(key=lambda x: (x[5]), reverse=True)
     for i in range(len(rows)):
@@ -181,13 +181,13 @@ def get_drive_data(drives, running_work, job_data):
     return pretty_print_table(rows)
 
 
-def print_json(jobs, running_work, view_settings):
-    get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings, as_json=True)
+def print_json(jobs, running_work, view_settings, backend='chia'):
+    get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings, as_json=True, backend=backend)
 
 
-def print_view(jobs, running_work, analysis, drives, next_log_check, view_settings, loop):
+def print_view(jobs, running_work, analysis, drives, next_log_check, view_settings, loop, backend):
     # Job Table
-    job_data = get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings)
+    job_data = get_job_data(jobs=jobs, running_work=running_work, view_settings=view_settings, backend=backend)
 
     # Drive Table
     drive_data = ''
