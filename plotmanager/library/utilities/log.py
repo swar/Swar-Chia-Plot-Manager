@@ -163,7 +163,7 @@ def get_progress(line_count, progress_settings, backend='chia'):
 
     backend_header_lines = dict(
         chia=0,
-        madmax=12
+        madmax=11
     )
 
     header_lines = backend_header_lines.get(backend)
