@@ -8,6 +8,7 @@ import socket
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
+from datetime import timedelta
 
 
 def get_log_file_name(log_directory, job, datetime):
@@ -85,7 +86,7 @@ def analyze_log_times(log_directory, backend):
     files = get_completed_log_files(log_directory)
     for file_path, contents in files.items():
         count += 1
-        phase_times, phase_dates = get_phase_info(contents, pretty_print=False, backend=backend)
+        phase_times, phase_dates = get_phase_info(contents, pretty_print=False, backend=backend, start_time=os.path.ctime(file_path))
         for phase, seconds in phase_times.items():
             total_times[phase] += seconds
         splits = contents.split('Time for phase')
@@ -114,7 +115,7 @@ def get_phase_info(*args, backend='chia', **kwargs):
     return phase_info_parsers.get(backend)(*args, **kwargs)
 
 
-def _get_chia_backend_phase_info(contents, view_settings=None, pretty_print=True):
+def _get_chia_backend_phase_info(contents, view_settings=None, pretty_print=True, **kwargs):
     if not view_settings:
         view_settings = {}
     phase_times = {}
@@ -132,7 +133,7 @@ def _get_chia_backend_phase_info(contents, view_settings=None, pretty_print=True
     return phase_times, phase_dates
 
 
-def _get_madmax_backend_phase_info(contents, view_settings=None, pretty_print=True):
+def _get_madmax_backend_phase_info(contents, view_settings=None, pretty_print=True, start_time=None):
     if not view_settings:
         view_settings = {}
     phase_times = {}
@@ -144,6 +145,7 @@ def _get_madmax_backend_phase_info(contents, view_settings=None, pretty_print=Tr
             seconds = match.groups()
             seconds = float(seconds[0])
             phase_times[phase] = pretty_print_time(int(seconds), view_settings['include_seconds_for_phase']) if pretty_print else seconds
+            phase_dates[phase] = start_time + timedelta(seconds=seconds)
 
     return phase_times, phase_dates
 
@@ -194,7 +196,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
 
         progress = get_progress(line_count=line_count, progress_settings=progress_settings)
 
-        phase_times, phase_dates = get_phase_info(data, view_settings, backend=backend)
+        phase_times, phase_dates = get_phase_info(data, view_settings, backend=backend, start_time=work.datetime_start)
         current_phase = 1
         if phase_times:
             current_phase = max(phase_times.keys()) + 1
