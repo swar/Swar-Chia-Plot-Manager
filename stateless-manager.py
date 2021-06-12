@@ -87,7 +87,7 @@ while has_active_jobs_and_work(jobs):
     logging.info(f'Checking log progress..')
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                        notification_settings=notification_settings, view_settings=view_settings,
-                       instrumentation_settings=instrumentation_settings)
+                       instrumentation_settings=instrumentation_settings, backend=backend)
     next_log_check = datetime.now() + timedelta(seconds=manager_check_interval)
 
     # DETERMINE IF JOB NEEDS TO START
