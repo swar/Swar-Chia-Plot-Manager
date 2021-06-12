@@ -150,7 +150,7 @@ def _get_madmax_backend_phase_info(contents, view_settings=None, pretty_print=Tr
     return phase_times, phase_dates
 
 
-def get_progress(line_count, progress_settings):
+def get_progress(line_count, progress_settings, backend='chia'):
     phase1_line_end = progress_settings['phase1_line_end']
     phase2_line_end = progress_settings['phase2_line_end']
     phase3_line_end = progress_settings['phase3_line_end']
@@ -160,6 +160,15 @@ def get_progress(line_count, progress_settings):
     phase3_weight = progress_settings['phase3_weight']
     phase4_weight = progress_settings['phase4_weight']
     progress = 0
+
+    backend_header_lines = dict(
+        chia=0,
+        madmax=12
+    )
+
+    header_lines = backend_header_lines.get(backend)
+    line_count = line_count - header_lines
+
     if line_count > phase1_line_end:
         progress += phase1_weight
     else:
@@ -179,6 +188,7 @@ def get_progress(line_count, progress_settings):
         progress += phase4_weight
     else:
         progress += phase4_weight * ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
+
     return progress
 
 
@@ -194,7 +204,7 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
 
         line_count = (data.count('\n') + 1)
 
-        progress = get_progress(line_count=line_count, progress_settings=progress_settings)
+        progress = get_progress(line_count=line_count, progress_settings=progress_settings, backend=backend)
 
         phase_times, phase_dates = get_phase_info(data, view_settings, backend=backend, start_time=work.datetime_start)
         current_phase = 1
