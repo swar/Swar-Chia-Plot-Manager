@@ -43,8 +43,21 @@ def is_windows():
     return platform.system() == 'Windows'
 
 
-def get_chia_executable_name():
+def get_chia_executable_name(backend):
+    executable_name_parsers = dict(
+        chia=_get_chia_backend_executable_name,
+        madmax=_get_madmax_backend_executable_name,
+    )
+
+    return executable_name_parsers.get(backend)()
+
+
+def _get_chia_backend_executable_name():
     return f'chia{".exe" if is_windows() else ""}'
+
+
+def _get_madmax_backend_executable_name():
+    return f'chia_plot{".exe" if is_windows() else ""}'
 
 
 def get_plot_k_size(commands):
@@ -170,10 +183,10 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     return temp_size
 
 
-def get_running_plots(jobs, running_work, instrumentation_settings):
+def get_running_plots(jobs, running_work, instrumentation_settings, backend='chia'):
     chia_processes = []
     logging.info(f'Getting running plots')
-    chia_executable_name = get_chia_executable_name()
+    chia_executable_name = get_chia_executable_name(backend)
     for process in psutil.process_iter():
         try:
             if chia_executable_name not in process.name() and 'python' not in process.name().lower():
@@ -181,7 +194,7 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
         except (psutil.AccessDenied, psutil.NoSuchProcess):
             continue
         try:
-            if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
+            if (('plots' not in process.cmdline() or 'create' not in process.cmdline()) and backend == 'chia') or ('python' in process.name() and backend == 'madmax'):
                 continue
         except (psutil.ZombieProcess, psutil.NoSuchProcess):
             continue

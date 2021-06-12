@@ -160,7 +160,7 @@ def view(loop=True):
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             jobs = load_jobs(config_jobs)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
-                                                   instrumentation_settings=instrumentation_settings)
+                                                   instrumentation_settings=instrumentation_settings, backend=backend)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                                notification_settings=notification_settings, view_settings=view_settings,
                                instrumentation_settings=instrumentation_settings)
