@@ -228,7 +228,8 @@ def get_running_plots(jobs, running_work, instrumentation_settings, backend='chi
         except (psutil.AccessDenied, psutil.NoSuchProcess):
             continue
         try:
-            if (('plots' not in process.cmdline() or 'create' not in process.cmdline()) and backend == 'chia') or ('python' in process.name() and backend == 'madmax'):
+            if (('plots' not in process.cmdline() or 'create' not in process.cmdline()) and backend == 'chia') or\
+                    (('python' in process.name() or 'zombie' in process.status()) and backend == 'madmax'):
                 continue
         except (psutil.ZombieProcess, psutil.NoSuchProcess):
             continue
