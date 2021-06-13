@@ -9,7 +9,7 @@ import time
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 def get_log_file_name(log_directory, job, datetime):
@@ -100,10 +100,12 @@ def analyze_log_times(log_directory, backend):
     files = get_completed_log_files(log_directory)
     for file_path, contents in files.items():
         count += 1
-        phase_times, phase_dates = get_phase_info(contents, pretty_print=False, backend=backend, start_time=os.path.ctime(file_path))
+        start_time_raw = os.path.getctime(file_path)
+        start_time = datetime.fromtimestamp(start_time_raw)
+        phase_times, phase_dates = get_phase_info(contents, pretty_print=False, backend=backend, start_time=start_time)
         for phase, seconds in phase_times.items():
             total_times[phase] += seconds
-        splits = contents.split('Time for phase')
+        splits = _get_log_splits_for_backend(backend, contents)
         phase = 0
         new_lines = 1
         for split in splits:
@@ -118,6 +120,23 @@ def analyze_log_times(log_directory, backend):
 
     for phase in range(1, 5):
         print(f'  phase{phase}_weight: {round(total_times[phase] / sum(total_times.values()) * 100, 2)}')
+
+
+def _get_log_splits_for_backend(backend, contents):
+    backend_parsers = dict(
+        chia=_get_log_splits_for_chia,
+        madmax=_get_log_splits_for_madmax
+    )
+
+    return backend_parsers.get(backend)(contents)
+
+
+def _get_log_splits_for_chia(contents):
+    return contents.split('Time for phase')
+
+
+def _get_log_splits_for_madmax(contents):
+    return re.split(r'\nPhase [1-4] took', contents)
 
 
 def get_phase_info(*args, backend='chia', **kwargs):
