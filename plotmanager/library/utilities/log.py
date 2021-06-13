@@ -4,6 +4,7 @@ import os
 import psutil
 import re
 import socket
+import time
 
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
@@ -15,17 +16,29 @@ def get_log_file_name(log_directory, job, datetime):
     return os.path.join(log_directory, f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
 
 
-def _analyze_log_end_date(contents):
+def _analyze_log_end_date(contents, file_path):
     match = re.search(r'total time = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
-    if not match:
-        return False
-    total_seconds, date_raw = match.groups()
-    total_seconds = pretty_print_time(int(float(total_seconds)))
-    parsed_date = dateparser.parse(date_raw)
-    return dict(
-        total_seconds=total_seconds,
-        date=parsed_date,
-    )
+    if match:
+        total_seconds, date_raw = match.groups()
+        total_seconds = pretty_print_time(int(float(total_seconds)))
+        parsed_date = dateparser.parse(date_raw)
+        return dict(
+            total_seconds=total_seconds,
+            date=parsed_date,
+        )
+    else:
+        match = re.search(r'Total plot creation time was ([\d\.]+) sec', contents, flags=re.I)
+        if not match:
+            return False
+        total_seconds = match.group(1)
+        total_seconds = pretty_print_time(int(float(total_seconds)))
+        parsed_date = os.path.getmtime(file_path)
+        file_date = dateparser.parse(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(parsed_date)))
+        return dict(
+            total_seconds=total_seconds,
+            date=file_date,
+        )
+        
 
 
 def _get_date_summary(analysis):
@@ -63,7 +76,8 @@ def get_completed_log_files(log_directory, skip=None):
             continue
         f.close()
         if 'Total time = ' not in contents:
-            continue
+           if 'Total plot creation time' not in contents:
+           	continue
         files[file_path] = contents
     return files
 
@@ -71,7 +85,7 @@ def get_completed_log_files(log_directory, skip=None):
 def analyze_log_dates(log_directory, analysis):
     files = get_completed_log_files(log_directory, skip=list(analysis['files'].keys()))
     for file_path, contents in files.items():
-        data = _analyze_log_end_date(contents)
+        data = _analyze_log_end_date(contents, file_path)
         if data is None:
             continue
         analysis['files'][file_path] = {'data': data, 'checked': False}
