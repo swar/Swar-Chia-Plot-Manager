@@ -158,7 +158,7 @@ def get_progress(line_count, progress_settings):
 
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings,
-                       instrumentation_settings, assingned_mounts, global_mounts):
+                       instrumentation_settings, assigned_mounts, drive_mounts):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
         if not work.log_file:
@@ -179,13 +179,14 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         work.phase_dates = phase_dates
         work.current_phase = current_phase
         work.progress = f'{progress:.2f}%'
-        if int(work.progress) > 95:
+        if int(progress) > 95:
             if not work.mount_assigned:
-                mount_index = len(global_mounts) % len(global_mounts)
-                actual_disk_path = global_mounts[mount_index]
-                work.mount_assigned = actual_disk_path
-                assigned_mounts.append(work.mount_assigned)
-                assign_mount(work.mount_assigned, work.destination_drive)                
+                if assigned_mounts != "View":  #view loop uses same command; have to protect
+                    mount_index = len(drive_mounts) % len(assigned_mounts)
+                    actual_disk_path = drive_mounts[mount_index]
+                    work.mount_assigned = actual_disk_path
+                    assigned_mounts.append(work.mount_assigned)
+                    assign_mount(work.mount_assigned, work.destination_drive)                
 
         if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
             logging.info(f'PID still alive: {pid}')

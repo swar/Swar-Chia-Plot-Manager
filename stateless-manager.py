@@ -11,7 +11,7 @@ from plotmanager.library.utilities.processes import get_running_plots, get_syste
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
     minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-    instrumentation_settings, global_mounts = get_config_info()   # 
+    instrumentation_settings, drive_mounts = get_config_info()   # 
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
@@ -90,7 +90,7 @@ while has_active_jobs_and_work(jobs):
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                        notification_settings=notification_settings, view_settings=view_settings,
                        instrumentation_settings=instrumentation_settings, assigned_mounts = assigned_mounts,
-                       global_mounts = global_mounts)
+                       drive_mounts = drive_mounts)
     next_log_check = datetime.now() + timedelta(seconds=manager_check_interval)  #good to know
 
     # DETERMINE IF JOB NEEDS TO START

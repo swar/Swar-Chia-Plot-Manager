@@ -32,7 +32,7 @@ def start_manager():     # need to make sure we deal with mounts and work here
 
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        instrumentation_settings, drive_mounts = get_config_info()
 
     load_jobs(config_jobs)
 
@@ -110,7 +110,8 @@ def json_output():
                                            instrumentation_settings=instrumentation_settings)
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                        notification_settings=notification_settings, view_settings=view_settings,
-                       instrumentation_settings=instrumentation_settings)
+                       instrumentation_settings=instrumentation_settings, 
+                       assigned_mounts = "View", drive_mounts=drive_mounts)
     print_json(jobs=jobs, running_work=running_work, view_settings=view_settings)
 
     has_file = False
@@ -131,7 +132,7 @@ def json_output():
 def view(loop=True):
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        instrumentation_settings, drive_mounts = get_config_info()
     view_check_interval = view_settings['check_interval']
     system_drives = get_system_drives()
     analysis = {'files': {}}
@@ -163,7 +164,8 @@ def view(loop=True):
                                                    instrumentation_settings=instrumentation_settings)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                                notification_settings=notification_settings, view_settings=view_settings,
-                               instrumentation_settings=instrumentation_settings)
+                               instrumentation_settings=instrumentation_settings, 
+                               assigned_drives = "View", drive_mounts=drive_mounts)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=view_check_interval),
                        view_settings=view_settings, loop=loop)

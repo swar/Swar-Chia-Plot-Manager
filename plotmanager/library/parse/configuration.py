@@ -69,7 +69,8 @@ def _get_global_config(config):             # odd that this follows, but OK.
     global_config = config['global']
     expected_parameters = ['max_concurrent', 'max_for_phase_1', 'minimum_minutes_between_jobs']
     _check_parameters(parameter=global_config, expected_parameters=expected_parameters, parameter_type='global')
-    drive_mounts = global_config['drive_mounts']
+    drive_string = global_config['drive_mounts']
+    drive_mounts = eval(drive_string)
     max_concurrent = global_config['max_concurrent']
     max_for_phase_1 = global_config['max_for_phase_1']
     minimum_minutes_between_jobs = global_config['minimum_minutes_between_jobs']
