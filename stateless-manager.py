@@ -100,6 +100,7 @@ while has_active_jobs_and_work(jobs):
                 non_zombie_work.append(pid)
             else:
                 del running_work[pid]
+                job.total_running = job.total_running - 1
 
         job.running_work = non_zombie_work
 
