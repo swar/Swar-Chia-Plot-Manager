@@ -170,7 +170,8 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
             if drive in drives_free_space:
                 continue
             try:
-                free_space = psutil.disk_usage(drive).free
+                free_space = 60550733574144
+                #free_space = psutil.disk_usage(drive).free
             except:
                 logging.exception(f"Failed to get disk_usage of drive {drive}.")
                 # I need to do this because if Manager fails, I don't want it to break.

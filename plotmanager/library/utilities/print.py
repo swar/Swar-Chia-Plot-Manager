@@ -11,6 +11,9 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
     work = running_work[pid]
     phase_times = work.phase_times
     elapsed_time = (datetime.now() - work.datetime_start)
+    work_fraction = float(work.progress.replace('%',''))/100
+    projected_time = elapsed_time.seconds / work_fraction
+    projected_time_view = pretty_print_time(int(projected_time))
     elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
     phase_time_log = []
     plot_id_prefix = ''
@@ -30,6 +33,7 @@ def _get_row_info(pid, running_work, view_settings, as_raw_values=False):
         work.current_phase,
         ' / '.join(phase_time_log),
         work.progress,
+        projected_time_view,
         pretty_print_bytes(work.temp_file_size, 'gb', 0, " GiB"),
     ]
     if not as_raw_values:
@@ -98,7 +102,7 @@ def get_job_data(jobs, running_work, view_settings, as_json=False):
 
 
 def pretty_print_job_data(job_data):
-    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
+    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'est duration',  'temp_size']
     rows = [headers] + job_data
     return pretty_print_table(rows)
 
