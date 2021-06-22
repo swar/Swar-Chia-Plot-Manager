@@ -18,7 +18,7 @@ from plotmanager.library.utilities.processes import is_windows, get_manager_proc
     start_process, identify_drive, get_system_drives
 
 
-def start_manager():
+def start_manager():     # need to make sure we deal with mounts and work here
     if get_manager_processes():
         raise ManagerError('Manager is already running.')
 

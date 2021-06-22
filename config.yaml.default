@@ -108,6 +108,24 @@ global:
   max_concurrent: 10
   max_for_phase_1: 3
   minimum_minutes_between_jobs: 5
+  drive_mounts: ('/mnt/disk1','/mnt/disk2','/mnt/disk3')
+
+
+work:    # ugh - name collision.  can't call them jobs.  call them deliveries or sales or 
+  /home/todd/work
+
+torrent:
+# leaving for location and ports opened 
+
+payment:
+# coinbase ID only  
+
+bids:
+  bidder_id:
+  bid_price:
+  completion_time_promise:
+  upload_speed_promise:
+  bid_directory: 
 
 
 jobs:

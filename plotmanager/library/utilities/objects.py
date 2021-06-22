@@ -23,7 +23,7 @@ class Job:
 
     temporary_directory = None
     temporary2_directory = None
-    destination_directory = []
+    destination_directory = []               # this will be a symbolic link
     exclude_final_directory = None
     skip_full_destinations = None
     size = None
@@ -49,6 +49,7 @@ class Work:
     temporary_drive = None
     temporary2_drive = None
     destination_drive = None
+    mount_assigned = None
 
     current_phase = 1
 

@@ -8,6 +8,8 @@ import socket
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
+from plotmanager.library.utilities.assignments import assign_mount
+
 
 
 def get_log_file_name(log_directory, job, datetime):
@@ -156,7 +158,7 @@ def get_progress(line_count, progress_settings):
 
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings,
-                       instrumentation_settings):
+                       instrumentation_settings, assingned_mounts, global_mounts):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
         if not work.log_file:
@@ -177,6 +179,13 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
         work.phase_dates = phase_dates
         work.current_phase = current_phase
         work.progress = f'{progress:.2f}%'
+        if int(work.progress) > 95:
+            if not work.mount_assigned:
+                mount_index = len(global_mounts) % len(global_mounts)
+                actual_disk_path = global_mounts[mount_index]
+                work.mount_assigned = actual_disk_path
+                assigned_mounts.append(work.mount_assigned)
+                assign_mount(work.mount_assigned, work.destination_drive)                
 
         if psutil.pid_exists(pid) and 'renamed final file from ' not in data.lower():
             logging.info(f'PID still alive: {pid}')
@@ -189,6 +198,8 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
             if job.name != work.job.name:
                 continue
             logging.info(f'Removing PID {pid} from job: {job.name}')
+            if work.destination_mount:            # pop the list when a job finishes
+                assigned_mounts.pop(0)
             if pid in job.running_work:
                 job.running_work.remove(pid)
             job.total_running -= 1

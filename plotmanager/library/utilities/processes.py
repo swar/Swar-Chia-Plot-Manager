@@ -85,7 +85,7 @@ def get_plot_drives(commands, drives=None):
     return temporary_drive, temporary2_drive, destination_drive
 
 
-def get_chia_drives():
+def get_chia_drives():                     # need to be sure to handle mounts here...
     drive_stats = {'temp': {}, 'temp2': {}, 'dest': {}}
     chia_executable_name = get_chia_executable_name()
     for process in psutil.process_iter():
@@ -118,7 +118,7 @@ def get_chia_drives():
     return drive_stats
 
 
-def get_system_drives():
+def get_system_drives():    # not sure what this is for...
     drives = []
     for disk in psutil.disk_partitions(all=True):
         drive = disk.mountpoint
@@ -129,7 +129,7 @@ def get_system_drives():
     return drives
 
 
-def identify_drive(file_path, drives):
+def identify_drive(file_path, drives):   # not sure what this is for
     if not file_path:
         return None
     for drive in drives:
