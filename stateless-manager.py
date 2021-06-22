@@ -1,5 +1,6 @@
 import logging
 import time
+import psutil
 
 from datetime import datetime, timedelta
 
@@ -89,6 +90,18 @@ while has_active_jobs_and_work(jobs):
                        notification_settings=notification_settings, view_settings=view_settings,
                        instrumentation_settings=instrumentation_settings, backend=backend)
     next_log_check = datetime.now() + timedelta(seconds=manager_check_interval)
+
+    logging.info(f'Clearing zombies')
+
+    for job in jobs:
+        non_zombie_work = []
+        for pid in job.running_work:
+            if psutil.Process(pid).status() != 'zombie':
+                non_zombie_work.append(pid)
+            else:
+                del running_work[pid]
+
+        job.running_work = non_zombie_work
 
     # DETERMINE IF JOB NEEDS TO START
     logging.info(f'Monitoring jobs to start.')
