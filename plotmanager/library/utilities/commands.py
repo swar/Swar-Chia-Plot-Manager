@@ -110,7 +110,7 @@ def json_output():
                                            instrumentation_settings=instrumentation_settings, backend=backend)
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                        notification_settings=notification_settings, view_settings=view_settings,
-                       instrumentation_settings=instrumentation_settings)
+                       instrumentation_settings=instrumentation_settings, backend=backend)
     print_json(jobs=jobs, running_work=running_work, view_settings=view_settings, backend=backend)
 
     has_file = False
