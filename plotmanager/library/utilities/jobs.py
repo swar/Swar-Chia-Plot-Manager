@@ -82,6 +82,7 @@ def load_jobs(config_jobs):
 
         job.farmer_public_key = info.get('farmer_public_key', None)
         job.pool_public_key = info.get('pool_public_key', None)
+        job.pool_url = info.get('pool_url', None)
         job.max_concurrent = info['max_concurrent']
         job.max_concurrent_with_start_early = info['max_concurrent_with_start_early']
 
