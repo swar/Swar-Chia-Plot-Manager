@@ -4,6 +4,7 @@ class Job:
 
     farmer_public_key = None
     pool_public_key = None
+    pool_url = None
 
     total_running = 0
     total_kicked_off = 0
