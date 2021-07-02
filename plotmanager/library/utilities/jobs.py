@@ -306,6 +306,7 @@ def start_work(job, chia_location, log_directory, drives_free_space):
         chia_location=chia_location,
         farmer_public_key=job.farmer_public_key,
         pool_public_key=job.pool_public_key,
+        pool_url=job.pool_url,
         size=job.size,
         memory_buffer=job.memory_buffer,
         temporary_directory=temporary_directory,
