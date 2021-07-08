@@ -14,7 +14,7 @@ def create(size, memory_buffer, temporary_directory, destination_directory, thre
     if farmer_public_key is not None:
         flags['f'] = farmer_public_key
     if pool_public_key is not None:
-        flags['p'] = pool_public_key
+        flags['c'] = pool_public_key
     if bitfield is False:
         flags['e'] = ''
     if exclude_final_directory:
