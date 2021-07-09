@@ -207,7 +207,8 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `name` - This is the name that you want to give to the job.
 * `max_plots` - This is the maximum number of jobs to make in one run of the manager. Any restarts to manager will reset this variable. It is only here to help with short term plotting.
 * [OPTIONAL]`farmer_public_key` - Your farmer public key. If none is provided, it will not pass in this variable to the chia executable which results in your default keys being used. This is only needed if you have chia set up on a machine that does not have your credentials.
-* [OPTIONAL]`pool_public_key` - Your pool public key. Same information as the above. 
+* [OPTIONAL] pool_public_key: Your pool public key. DONT Use IF YOU ARE USING A POOL CONTRACT ADDRESS! Othewise same information as above.
+* [OPTIONAL] pool_contract_address:  Your Pool's Contract Address. Refer to https://github.com/Chia-Network/chia-blockchain/wiki/Pooling-FAQ#how-do-i-assign-portable-plots-to-a-pool
 * `temporary_directory` - Can be a single value or a list of values. This is where the plotting will take place. If you provide a list, it will cycle through each drive one by one. These directories must be unique from one another.
 * [OPTIONAL]`temporary2_directory` - Can be a single value or a list of values. This is an optional parameter to use in case you want to use the temporary2 directory functionality of Chia plotting.
 * `destination_directory` - Can be a single value or a list of values. This is the final directory where the plot will be transferred once it is completed. If you provide a list, it will cycle through each drive one by one.  
