@@ -19,7 +19,7 @@ manager:
 
 log:
   # folder_path: This is the folder where your log files for plots will be saved.
-  folder_path: S:\Chia\Logs\Plotter
+  folder_path: C:\Chia\Logs\Plotter
 
 
 view:
