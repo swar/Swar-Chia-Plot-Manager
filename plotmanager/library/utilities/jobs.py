@@ -82,6 +82,7 @@ def load_jobs(config_jobs):
 
         job.farmer_public_key = info.get('farmer_public_key', None)
         job.pool_public_key = info.get('pool_public_key', None)
+        job.pool_contract_address = info.get('pool_contract_address', None)
         job.max_concurrent = info['max_concurrent']
         job.max_concurrent_with_start_early = info['max_concurrent_with_start_early']
 
@@ -314,6 +315,7 @@ def start_work(job, chia_location, log_directory, drives_free_space):
         buckets=job.buckets,
         bitfield=job.bitfield,
         exclude_final_directory=job.exclude_final_directory,
+        pool_contract_address=job.pool_contract_address,
     )
     logging.info(f'Starting with plot command: {plot_command}')
 

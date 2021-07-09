@@ -1,6 +1,6 @@
 def create(size, memory_buffer, temporary_directory, destination_directory, threads, buckets, bitfield,
            chia_location='chia', temporary2_directory=None, farmer_public_key=None, pool_public_key=None,
-           exclude_final_directory=False):
+           exclude_final_directory=False, pool_contract_address=None):
     flags = dict(
         k=size,
         b=memory_buffer,
@@ -13,8 +13,12 @@ def create(size, memory_buffer, temporary_directory, destination_directory, thre
         flags['2'] = temporary2_directory
     if farmer_public_key is not None:
         flags['f'] = farmer_public_key
-    if pool_public_key is not None:
+
+    if pool_contract_address is not None:
+        flags['c'] = pool_contract_address
+    elif pool_public_key is not None:
         flags['p'] = pool_public_key
+
     if bitfield is False:
         flags['e'] = ''
     if exclude_final_directory:

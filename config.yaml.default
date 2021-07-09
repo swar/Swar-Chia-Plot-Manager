@@ -124,6 +124,8 @@ jobs:
   # [OPTIONAL] farmer_public_key: Your farmer public key. If none is provided, it will not pass in this variable to the
   #                               chia executable which results in your default keys being used. This is only needed if
   #                               you have chia set up on a machine that does not have your credentials.
+  # [OPTIONAL] pool_contract_address: Your pool contract address, use this instead of pool_public_key to create plots that
+  #                                   are tied to your pool NFT making them eligible for pool farming.
   # [OPTIONAL] pool_public_key: Your pool public key. Same information as the above.
   #
   # temporary_directory: Can be a single value or a list of values. This is where the plotting will take place. If you
@@ -177,6 +179,7 @@ jobs:
   - name: micron
     max_plots: 999
     farmer_public_key:
+    pool_contract_address:
     pool_public_key:
     temporary_directory: Z:\Plotter
     temporary2_directory:
@@ -204,6 +207,7 @@ jobs:
   - name: inland
     max_plots: 999
     farmer_public_key:
+    pool_contract_address:
     pool_public_key:
     temporary_directory:
       - Y:\Plotter1
