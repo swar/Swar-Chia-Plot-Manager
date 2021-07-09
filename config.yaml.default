@@ -177,7 +177,7 @@ jobs:
   - name: micron
     max_plots: 999
     farmer_public_key:
-    pool_public_key:
+    pool_contract_address:
     temporary_directory: Z:\Plotter
     temporary2_directory:
     destination_directory: J:\Plots
@@ -204,7 +204,7 @@ jobs:
   - name: inland
     max_plots: 999
     farmer_public_key:
-    pool_public_key:
+    pool_contract_address:
     temporary_directory:
       - Y:\Plotter1
       - Y:\Plotter2
