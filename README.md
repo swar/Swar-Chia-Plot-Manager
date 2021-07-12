@@ -235,4 +235,4 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 	* 128   `HIGH_PRIORITY_CLASS`
 	* 256   `REALTIME_PRIORITY_CLASS`
 * `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
-* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
+* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free). You have to specify all logical cores/threads that you wanted to use in this format [ 0, 1, 2, 3 ] and NOT [ 0-3 ] if you intend to use the first 4 logical cores.
