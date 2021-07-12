@@ -135,7 +135,7 @@ def _check_parameters(parameter, expected_parameters, parameter_type):
 
 
 def _get_backend_settings(config):
-    return config.get('backend')
+    return config.get('backend', 'chia')
 
 
 def get_config_info():
