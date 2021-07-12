@@ -43,16 +43,42 @@ def is_windows():
     return platform.system() == 'Windows'
 
 
-def get_chia_executable_name():
+def get_chia_executable_name(backend):
+    executable_name_parsers = dict(
+        chia=_get_chia_backend_executable_name,
+        madmax=_get_madmax_backend_executable_name,
+    )
+
+    return executable_name_parsers.get(backend)()
+
+
+def _get_chia_backend_executable_name():
     return f'chia{".exe" if is_windows() else ""}'
 
 
-def get_plot_k_size(commands):
+def _get_madmax_backend_executable_name():
+    return f'chia_plot{".exe" if is_windows() else ""}'
+
+
+def get_plot_k_size(commands, backend):
+    k_size_parsers = dict(
+        chia=_get_chia_backend_plot_k_size,
+        madmax=_get_madmax_backend_plot_k_size,
+    )
+
+    return k_size_parsers.get(backend)(commands)
+
+
+def _get_chia_backend_plot_k_size(commands, backend):
     try:
         k_index = commands.index('-k') + 1
     except ValueError:
         return None
     return commands[k_index]
+
+
+def _get_madmax_backend_plot_k_size(*args):
+    return '32'
 
 
 def get_plot_directories(commands):
@@ -139,7 +165,16 @@ def identify_drive(file_path, drives):
     return None
 
 
-def get_plot_id(file_path=None, contents=None):
+def get_plot_id(file_path=None, contents=None, backend='chia'):
+    plot_id_parsers = dict(
+        chia=_get_chia_backend_plot_id,
+        madmax=_get_madmax_backend_plot_id,
+    )
+
+    return plot_id_parsers.get(backend)(file_path, contents)
+
+
+def _get_chia_backend_plot_id(file_path=None, contents=None):
     if not contents:
         f = open(file_path, 'r')
         contents = f.read()
@@ -148,6 +183,18 @@ def get_plot_id(file_path=None, contents=None):
     match = re.search(rf'^ID: (.*?)$', contents, flags=re.M)
     if match:
         return match.groups()[0]
+    return None
+
+
+def _get_madmax_backend_plot_id(file_path=None, contents=None):
+    if not contents:
+        f = open(file_path, 'r')
+        contents = f.read()
+        f.close()
+
+    match = re.search(rf'^Plot Name: (.*?)$', contents, flags=re.M)
+    if match:
+        return match.groups()[0].split('-')[-1]
     return None
 
 
@@ -170,10 +217,10 @@ def get_temp_size(plot_id, temporary_directory, temporary2_directory):
     return temp_size
 
 
-def get_running_plots(jobs, running_work, instrumentation_settings):
+def get_running_plots(jobs, running_work, instrumentation_settings, backend='chia'):
     chia_processes = []
     logging.info(f'Getting running plots')
-    chia_executable_name = get_chia_executable_name()
+    chia_executable_name = get_chia_executable_name(backend)
     for process in psutil.process_iter():
         try:
             if chia_executable_name not in process.name() and 'python' not in process.name().lower():
@@ -181,7 +228,8 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
         except (psutil.AccessDenied, psutil.NoSuchProcess):
             continue
         try:
-            if 'plots' not in process.cmdline() or 'create' not in process.cmdline():
+            if (('plots' not in process.cmdline() or 'create' not in process.cmdline()) and backend == 'chia') or\
+                    (('python' in process.name() or 'zombie' in process.status()) and backend == 'madmax'):
                 continue
         except (psutil.ZombieProcess, psutil.NoSuchProcess):
             continue
@@ -233,13 +281,13 @@ def get_running_plots(jobs, running_work, instrumentation_settings):
 
         plot_id = None
         if log_file_path:
-            plot_id = get_plot_id(file_path=log_file_path)
+            plot_id = get_plot_id(file_path=log_file_path, backend=backend)
 
         temp_file_size = get_temp_size(plot_id=plot_id, temporary_directory=temporary_directory,
                                        temporary2_directory=temporary2_directory)
 
         temporary_drive, temporary2_drive, destination_drive = get_plot_drives(commands=commands)
-        k_size = get_plot_k_size(commands=commands)
+        k_size = get_plot_k_size(commands=commands, backend=backend)
         work = deepcopy(Work())
         work.job = assumed_job
         work.log_file = log_file_path

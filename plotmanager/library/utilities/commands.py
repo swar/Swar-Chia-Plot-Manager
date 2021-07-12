@@ -32,7 +32,7 @@ def start_manager():
 
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        instrumentation_settings, backend = get_config_info()
 
     load_jobs(config_jobs)
 
@@ -80,7 +80,7 @@ def stop_manager():
 def json_output():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        instrumentation_settings, backend = get_config_info()
 
     system_drives = get_system_drives()
 
@@ -107,11 +107,11 @@ def json_output():
 
     jobs = load_jobs(config_jobs)
     jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
-                                           instrumentation_settings=instrumentation_settings)
+                                           instrumentation_settings=instrumentation_settings, backend=backend)
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                        notification_settings=notification_settings, view_settings=view_settings,
-                       instrumentation_settings=instrumentation_settings)
-    print_json(jobs=jobs, running_work=running_work, view_settings=view_settings)
+                       instrumentation_settings=instrumentation_settings, backend=backend)
+    print_json(jobs=jobs, running_work=running_work, view_settings=view_settings, backend=backend)
 
     has_file = False
     if len(running_work.values()) == 0:
@@ -131,7 +131,7 @@ def json_output():
 def view(loop=True):
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
+        instrumentation_settings, backend = get_config_info()
     view_check_interval = view_settings['check_interval']
     system_drives = get_system_drives()
     analysis = {'files': {}}
@@ -160,13 +160,13 @@ def view(loop=True):
             analysis = analyze_log_dates(log_directory=log_directory, analysis=analysis)
             jobs = load_jobs(config_jobs)
             jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
-                                                   instrumentation_settings=instrumentation_settings)
+                                                   instrumentation_settings=instrumentation_settings, backend=backend)
             check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                                notification_settings=notification_settings, view_settings=view_settings,
-                               instrumentation_settings=instrumentation_settings)
+                               instrumentation_settings=instrumentation_settings, backend=backend)
             print_view(jobs=jobs, running_work=running_work, analysis=analysis, drives=drives,
                        next_log_check=datetime.now() + timedelta(seconds=view_check_interval),
-                       view_settings=view_settings, loop=loop)
+                       view_settings=view_settings, loop=loop, backend=backend)
             if not loop:
                 break
             time.sleep(view_check_interval)
@@ -190,5 +190,5 @@ def view(loop=True):
 def analyze_logs():
     chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
         minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-        instrumentation_settings = get_config_info()
-    analyze_log_times(log_directory)
+        instrumentation_settings, backend = get_config_info()
+    analyze_log_times(log_directory, backend)

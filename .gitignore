@@ -131,3 +131,4 @@ dmypy.json
 # Custom
 config.yaml
 *.bak
+.idea
