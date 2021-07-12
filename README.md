@@ -5,7 +5,7 @@
 
 ![The view of the manager](https://i.imgur.com/hIhjXt0.png "View")
 
-##### Development Version: v0.1.0
+##### Development Version: v0.1.1
 
 This is a cross-platform Chia Plot Manager that will work on the major operating systems. This is not a plotter. The purpose of this library is to manage your plotting and kick off new plots with the settings that you configure. Everyone's system is unique so customization is an important feature that was engraved into this library.
 
@@ -21,6 +21,7 @@ This library has been tested for Windows and Linux.
 * Utilize temporary space to its maximum potential by starting a new plot early.
 * Run a maximum number of plots concurrently to avoid bottlenecks or limit resource hogging.
 * More in-depth active plot screen.
+* Support MadMax and the new pooling protocol
 
 
 ## Sponsor / Support this Library
@@ -146,6 +147,10 @@ This is a single variable that should contain the location of your chia executab
 * Windows Example: `C:\Users\<USERNAME>\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe`
 * Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
 * Another Linux Example: `/home/swar/chia-blockchain/venv/bin/chia`
+
+### backend
+
+This is where you signify if you are using Chia or the MadMax binary files for plotting.
 
 ### manager
 
