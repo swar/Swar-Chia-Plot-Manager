@@ -69,7 +69,7 @@ def get_plot_k_size(commands, backend):
     return k_size_parsers.get(backend)(commands)
 
 
-def _get_chia_backend_plot_k_size(commands, backend):
+def _get_chia_backend_plot_k_size(commands):
     try:
         k_index = commands.index('-k') + 1
     except ValueError:
