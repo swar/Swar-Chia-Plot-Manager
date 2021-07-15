@@ -67,7 +67,7 @@ def _get_chia_flags(size, memory_buffer, temporary_directory, destination_direct
 
 
 def _get_madmax_flags(temporary_directory, destination_directory, threads, buckets,
-                      temporary2_directory=None, farmer_public_key=None, pool_public_key=None, pool_contract_address=None, **kwargs):
+                      buckets_p3=None, threads_p2=None, temporary2_directory=None, farmer_public_key=None, pool_public_key=None, pool_contract_address=None, **kwargs):
     flags = dict(
         r=threads,
         t=temporary_directory,
@@ -83,5 +83,9 @@ def _get_madmax_flags(temporary_directory, destination_directory, threads, bucke
         flags['p'] = pool_public_key
     if pool_contract_address is not None:
         flags['c'] = pool_contract_address
+    if buckets_p3 is not None:
+        flags['v'] = buckets_p3
+    if threads_p2 is not None:
+        flags['K'] = threads_p2
 
     return flags
