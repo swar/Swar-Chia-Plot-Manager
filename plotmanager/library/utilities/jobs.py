@@ -126,7 +126,7 @@ def load_jobs(config_jobs):
         job.size = info['size']
         job.bitfield = info['bitfield']
         job.threads = info['threads']
-        job.threads_p2 = info['threads_p2']
+        job.threadX_p2 = info['threadX_p2']
         job.buckets = info['buckets']
         job.buckets_p3 = info['buckets_p3']
         job.memory_buffer = info['memory_buffer']
@@ -320,7 +320,7 @@ def start_work(job, chia_location, log_directory, drives_free_space, backend):
         temporary2_directory=temporary2_directory,
         destination_directory=destination_directory,
         threads=job.threads,
-        threads_p2=job.threads_p2,
+        threadX_p2=job.threadX_p2,
         buckets=job.buckets,
         buckets_p3=job.buckets_p3,
         bitfield=job.bitfield,
