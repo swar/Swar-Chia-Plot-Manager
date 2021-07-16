@@ -126,9 +126,9 @@ def load_jobs(config_jobs):
         job.size = info['size']
         job.bitfield = info['bitfield']
         job.threads = info['threads']
-        job.threadX_p2 = info['threadX_p2']
+        job.threadX_p2 = info.get('threadX_p2')
         job.buckets = info['buckets']
-        job.buckets_p3 = info['buckets_p3']
+        job.buckets_p3 = info.get('buckets_p3')
         job.memory_buffer = info['memory_buffer']
 
         job.unix_process_priority = info.get('unix_process_priority', 10)
