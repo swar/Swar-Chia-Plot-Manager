@@ -64,7 +64,7 @@ def check_valid_destinations(job, drives_free_space):
 
     return job
 
-        
+
 def load_jobs(config_jobs):
     jobs = []
     checked_job_names = []
@@ -89,7 +89,7 @@ def load_jobs(config_jobs):
         if job.max_concurrent_with_start_early < job.max_concurrent:
             raise InvalidConfigurationSetting('Your "max_concurrent_with_start_early" value must be greater than or '
                                               'equal to your "max_concurrent" value.')
-        
+
         if (job.pool_contract_address and job.pool_public_key) is not None:
             raise InvalidConfigurationSetting('You cant use both "pool_contract_address" and "pool_public_key" at once '
                                               'You can only define one per job')
@@ -158,15 +158,14 @@ def determine_job_size(k_size):
     size = 109000000000
     if k_size < base_k_size:
         # Why 2.058? Just some quick math.
-        size /= pow(2.058, base_k_size-k_size)
+        size /= pow(2.058, base_k_size - k_size)
     if k_size > base_k_size:
         # Why 2.06? Just some quick math from my current plots.
-        size *= pow(2.06, k_size-base_k_size)
+        size *= pow(2.06, k_size - base_k_size)
     return size
 
 
-def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, next_job_work, chia_location,
-                          log_directory, next_log_check, minimum_minutes_between_jobs, system_drives, backend):
+def get_drives_free_space(jobs, system_drives, running_work):
     drives_free_space = {}
     for job in jobs:
         directories = [job.destination_directory]
@@ -187,13 +186,22 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
     logging.info(f'Free space before checking active jobs: {drives_free_space}')
     for pid, work in running_work.items():
         drive = work.destination_drive
-        if drive not in drives_free_space or drives_free_space[drive] is None:
+        if drive[-1] == '/' or drive[-1] == '\\':
+            drive = drive[:-1]
+        if drive in drives_free_space.keys():
+            if drives_free_space[drive] is None:
+                continue
+        else:
             continue
         work_size = determine_job_size(work.k_size)
         drives_free_space[drive] -= work_size
         logging.info(drive)
     logging.info(f'Free space after checking active jobs: {drives_free_space}')
+    return drives_free_space
 
+
+def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, next_job_work, chia_location,
+                          log_directory, next_log_check, minimum_minutes_between_jobs, system_drives, backend):
     total_phase_1_count = 0
     for pid in running_work.keys():
         if running_work[pid].current_phase > 1:
@@ -201,6 +209,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
         total_phase_1_count += 1
 
     for i, job in enumerate(jobs):
+        drives_free_space = get_drives_free_space(jobs, system_drives, running_work)
         logging.info(f'Checking to queue work for job: {job.name}')
         if len(running_work.values()) >= max_concurrent:
             logging.info(f'Global concurrent limit met, skipping. Running plots: {len(running_work.values())}, '
@@ -245,7 +254,8 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
                          f'{job.total_running - discount_running}, Max concurrent: {job.max_concurrent}')
             continue
         if job.total_running >= job.max_concurrent_with_start_early:
-            logging.info(f'Job\'s max concurrnet limit with start early has been met, skipping. Max: {job.max_concurrent_with_start_early}')
+            logging.info(
+                f'Job\'s max concurrnet limit with start early has been met, skipping. Max: {job.max_concurrent_with_start_early}')
             continue
         if job.stagger_minutes:
             next_job_work[job.name] = datetime.now() + timedelta(minutes=job.stagger_minutes)
@@ -258,8 +268,9 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
                     logging.info(f'Skipping stagger for {j.name}. Stagger is larger than minimum_minutes_between_jobs. '
                                  f'Min: {minimum_stagger}, Current: {next_job_work[j.name]}')
                     continue
-                logging.info(f'Setting a new stagger for {j.name}. minimum_minutes_between_jobs is larger than assigned '
-                             f'stagger. Min: {minimum_stagger}, Current: {next_job_work[j.name]}')
+                logging.info(
+                    f'Setting a new stagger for {j.name}. minimum_minutes_between_jobs is larger than assigned '
+                    f'stagger. Min: {minimum_stagger}, Current: {next_job_work[j.name]}')
                 next_job_work[j.name] = minimum_stagger
 
         job, work = start_work(
@@ -301,6 +312,8 @@ def start_work(job, chia_location, log_directory, drives_free_space, backend):
     work.log_file = log_file_path
     work.datetime_start = now
     work.work_id = job.current_work_id
+    work.k_size = job.size
+    work.destination_drive = destination_directory
 
     job.current_work_id += 1
 
