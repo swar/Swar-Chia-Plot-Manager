@@ -184,6 +184,8 @@ def get_drives_free_space(jobs, system_drives, running_work):
     logging.info(f'Free space before checking active jobs: {drives_free_space}')
     for pid, work in running_work.items():
         drive = work.destination_drive
+        if drive[-1] == '/' or drive[-1] == '\\':
+            drive = drive[:-1]
         if drive in drives_free_space.keys():
             if drives_free_space[drive] is None:
                 continue
@@ -309,9 +311,6 @@ def start_work(job, chia_location, log_directory, drives_free_space, backend):
     work.datetime_start = now
     work.work_id = job.current_work_id
     work.k_size = job.size
-    if destination_directory[-1] == '/' or destination_directory[-1] == '\\':
-        destination_directory = destination_directory[:-1]
-
     work.destination_drive = destination_directory
 
     job.current_work_id += 1
