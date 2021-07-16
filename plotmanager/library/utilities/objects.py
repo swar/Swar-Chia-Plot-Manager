@@ -30,7 +30,9 @@ class Job:
     size = None
     bitfield = None
     threads = None
+    threadX_p2 = None
     buckets = None
+    buckets_p3 = None
     memory_buffer = None
 
     unix_process_priority = 10

@@ -150,12 +150,16 @@ jobs:
   # destination_directory: Can be a single value or a list of values. This is the final directory where the plot will be
   #                        transferred once it is completed. If you provide a list, it will cycle through each drive
   #                        one by one.
+  #    *** MadMax requires trailing '/' on directories! ***
   #
   # size: This refers to the k size of the plot. You would type in something like 32, 33, 34, 35... in here.
   # bitfield: This refers to whether you want to use bitfield or not in your plotting. Typically, you want to keep
   #           this as true.
-  # threads: This is the number of threads that will be assigned to the plotter. Only phase 1 uses more than 1 thread.
-  # buckets: The number of buckets to use. The default provided by Chia is 128.
+  # threads: This is the number of threads that will be assigned to the plotter. Chia only uses more than 1 thread in phase 1.
+  #           Madmax is multithreaded.
+  # [OPTIONAL] threadX_p2: [madmax only] This is a *MULTIPLIER* (integer) for the number of threads the madmax plotter will use for phase 2. Blank defaults to 1.
+  # buckets: The number of buckets to use. The default provided by Chia is 128. (applies to phases 1 and 2 in madmax when used in conjunction with 'buckets_p3' parameter)
+  # [OPTIONAL] buckets_p3: [madmax only] The number of buckets to use in Phases 3 (and 4). Leave blank to use the same value for all phases (from 'buckets' parameter, default 128)
   # memory_buffer: The amount of memory you want to allocate to the process.
   # max_concurrent: The maximum number of plots to have for this job at any given time.
   # max_concurrent_with_start_early: The maximum number of plots to have for this job at any given time including
@@ -201,7 +205,9 @@ jobs:
     size: 32
     bitfield: true
     threads: 8
+    threadX_p2:
     buckets: 128
+    buckets_p3:
     memory_buffer: 4000
     max_concurrent: 6
     max_concurrent_with_start_early: 7
