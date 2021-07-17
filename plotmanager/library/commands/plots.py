@@ -40,7 +40,7 @@ def _get_backend_flags(backend, *args, **kwargs):
 
 def _get_chia_flags(size, memory_buffer, temporary_directory, destination_directory, threads, buckets, bitfield,
                     temporary2_directory=None, farmer_public_key=None, pool_public_key=None,
-                    exclude_final_directory=False, pool_contract_address=None):
+                    exclude_final_directory=False, pool_contract_address=None, **kwargs):
     flags = dict(
         k=size,
         b=memory_buffer,
