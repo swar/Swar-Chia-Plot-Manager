@@ -50,7 +50,8 @@ def check_valid_destinations(job, drives_free_space):
 
     valid_destinations = []
     for directory in destination_directories:
-        drive = identify_drive(file_path=directory, drives=drives)
+        #drive = identify_drive(file_path=directory, drives=drives)
+        drive = directory
         logging.info(f'Drive "{drive}" has {drives_free_space[drive]} free space.')
         if drives_free_space[drive] is None or drives_free_space[drive] >= job_size:
             valid_destinations.append(directory)
@@ -357,6 +358,8 @@ def start_work(job, chia_location, log_directory, drives_free_space, backend):
         logging.info(f'Set process cpu affinity')
 
     work.pid = pid
+    work.k_size = job.size
+    work.destination_drive = destination_directory
     job.total_running += 1
     job.total_kicked_off += 1
     job.running_work = job.running_work + [pid]
