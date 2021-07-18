@@ -6,6 +6,8 @@ import re
 import socket
 import time
 
+from datetime import datetime
+
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
@@ -265,9 +267,20 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
             job.total_completed += 1
             increment_plots_completed(increment=1, job_name=job.name, instrumentation_settings=instrumentation_settings)
 
+            phase_time_log = []
+            for i in range(1, 5):
+                if phase_times.get(i):
+                    phase_time_log.append(phase_times.get(i))
+            phase_times_log_string = ' / '.join(phase_time_log)
+
+            elapsed_time = (datetime.now() - work.datetime_start)
+            elapsed_time = pretty_print_time(elapsed_time.seconds + elapsed_time.days * 86400)
+
+            plotname = f'plot {work.k_size} {work.datetime_start} {job.name}'
+
             send_notifications(
                 title='Plot Completed',
-                body=f'You completed a plot on {socket.gethostname()}!',
+                body=f'You completed plot "{plotname}" on {socket.gethostname()}! (Phase times: {phase_times_log_string}) Total duration: {elapsed_time}',
                 settings=notification_settings,
             )
             break
