@@ -68,8 +68,11 @@ notifications:
   pushover_api_key: xx
   
   # TELEGRAM
+  # use this URL to find the telegram_chat_id of the telegram group or leave empty to send to everyone
+  # https://api.telegram.org/<telegram_bot_token>/getUpdates
   notify_telegram: false
   telegram_token: xxxxx
+  telegram_chat_id: -1087228824
 
   # TWILIO
   notify_twilio: false
