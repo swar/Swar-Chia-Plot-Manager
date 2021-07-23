@@ -4,27 +4,41 @@ import os
 import psutil
 import re
 import socket
+import time
 
 from plotmanager.library.utilities.instrumentation import increment_plots_completed
 from plotmanager.library.utilities.notifications import send_notifications
 from plotmanager.library.utilities.print import pretty_print_time
+from datetime import timedelta, datetime
 
 
 def get_log_file_name(log_directory, job, datetime):
     return os.path.join(log_directory, f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
 
 
-def _analyze_log_end_date(contents):
+def _analyze_log_end_date(contents, file_path):
     match = re.search(r'total time = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
-    if not match:
-        return False
-    total_seconds, date_raw = match.groups()
-    total_seconds = pretty_print_time(int(float(total_seconds)))
-    parsed_date = dateparser.parse(date_raw)
-    return dict(
-        total_seconds=total_seconds,
-        date=parsed_date,
-    )
+    if match:
+        total_seconds, date_raw = match.groups()
+        total_seconds = pretty_print_time(int(float(total_seconds)))
+        parsed_date = dateparser.parse(date_raw)
+        return dict(
+            total_seconds=total_seconds,
+            date=parsed_date,
+        )
+    else:
+        match = re.search(r'Total plot creation time was ([\d\.]+) sec', contents, flags=re.I)
+        if not match:
+            return False
+        total_seconds = match.group(1)
+        total_seconds = pretty_print_time(int(float(total_seconds)))
+        parsed_date = os.path.getmtime(file_path)
+        file_date = dateparser.parse(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(parsed_date)))
+        return dict(
+            total_seconds=total_seconds,
+            date=file_date,
+        )
+        
 
 
 def _get_date_summary(analysis):
@@ -62,7 +76,8 @@ def get_completed_log_files(log_directory, skip=None):
             continue
         f.close()
         if 'Total time = ' not in contents:
-            continue
+           if 'Total plot creation time' not in contents:
+           	continue
         files[file_path] = contents
     return files
 
@@ -70,7 +85,7 @@ def get_completed_log_files(log_directory, skip=None):
 def analyze_log_dates(log_directory, analysis):
     files = get_completed_log_files(log_directory, skip=list(analysis['files'].keys()))
     for file_path, contents in files.items():
-        data = _analyze_log_end_date(contents)
+        data = _analyze_log_end_date(contents, file_path)
         if data is None:
             continue
         analysis['files'][file_path] = {'data': data, 'checked': False}
@@ -78,17 +93,19 @@ def analyze_log_dates(log_directory, analysis):
     return analysis
 
 
-def analyze_log_times(log_directory):
+def analyze_log_times(log_directory, backend):
     total_times = {1: 0, 2: 0, 3: 0, 4: 0}
     line_numbers = {1: [], 2: [], 3: [], 4: []}
     count = 0
     files = get_completed_log_files(log_directory)
     for file_path, contents in files.items():
         count += 1
-        phase_times, phase_dates = get_phase_info(contents, pretty_print=False)
+        start_time_raw = os.path.getctime(file_path)
+        start_time = datetime.fromtimestamp(start_time_raw)
+        phase_times, phase_dates = get_phase_info(contents, pretty_print=False, backend=backend, start_time=start_time)
         for phase, seconds in phase_times.items():
             total_times[phase] += seconds
-        splits = contents.split('Time for phase')
+        splits = _get_log_splits_for_backend(backend, contents)
         phase = 0
         new_lines = 1
         for split in splits:
@@ -105,7 +122,33 @@ def analyze_log_times(log_directory):
         print(f'  phase{phase}_weight: {round(total_times[phase] / sum(total_times.values()) * 100, 2)}')
 
 
-def get_phase_info(contents, view_settings=None, pretty_print=True):
+def _get_log_splits_for_backend(backend, contents):
+    backend_parsers = dict(
+        chia=_get_log_splits_for_chia,
+        madmax=_get_log_splits_for_madmax
+    )
+
+    return backend_parsers.get(backend)(contents)
+
+
+def _get_log_splits_for_chia(contents):
+    return contents.split('Time for phase')
+
+
+def _get_log_splits_for_madmax(contents):
+    return re.split(r'\nPhase [1-4] took', contents)
+
+
+def get_phase_info(*args, backend='chia', **kwargs):
+    phase_info_parsers = dict(
+        chia=_get_chia_backend_phase_info,
+        madmax=_get_madmax_backend_phase_info,
+    )
+
+    return phase_info_parsers.get(backend)(*args, **kwargs)
+
+
+def _get_chia_backend_phase_info(contents, view_settings=None, pretty_print=True, **kwargs):
     if not view_settings:
         view_settings = {}
     phase_times = {}
@@ -123,7 +166,24 @@ def get_phase_info(contents, view_settings=None, pretty_print=True):
     return phase_times, phase_dates
 
 
-def get_progress(line_count, progress_settings):
+def _get_madmax_backend_phase_info(contents, view_settings=None, pretty_print=True, start_time=None):
+    if not view_settings:
+        view_settings = {}
+    phase_times = {}
+    phase_dates = {}
+
+    for phase in range(1, 5):
+        match = re.search(rf'Phase {phase} took ([\d\.]+)', contents, flags=re.I)
+        if match:
+            seconds = match.groups()
+            seconds = float(seconds[0])
+            phase_times[phase] = pretty_print_time(int(seconds), view_settings['include_seconds_for_phase']) if pretty_print else seconds
+            phase_dates[phase] = start_time + timedelta(seconds=seconds)
+
+    return phase_times, phase_dates
+
+
+def get_progress(line_count, progress_settings, backend='chia'):
     phase1_line_end = progress_settings['phase1_line_end']
     phase2_line_end = progress_settings['phase2_line_end']
     phase3_line_end = progress_settings['phase3_line_end']
@@ -133,6 +193,15 @@ def get_progress(line_count, progress_settings):
     phase3_weight = progress_settings['phase3_weight']
     phase4_weight = progress_settings['phase4_weight']
     progress = 0
+
+    backend_header_lines = dict(
+        chia=0,
+        madmax=11
+    )
+
+    header_lines = backend_header_lines.get(backend)
+    line_count = line_count - header_lines
+
     if line_count > phase1_line_end:
         progress += phase1_weight
     else:
@@ -152,11 +221,12 @@ def get_progress(line_count, progress_settings):
         progress += phase4_weight
     else:
         progress += phase4_weight * ((line_count - phase3_line_end) / (phase4_line_end - phase3_line_end))
+
     return progress
 
 
 def check_log_progress(jobs, running_work, progress_settings, notification_settings, view_settings,
-                       instrumentation_settings):
+                       instrumentation_settings, backend):
     for pid, work in list(running_work.items()):
         logging.info(f'Checking log progress for PID: {pid}')
         if not work.log_file:
@@ -167,9 +237,9 @@ def check_log_progress(jobs, running_work, progress_settings, notification_setti
 
         line_count = (data.count('\n') + 1)
 
-        progress = get_progress(line_count=line_count, progress_settings=progress_settings)
+        progress = get_progress(line_count=line_count, progress_settings=progress_settings, backend=backend)
 
-        phase_times, phase_dates = get_phase_info(data, view_settings)
+        phase_times, phase_dates = get_phase_info(data, view_settings, backend=backend, start_time=work.datetime_start)
         current_phase = 1
         if phase_times:
             current_phase = max(phase_times.keys()) + 1

@@ -1,5 +1,6 @@
 import logging
 import time
+import psutil
 
 from datetime import datetime, timedelta
 
@@ -11,12 +12,13 @@ from plotmanager.library.utilities.processes import get_running_plots, get_syste
 
 chia_location, log_directory, config_jobs, manager_check_interval, max_concurrent, max_for_phase_1, \
     minimum_minutes_between_jobs, progress_settings, notification_settings, debug_level, view_settings, \
-    instrumentation_settings = get_config_info()
+    instrumentation_settings, backend = get_config_info()
 
 logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=debug_level)
 
 logging.info(f'Debug Level: {debug_level}')
 logging.info(f'Chia Location: {chia_location}')
+logging.info(f'Backend: {backend}')
 logging.info(f'Log Directory: {log_directory}')
 logging.info(f'Jobs: {config_jobs}')
 logging.info(f'Manager Check Interval: {manager_check_interval}')
@@ -41,7 +43,7 @@ logging.info(f"Found System Drives: {system_drives}")
 
 logging.info(f'Grabbing running plots.')
 jobs, running_work = get_running_plots(jobs=jobs, running_work=running_work,
-                                       instrumentation_settings=instrumentation_settings)
+                                       instrumentation_settings=instrumentation_settings, backend=backend)
 for job in jobs:
     next_job_work[job.name] = datetime.now()
     max_date = None
@@ -86,8 +88,21 @@ while has_active_jobs_and_work(jobs):
     logging.info(f'Checking log progress..')
     check_log_progress(jobs=jobs, running_work=running_work, progress_settings=progress_settings,
                        notification_settings=notification_settings, view_settings=view_settings,
-                       instrumentation_settings=instrumentation_settings)
+                       instrumentation_settings=instrumentation_settings, backend=backend)
     next_log_check = datetime.now() + timedelta(seconds=manager_check_interval)
+
+    logging.info(f'Clearing zombies')
+
+    for job in jobs:
+        non_zombie_work = []
+        for pid in job.running_work:
+            if psutil.Process(pid).status() != 'zombie':
+                non_zombie_work.append(pid)
+            else:
+                del running_work[pid]
+                job.total_running = job.total_running - 1
+
+        job.running_work = non_zombie_work
 
     # DETERMINE IF JOB NEEDS TO START
     logging.info(f'Monitoring jobs to start.')
@@ -102,6 +117,7 @@ while has_active_jobs_and_work(jobs):
         next_log_check=next_log_check,
         minimum_minutes_between_jobs=minimum_minutes_between_jobs,
         system_drives=system_drives,
+        backend=backend,
     )
 
     logging.info(f'Sleeping for {manager_check_interval} seconds.')
