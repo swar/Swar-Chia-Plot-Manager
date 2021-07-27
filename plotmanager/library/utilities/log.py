@@ -13,7 +13,8 @@ from datetime import timedelta, datetime
 
 
 def get_log_file_name(log_directory, job, datetime):
-    return os.path.join(log_directory, f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
+    return os.path.join(log_directory,
+                        f'{job.name}_{str(datetime).replace(" ", "_").replace(":", "_").replace(".", "_")}.log')
 
 
 def _analyze_log_end_date(contents, file_path):
@@ -38,7 +39,6 @@ def _analyze_log_end_date(contents, file_path):
             total_seconds=total_seconds,
             date=file_date,
         )
-        
 
 
 def _get_date_summary(analysis):
@@ -76,8 +76,8 @@ def get_completed_log_files(log_directory, skip=None):
             continue
         f.close()
         if 'Total time = ' not in contents:
-           if 'Total plot creation time' not in contents:
-           	continue
+            if 'Total plot creation time' not in contents:
+                continue
         files[file_path] = contents
     return files
 
@@ -155,11 +155,13 @@ def _get_chia_backend_phase_info(contents, view_settings=None, pretty_print=True
     phase_dates = {}
 
     for phase in range(1, 5):
-        match = re.search(rf'time for phase {phase} = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n', contents, flags=re.I)
+        match = re.search(rf'time for phase {phase} = ([\d\.]+) seconds\. CPU \([\d\.]+%\) [A-Za-z]+\s([^\n]+)\n',
+                          contents, flags=re.I)
         if match:
             seconds, date_raw = match.groups()
             seconds = float(seconds)
-            phase_times[phase] = pretty_print_time(int(seconds), view_settings['include_seconds_for_phase']) if pretty_print else seconds
+            phase_times[phase] = pretty_print_time(int(seconds), view_settings[
+                'include_seconds_for_phase']) if pretty_print else seconds
             parsed_date = dateparser.parse(date_raw)
             phase_dates[phase] = parsed_date
 
@@ -177,7 +179,8 @@ def _get_madmax_backend_phase_info(contents, view_settings=None, pretty_print=Tr
         if match:
             seconds = match.groups()
             seconds = float(seconds[0])
-            phase_times[phase] = pretty_print_time(int(seconds), view_settings['include_seconds_for_phase']) if pretty_print else seconds
+            phase_times[phase] = pretty_print_time(int(seconds), view_settings[
+                'include_seconds_for_phase']) if pretty_print else seconds
             phase_dates[phase] = start_time + timedelta(seconds=seconds)
 
     return phase_times, phase_dates
