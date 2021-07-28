@@ -156,10 +156,12 @@ def get_system_drives():
 
 
 def identify_drive(file_path, drives):
+    if file_path[-1] == '/' or file_path[-1] == '\\':
+        file_path = file_path[:-1]
     if not file_path:
         return None
     for drive in drives:
-        if drive not in file_path:
+        if drive != file_path:
             continue
         return drive
     return None
