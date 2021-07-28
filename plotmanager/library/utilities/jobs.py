@@ -51,8 +51,10 @@ def check_valid_destinations(job, drives_free_space):
     valid_destinations = []
     for directory in destination_directories:
         if directory[-1] == '/' or directory[-1] == '\\':
-            directory = directory[:-1]
-        drive = identify_drive(file_path=directory, drives=drives)
+            file_path = directory[:-1]
+        else:
+            file_path = directory
+        drive = identify_drive(file_path=file_path, drives=drives)
         logging.info(f'Drive "{drive}" has {drives_free_space[drive]} free space.')
         if drives_free_space[drive] is None or drives_free_space[drive] >= job_size:
             valid_destinations.append(directory)
