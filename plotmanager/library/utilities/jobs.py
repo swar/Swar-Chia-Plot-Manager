@@ -232,7 +232,7 @@ def monitor_jobs_to_start(jobs, running_work, max_concurrent, max_for_phase_1, n
             logging.info(f'Job\'s total kicked off greater than or equal to max plots, skipping. Total Kicked Off: '
                          f'{job.total_kicked_off}, Max Plots: {job.max_plots}')
             continue
-        if len(running_work.values()) > 0 and job.name in next_job_work and next_job_work[job.name] > datetime.now():
+        if job.name in next_job_work and next_job_work[job.name] > datetime.now():
             logging.info(f'Waiting for job stagger, skipping. Next allowable time: {next_job_work[job.name]}')
             continue
         discount_running = 0
