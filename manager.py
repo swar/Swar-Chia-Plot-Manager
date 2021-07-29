@@ -3,7 +3,6 @@ import argparse
 from plotmanager.library.utilities.exceptions import InvalidArgumentException
 from plotmanager.library.utilities.commands import start_manager, stop_manager, view, json_output, analyze_logs
 
-
 parser = argparse.ArgumentParser(description='This is the central manager for Swar\'s Chia Plot Manager.')
 
 help_description = '''

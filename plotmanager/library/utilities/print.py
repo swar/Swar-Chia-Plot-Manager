@@ -89,7 +89,7 @@ def get_job_data(jobs, running_work, view_settings, as_json=False, backend='chia
         added_pids.append(pid)
     rows.sort(key=lambda x: (x[5]), reverse=True)
     for i in range(len(rows)):
-        rows[i] = [str(i+1)] + rows[i]
+        rows[i] = [str(i + 1)] + rows[i]
     if as_json:
         jobs = dict(jobs=rows)
         print(json.dumps(jobs, separators=(',', ':')))
@@ -98,7 +98,8 @@ def get_job_data(jobs, running_work, view_settings, as_json=False, backend='chia
 
 
 def pretty_print_job_data(job_data):
-    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress', 'temp_size']
+    headers = ['num', 'job', 'k', 'plot_id', 'pid', 'start', 'elapsed_time', 'phase', 'phase_times', 'progress',
+               'temp_size']
     rows = [headers] + job_data
     return pretty_print_table(rows)
 
@@ -210,8 +211,9 @@ def print_view(jobs, running_work, analysis, drives, next_log_check, view_settin
         print(f'CPU Usage: {psutil.cpu_percent()}%')
     if view_settings.get('include_ram'):
         ram_usage = psutil.virtual_memory()
-        print(f'RAM Usage: {pretty_print_bytes(ram_usage.used, "gb")}/{pretty_print_bytes(ram_usage.total, "gb", 2, "GiB")}'
-              f'({ram_usage.percent}%)')
+        print(
+            f'RAM Usage: {pretty_print_bytes(ram_usage.used, "gb")}/{pretty_print_bytes(ram_usage.total, "gb", 2, "GiB")}'
+            f'({ram_usage.percent}%)')
     print()
     if view_settings.get('include_plot_stats'):
         print(f'Plots Completed Yesterday: {analysis["summary"].get(datetime.now().date() - timedelta(days=1), 0)}')

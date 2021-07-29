@@ -47,21 +47,21 @@ def _get_chia_flags(size, memory_buffer, temporary_directory, destination_direct
         t=temporary_directory,
         d=destination_directory,
         r=threads,
-        u=buckets,       
+        u=buckets,
     )
 
     if temporary2_directory is not None:
         flags['2'] = temporary2_directory
     if farmer_public_key is not None:
         flags['f'] = farmer_public_key
-    if pool_public_key is not None:
-        flags['p'] = pool_public_key
     if bitfield is False:
         flags['e'] = ''
     if exclude_final_directory:
         flags['x'] = ''
     if pool_contract_address is not None:
         flags['c'] = pool_contract_address
+    elif pool_public_key is not None:
+        flags['p'] = pool_public_key
 
     return flags
 
@@ -79,13 +79,12 @@ def _get_madmax_flags(temporary_directory, destination_directory, threads, bucke
         flags['2'] = temporary2_directory
     if farmer_public_key is not None:
         flags['f'] = farmer_public_key
-    if pool_public_key is not None:
-        flags['p'] = pool_public_key
     if pool_contract_address is not None:
         flags['c'] = pool_contract_address
+    elif pool_public_key is not None:
+        flags['p'] = pool_public_key
     if buckets_p3 is not None:
         flags['v'] = buckets_p3
     if threadX_p2 is not None:
         flags['K'] = threadX_p2
-
     return flags
