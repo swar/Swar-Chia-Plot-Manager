@@ -13,7 +13,7 @@ def _get_config():
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Unable to find the config.yaml file. Expected location: {file_path}")
     f = open(file_path, 'r')
-    config = yaml.load(stream=f, Loader=yaml.Loader)
+    config = yaml.load(stream=f, Loader=yaml.Loader, encoding='utf-8')
     f.close()
     return config
 
