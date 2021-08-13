@@ -1,3 +1,5 @@
+import logging
+
 def _send_notifications(title, body, settings):
     if settings.get('notify_discord') is True:
         import discord_notify
@@ -20,7 +22,12 @@ def _send_notifications(title, body, settings):
 
     if settings.get('notify_ifttt') is True:
         import requests
-        requests.post(settings.get('ifttt_webhook_url'), data={'value1': title, 'value2': body})
+        try:
+            requests.post(settings.get('ifttt_webhook_url'), data={'value1': title, 'value2': body}, timeout=10)
+        except requests.exceptions.Timeout:
+            logging.error(f"Connecting to IFTTT timeout.(Default is 10 sec)")
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Fail to connect IFTTT-{str(e)}")
 
 
 def send_notifications(title, body, settings):
