@@ -121,6 +121,10 @@ while has_active_jobs_and_work(jobs):
     )
 
     logging.info(f'Sleeping for {manager_check_interval} seconds.')
-    time.sleep(manager_check_interval)
-
+    try:
+        time.sleep(manager_check_interval)
+    except KeyboardInterrupt as results:
+        logging.info(f'You may have pressed Ctrl + C by mistake. If you need to end it, you can try the stop parameter of manager.py.')
+        pass
+    
 logging.info(f'Manager has exited loop because there are no more active jobs.')
