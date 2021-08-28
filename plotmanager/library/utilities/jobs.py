@@ -143,7 +143,7 @@ def load_jobs(config_jobs):
         job.enable_cpu_affinity = info.get('enable_cpu_affinity', False)
         if job.enable_cpu_affinity:
             job.cpu_affinity = info['cpu_affinity']
-
+        job.port = info['job_port']
         jobs.append(job)
 
     return jobs
@@ -338,6 +338,7 @@ def start_work(job, chia_location, log_directory, drives_free_space, backend):
         buckets_p3=job.buckets_p3,
         bitfield=job.bitfield,
         exclude_final_directory=job.exclude_final_directory,
+        job_port=job.port,
         backend=backend,
     )
     logging.info(f'Starting with plot command: {plot_command}')
