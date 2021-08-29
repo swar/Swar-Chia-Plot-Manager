@@ -143,7 +143,11 @@ def load_jobs(config_jobs):
         job.enable_cpu_affinity = info.get('enable_cpu_affinity', False)
         if job.enable_cpu_affinity:
             job.cpu_affinity = info['cpu_affinity']
-        job.port = info['job_port']
+        
+        job_port = info.get('job_port', None)
+        if not job_port:
+            job_port = None
+        job.port = job_port
         jobs.append(job)
 
     return jobs
