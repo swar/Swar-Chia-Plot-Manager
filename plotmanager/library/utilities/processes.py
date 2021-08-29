@@ -77,8 +77,12 @@ def _get_chia_backend_plot_k_size(commands):
     return commands[k_index]
 
 
-def _get_madmax_backend_plot_k_size(*args):
-    return '32'
+def _get_madmax_backend_plot_k_size(commands):
+    try:
+        k_index = commands.index('-k') + 1
+    except ValueError:
+        return None
+    return commands[k_index]
 
 
 def get_plot_directories(commands):

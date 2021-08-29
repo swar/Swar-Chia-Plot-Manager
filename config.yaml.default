@@ -195,6 +195,7 @@ jobs:
   #        cpu_affinity: List of cpu (or threads) to allocate for plot processes. The default example assumes you have
   #                      a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use
   #                      logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
+  # job_port: Network port (default = 8444, chives = 9699)
   - name: micron
     max_plots: 999
     farmer_public_key:
@@ -223,6 +224,7 @@ jobs:
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+    job_port: 8444
 
   - name: inland
     max_plots: 999
@@ -256,3 +258,4 @@ jobs:
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 ]
+    job_port: 8444
