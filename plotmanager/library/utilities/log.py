@@ -47,7 +47,10 @@ def _get_date_summary(analysis):
         if analysis['files'][file_path]['checked']:
             continue
         analysis['files'][file_path]['checked'] = True
-        end_date = analysis['files'][file_path]['data']['date'].date()
+        if analysis['files'][file_path]['data']['date'] is None:
+            end_date = datetime.now()
+        else:
+            end_date = analysis['files'][file_path]['data']['date'].date()
         if end_date not in summary:
             summary[end_date] = 0
         summary[end_date] += 1
