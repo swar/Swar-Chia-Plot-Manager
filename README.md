@@ -5,7 +5,7 @@
 
 ![The view of the manager](https://i.imgur.com/hIhjXt0.png "View")
 
-##### Development Version: v0.1.0
+##### Development Version: v0.1.1
 
 This is a cross-platform Chia Plot Manager that will work on the major operating systems. This is not a plotter. The purpose of this library is to manage your plotting and kick off new plots with the settings that you configure. Everyone's system is unique so customization is an important feature that was engraved into this library.
 
@@ -21,6 +21,7 @@ This library has been tested for Windows and Linux.
 * Utilize temporary space to its maximum potential by starting a new plot early.
 * Run a maximum number of plots concurrently to avoid bottlenecks or limit resource hogging.
 * More in-depth active plot screen.
+* Support MadMax and the new pooling protocol
 
 
 ## Sponsor / Support this Library
@@ -147,6 +148,10 @@ This is a single variable that should contain the location of your chia executab
 * Linux Example: `/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia`
 * Another Linux Example: `/home/swar/chia-blockchain/venv/bin/chia`
 
+### backend
+
+This is where you signify if you are using Chia or the MadMax binary files for plotting.
+
 ### manager
 
 These are the config settings that will only be used by the plot manager.
@@ -207,7 +212,8 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 * `name` - This is the name that you want to give to the job.
 * `max_plots` - This is the maximum number of jobs to make in one run of the manager. Any restarts to manager will reset this variable. It is only here to help with short term plotting.
 * [OPTIONAL]`farmer_public_key` - Your farmer public key. If none is provided, it will not pass in this variable to the chia executable which results in your default keys being used. This is only needed if you have chia set up on a machine that does not have your credentials.
-* [OPTIONAL]`pool_public_key` - Your pool public key. Same information as the above. 
+* [OPTIONAL] pool_public_key: Your pool public key. DONT Use IF YOU ARE USING A POOL CONTRACT ADDRESS! Othewise same information as above.
+* [OPTIONAL] pool_contract_address:  Your Pool's Contract Address. Refer to https://github.com/Chia-Network/chia-blockchain/wiki/Pooling-FAQ#how-do-i-assign-portable-plots-to-a-pool
 * `temporary_directory` - Can be a single value or a list of values. This is where the plotting will take place. If you provide a list, it will cycle through each drive one by one. These directories must be unique from one another.
 * [OPTIONAL]`temporary2_directory` - Can be a single value or a list of values. This is an optional parameter to use in case you want to use the temporary2 directory functionality of Chia plotting.
 * `destination_directory` - Can be a single value or a list of values. This is the final directory where the plot will be transferred once it is completed. If you provide a list, it will cycle through each drive one by one.  
@@ -234,4 +240,4 @@ Check for more details on the Chia CLI here: https://github.com/Chia-Network/chi
 	* 128   `HIGH_PRIORITY_CLASS`
 	* 256   `REALTIME_PRIORITY_CLASS`
 * `enable_cpu_affinity` - Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see improved harvester or node performance when excluding one or two threads for plotting process.
-* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
+* `cpu_affinity` - List of cpu (or threads) to allocate for plot processes. The default example assumes you have a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free). You have to specify all logical cores/threads that you wanted to use in this format [ 0, 1, 2, 3 ] and NOT [ 0-3 ] if you intend to use the first 4 logical cores.
