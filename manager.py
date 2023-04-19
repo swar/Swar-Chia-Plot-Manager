@@ -5,7 +5,7 @@ from plotmanager.library.utilities.commands import start_manager, stop_manager, 
 
 
 parser = argparse.ArgumentParser(description='This is the central manager for Swar\'s Chia Plot Manager.')
-
+tberrror here
 help_description = '''
 There are a few different actions that you can use: "start", "restart", "stop", "view", "status", "json", and 
 "analyze_logs". "start" will start a manager process. If one already exists, it will display an error message. 
